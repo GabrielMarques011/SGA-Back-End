@@ -33,7 +33,6 @@ public class Aula {
 	//@NotNull
 	private Calendar dataFinal;
 	
-		
 	@OneToOne
 	private UnidadeCurricular unidadeCurricular;
 	
