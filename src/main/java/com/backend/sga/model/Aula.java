@@ -33,9 +33,7 @@ public class Aula {
 	//@NotNull
 	private Calendar dataFinal;
 	
-	//Curso vem de Unidade Curricular, pq acrescentar ele?
-	//private Curso curso;
-	
+		
 	@OneToOne
 	private UnidadeCurricular unidadeCurricular;
 	
