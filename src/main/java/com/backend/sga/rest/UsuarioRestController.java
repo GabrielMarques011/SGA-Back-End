@@ -42,7 +42,7 @@ public class UsuarioRestController {
 	
 	//metodo para excluir por 'ID'
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Object> excluirUnidade (@PathVariable("id") Long id, Usuario user,HttpServletRequest request){// Verificando se o id do 'user' é igual ao do passado
+	public ResponseEntity<Object> excluirUser (@PathVariable("id") Long id, Usuario user,HttpServletRequest request){// Verificando se o id do 'user' é igual ao do passado
 		if(user.getNif() == user.getNif()) {
 			usuarioRepository.delete(user);
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
@@ -55,8 +55,20 @@ public class UsuarioRestController {
 	
 	//Buscando todos os dados no banco
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public Iterable<Usuario> listaDnl (Usuario user){
+	public Iterable<Usuario> listaUser (Usuario user){
 		return usuarioRepository.findAll();
+	}
+	
+	//metodo para alterar
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> atualizarUser(@PathVariable("id") String nif, @RequestBody Usuario user, HttpServletRequest request){
+		if (user.getNif() != nif) {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "NIF inválido", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		}else {
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+		}
 	}
 	
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.model.UnidadeCurricular;
+import com.backend.sga.model.Usuario;
 import com.backend.sga.repository.UnidadeCurricularRepository;
 
 //CrossOrigin serve para que o projeto receba JSON
@@ -29,7 +30,7 @@ public class UnidadeCurricularRestController {
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarUnidade (@RequestBody UnidadeCurricular curricular, HttpServletRequest request){
 		if(curricular != null) {
-			curricularRepository.delete(curricular);
+			curricularRepository.save(curricular);
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}else {
@@ -56,5 +57,17 @@ public class UnidadeCurricularRestController {
 	public Iterable<UnidadeCurricular> listaDnl (UnidadeCurricular curricular){
 		return curricularRepository.findAll();
 	}
+	
+	//metodo para alterar
+		@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+		public ResponseEntity<Object> atualizarUser(@PathVariable("id") Long id, @RequestBody UnidadeCurricular curricular, HttpServletRequest request){
+			if (curricular.getId() != id) {
+				Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "NIF inválido", null);
+				return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+			}else {
+				Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+				return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+			}
+		}
 	
 }
