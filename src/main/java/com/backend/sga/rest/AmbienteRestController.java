@@ -1,4 +1,4 @@
-package com.backend.sga.rest;""
+package com.backend.sga.rest;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 
 import com.backend.sga.model.Ambiente;
 import com.backend.sga.repository.AmbienteRepository;
-
-import br.com.senaisp.sistemaauditorio.model.Agendamento;
 
 //CrossOrigin serve para que o projeto receba JSON
 @CrossOrigin
