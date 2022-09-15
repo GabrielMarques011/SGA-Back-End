@@ -27,6 +27,7 @@ public class AmbienteRestController {
 	@Autowired
 	private AmbienteRepository ambienteRepository;
 	
+	//metodo para criar o ambiente
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarAmbiente (@RequestBody Ambiente ambiente, HttpServletRequest request){
 			if(ambiente != null) {
