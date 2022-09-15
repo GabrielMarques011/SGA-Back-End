@@ -1,5 +1,11 @@
 package com.backend.sga.repository;
 
-public interface UsuarioRepository {
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
+
+import com.backend.sga.model.Usuario;
+
+@Repository
+public interface UsuarioRepository extends PagingAndSortingRepository<Usuario, String>{
 
 }

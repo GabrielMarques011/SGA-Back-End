@@ -1,5 +1,11 @@
 package com.backend.sga.repository;
 
-public interface AmbienteRepository {
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
+
+import com.backend.sga.model.Ambiente;
+
+@Repository
+public interface AmbienteRepository extends PagingAndSortingRepository<Ambiente, Long>{
 
 }

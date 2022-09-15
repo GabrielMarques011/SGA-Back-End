@@ -1,5 +1,11 @@
 package com.backend.sga.repository;
 
-public interface AusenciaRepository {
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
+
+import com.backend.sga.model.Ausencia;
+
+@Repository
+public interface AusenciaRepository extends PagingAndSortingRepository<Ausencia, Long>{
 
 }
