@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 
@@ -24,19 +25,19 @@ public class Aula {
 	@OneToOne
 	private Ambiente ambiente;
 	
-	//@NotNull
+	@NotNull
 	private double cargaDiaria;
 	
-	//@NotNull
+	@NotNull
 	private Calendar dataInicio;
 	
-	//@NotNull
+	@NotNull
 	private Calendar dataFinal;
 	
 	@OneToOne
 	private UnidadeCurricular unidadeCurricular;
 	
-	//@NotNull
+	@NotNull
 	private String codTurma;
 	
 	private Periodo periodo;

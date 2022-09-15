@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 
@@ -16,14 +17,14 @@ public class UnidadeCurricular {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	//@NotNull lembrar de importar
+	@NotNull
 	private String nome;
 	
 	@ManyToOne
 	private Curso curso;
 	
 	//tratar com o grupo oq seria no @annotation
-	//@NotNull
+	@NotNull
 	private double horas;
 	
 }

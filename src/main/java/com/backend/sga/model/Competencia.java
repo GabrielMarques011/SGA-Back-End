@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 
@@ -22,7 +23,7 @@ public class Competencia {
 	@OneToOne
 	private UnidadeCurricular unidadeCurricular;
 	
-	//@NotNull
+	@NotNull
 	private String nivelHabilidade;
 	
 }
