@@ -1,5 +1,11 @@
 package com.backend.sga.repository;
 
-public interface AulaRepository {
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
+
+import com.backend.sga.model.Aula;
+
+@Repository
+public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 
 }
