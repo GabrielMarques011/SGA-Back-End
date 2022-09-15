@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 
@@ -17,12 +18,12 @@ public class Curso {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	//@NotNull lembrar de importar
+	@NotNull
 	private String nome;
 	
 	//aqui estamos puxando a Enum do TipoDeCurso, para que apareça os selects depois
 	//Colocar depois o metodo getCargaHoraria
-	@OneToOne
+	
 	private TipoCurso tipoCurso;
 		
 }

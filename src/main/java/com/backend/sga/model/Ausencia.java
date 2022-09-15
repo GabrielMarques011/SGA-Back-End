@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 
@@ -20,17 +21,17 @@ public class Ausencia {
 	
 	//perguntar para o Matheus se irão utilizar essa pratica no React
 	//@JsonProperty("start")
-	//@NotNull(message = "{agendamento.dataFinalizada.null}")
+	@NotNull
 	private Calendar dataInicio;
 	
 	//@JsonProperty("end")
-	//@NotNull(message = "{agendamento.dataFinalizada.null}")
+	@NotNull
 	private Calendar dataFinal;
 	
 	@ManyToOne
 	private Professor professor;
 	
-	//@NotNull
+	@NotNull
 	private String tipo;
 	
 }
