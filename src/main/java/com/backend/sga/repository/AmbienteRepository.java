@@ -7,5 +7,5 @@ import com.backend.sga.model.Ambiente;
 
 @Repository
 public interface AmbienteRepository extends PagingAndSortingRepository<Ambiente, Long>{
-
+	
 }
