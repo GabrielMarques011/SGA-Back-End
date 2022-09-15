@@ -42,7 +42,7 @@ public class AmbienteRestController {
 	//metodo para excluir por 'ID'
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> excluirAmbiente (@PathVariable("id") Long id, Ambiente ambiente,HttpServletRequest request){// Verificando se o id do 'ambiente' é igual ao do passado
-		if(ambiente.getClass() == null) {
+		if(ambiente.getId() == id) {
 			ambienteRepository.delete(ambiente);
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
@@ -53,9 +53,9 @@ public class AmbienteRestController {
 	}
 	
 	//Buscando todos os dados no banco
-	//@RequestMapping(value = "", method = RequestMethod.GET)
-	//public Iterable<Ambiente> listaAmbiente (Ambiente ambiente){
-	//	ambienteRepository.findAll();
-	//}
+	@RequestMapping(value = "", method = RequestMethod.GET)
+	public Iterable<Ambiente> listaAmbiente (Ambiente ambiente){
+		return ambienteRepository.findAll();
+	}
 	
 }
