@@ -2,6 +2,7 @@ package com.backend.sga.rest;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.model.UnidadeCurricular;
-import com.backend.sga.model.Usuario;
 import com.backend.sga.repository.UnidadeCurricularRepository;
 
 //CrossOrigin serve para que o projeto receba JSON
@@ -24,6 +24,7 @@ import com.backend.sga.repository.UnidadeCurricularRepository;
 @RequestMapping("/api/unidade")
 public class UnidadeCurricularRestController {
 
+	@Autowired
 	private UnidadeCurricularRepository curricularRepository;
 	
 	//metodo para criar o professor
