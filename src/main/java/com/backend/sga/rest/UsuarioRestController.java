@@ -65,11 +65,11 @@ public class UsuarioRestController {
 		if (user.getNif() != nif) {
 			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "NIF inválido", null);
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-		}else {
-			usuarioRepository.findById(nif).get();
+		}
+			//usuarioRepository.findById(nif);
+			usuarioRepository.save(user);
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
-		}
 	}
 	
 }
