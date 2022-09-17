@@ -60,4 +60,17 @@ public class AusenciaRestController {
 		return ausenciaRepository.findAll(); // retorna todos os itenas do banco de dados
 	}
 	
+	//metodo para alterar
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> atualizarAusencia(@PathVariable("id") Long id, @RequestBody Ausencia ausencia, HttpServletRequest request){
+		if (ausencia.getId() != id) {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID invalido!", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		}else {
+			ausenciaRepository.save(ausencia);
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+		}
+	}
+	
 }

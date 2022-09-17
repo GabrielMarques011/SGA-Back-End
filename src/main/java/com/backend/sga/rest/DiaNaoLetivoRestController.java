@@ -59,5 +59,17 @@ public class DiaNaoLetivoRestController {
 			return diaNaoLetivoRepository.findAll();
 		}
 		
+		//metodo para alterar
+		@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+		public ResponseEntity<Object> atualizarDnl(@PathVariable("id") Long id, @RequestBody DiaNaoLetivo dnl, HttpServletRequest request){
+			if (dnl.getId() != id) {
+				Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null);
+				return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+			}else {
+				diaNaoLetivoRepository.save(dnl);
+				Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+				return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+			}
+		}
 	
 }

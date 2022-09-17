@@ -58,5 +58,18 @@ public class CursoRestController {
 		public Iterable<Curso> listaCurso (Curso curso){
 			return cursoRepository.findAll();
 		}
+		
+		//metodo para alterar
+		@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+		public ResponseEntity<Object> atualizarCurso(@PathVariable("id") Long id, @RequestBody Curso curso, HttpServletRequest request){
+			if (curso.getId() != id) {
+				Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null);
+				return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+			}else {
+				cursoRepository.save(curso);
+				Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+				return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+			}
+		}
 	
 }

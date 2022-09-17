@@ -60,5 +60,19 @@ public class AulaRestController {
 	public Iterable<Aula> listarAulas(){
 		return aulaRepository.findAll(); // retorna a lista de todos os comonentes do banco de dados
 	}
+	
+	//metodo para alterar
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> atualizarAula(@PathVariable("id") Long id, @RequestBody Aula aula, HttpServletRequest request){
+		if (aula.getId() != id) {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		}else {
+			aulaRepository.save(aula);
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+		}
+	}
+	
 }
 

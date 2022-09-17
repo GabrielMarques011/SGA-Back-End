@@ -59,4 +59,17 @@ public class ProfessorRestController {
 		return professorRepository.findAll();
 	}
 	
+	//metodo para alterar
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> atualizarProf(@PathVariable("id") Long id, @RequestBody Professor prof, HttpServletRequest request){
+		if (prof.getId() != id) {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		}else {
+			professorRepository.save(prof);
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+		}
+	}
+	
 }
