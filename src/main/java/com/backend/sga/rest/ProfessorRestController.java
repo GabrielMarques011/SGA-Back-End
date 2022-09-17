@@ -55,7 +55,7 @@ public class ProfessorRestController {
 	
 	//Buscando todos os dados no banco
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public Iterable<Professor> listaDnl (Professor prof){
+	public Iterable<Professor> listaDnl (){
 		return professorRepository.findAll();
 	}
 	
