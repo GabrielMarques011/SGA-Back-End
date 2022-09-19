@@ -61,7 +61,7 @@ public class UnidadeCurricularRestController {
 	
 	//metodo para alterar
 		@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-		public ResponseEntity<Object> atualizarUnidade(@PathVariable("id") Long id, @RequestBody UnidadeCurricular curricular, HttpServletRequest request){
+		public ResponseEntity<Object> atualizarUnidadetand(@PathVariable("id") Long id, @RequestBody UnidadeCurricular curricular, HttpServletRequest request){
 			if (curricular.getId() != id) {
 				Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "NIF inválido", null);
 				return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
