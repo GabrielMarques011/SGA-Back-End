@@ -27,7 +27,4 @@ public class UnidadeCurricular {
 	@NotNull
 	private double horas;
 	
-	@ManyToOne
-	private Competencia competencia;
-	
 }

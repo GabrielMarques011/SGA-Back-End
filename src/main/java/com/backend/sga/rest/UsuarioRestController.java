@@ -43,7 +43,7 @@ public class UsuarioRestController {
 	//metodo para excluir por 'ID'
 	@RequestMapping(value = "/{nif}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> excluirUser (@PathVariable("nif") String nif, Usuario user,HttpServletRequest request){// Verificando se o id do 'user' é igual ao do passado
-		if(user.getNif() == user.getNif()) {
+		if(user.getNif() == nif) {
 			usuarioRepository.delete(user);
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
@@ -62,7 +62,7 @@ public class UsuarioRestController {
 	//metodo para alterar
 	@RequestMapping(value = "/{nif}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> atualizarUser(@PathVariable("nif") String nif, @RequestBody Usuario user, HttpServletRequest request){
-		if (user.getNif() != nif) {
+		if (!user.getNif().equals(nif)) {
 			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "NIF inválido", null);
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
