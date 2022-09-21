@@ -71,4 +71,10 @@ public class CompetenciaRestController {
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
 	}
+	
+	@RequestMapping(value = "/{nivel}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Iterable<Competencia> buscaNivel(@PathVariable("nivel") int nivel ,@RequestBody Competencia competencia, HttpServletRequest request){
+		
+		return competenciaRepository.buscarNivel(nivel);
+	}
 }

@@ -31,6 +31,8 @@ public class Professor {
 	
 	private Boolean ativo;
 	
+	
+	
 	//removi do diagrama pois não fazeria sentido ambos terem relação
 	//@OneToMany(mappedBy = "professor")
 	//private List<Ausencia> ausencias;

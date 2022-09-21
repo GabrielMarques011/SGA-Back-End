@@ -26,4 +26,6 @@ public class Competencia {
 	@NotNull
 	private String nivelHabilidade;
 	
+	@NotNull
+	private int nivel;
 }
