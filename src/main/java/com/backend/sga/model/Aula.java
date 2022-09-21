@@ -9,6 +9,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 
 @Data
@@ -29,9 +33,11 @@ public class Aula {
 	private double cargaDiaria;
 	
 	@NotNull
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private Calendar dataInicio;
 	
 	@NotNull
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private Calendar dataFinal;
 	
 	@OneToOne
