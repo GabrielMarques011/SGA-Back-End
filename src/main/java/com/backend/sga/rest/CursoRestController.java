@@ -31,7 +31,8 @@ public class CursoRestController {
 		@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 		public ResponseEntity<Object> criarCurso (@RequestBody Curso curso, HttpServletRequest request){
 				if(curso != null) {
-					cursoRepository.save(curso);
+					curso.setAtivo(true); // setando o ativo como true (padrão)
+					cursoRepository.save(curso); // salvando o curso
 					Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 					return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 				}else {
@@ -41,10 +42,11 @@ public class CursoRestController {
 		}
 		
 		//metodo para excluir por 'ID'
-		@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-		public ResponseEntity<Object> excluirCurso (@PathVariable("id") Long id, Curso curso,HttpServletRequest request){// Verificando se o id do 'ambiente' é igual ao do passado
+		@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+		public ResponseEntity<Object> desativarCurso (@PathVariable("id") Long id, Curso curso,HttpServletRequest request){// Verificando se o id do 'ambiente' é igual ao do passado
 			if(curso.getId() == id) {
-				cursoRepository.delete(curso);
+				curso.setAtivo(false); // setando o ativo como false, para estar desativado
+				cursoRepository.save(curso); // salvando o curso
 				Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 				return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 			}else {
