@@ -24,5 +24,7 @@ public class Curso {
 	//Colocar depois o metodo getCargaHoraria
 	
 	private TipoCurso tipoCurso;
+	
+	private boolean ativo;
 		
 }

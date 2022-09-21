@@ -31,7 +31,8 @@ public class AmbienteRestController {
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarAmbiente (@RequestBody Ambiente ambiente, HttpServletRequest request){
 			if(ambiente != null) {
-				ambienteRepository.save(ambiente);
+				ambiente.setAtivo(true); // setando o ativo como true (padrão)
+				ambienteRepository.save(ambiente); // salvando o ambiente no banco de dados
 				Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 				return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 			}else {
@@ -41,10 +42,11 @@ public class AmbienteRestController {
 	}
 	
 	//metodo para excluir por 'ID'
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Object> excluirAmbiente (@PathVariable("id") Long id, Ambiente ambiente,HttpServletRequest request){// Verificando se o id do 'ambiente' é igual ao do passado
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<Object> desativarAmbiente (@PathVariable("id") Long id, Ambiente ambiente,HttpServletRequest request){// Verificando se o id do 'ambiente' é igual ao do passado
 		if(ambiente.getId() == id) {
-			ambienteRepository.delete(ambiente);
+			ambiente.setAtivo(false); // setando o Ativo como false, para estar desativado
+			ambienteRepository.save(ambiente); // salvando o ambiente
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}else {

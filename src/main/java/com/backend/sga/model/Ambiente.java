@@ -30,4 +30,6 @@ public class Ambiente {
 	@NotNull
 	private String complemento;
 	
+	private boolean ativo;
+	
 }
