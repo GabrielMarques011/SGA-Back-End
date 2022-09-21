@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 
 @Data
@@ -19,9 +21,11 @@ public class DiaNaoLetivo {
 	private Long id;
 	
 	@NotNull
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private Calendar dataInicio;
 	
 	@NotNull
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private Calendar dataFinal;
 	
 	@NotNull

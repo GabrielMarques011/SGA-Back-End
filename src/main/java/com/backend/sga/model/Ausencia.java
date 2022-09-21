@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 
 @Data
@@ -23,10 +25,12 @@ public class Ausencia {
 	//perguntar para o Matheus se irão utilizar essa pratica no React
 	//@JsonProperty("start")
 	@NotNull
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private Calendar dataInicio;
 	
 	//@JsonProperty("end")
 	@NotNull
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private Calendar dataFinal;
 	
 	@ManyToOne
