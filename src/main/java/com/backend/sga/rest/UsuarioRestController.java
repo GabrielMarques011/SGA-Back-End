@@ -1,9 +1,6 @@
 package com.backend.sga.rest;
 
-import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,7 +43,11 @@ public class UsuarioRestController {
 			//mandando criptografada
 			user.setSenha(crip);
 			
+			//deixando o usuario como ativo no banco de dados
+			user.setAtivo(true);
+			
 			usuarioRepository.save(user);
+			
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}else {
@@ -55,17 +56,18 @@ public class UsuarioRestController {
 		}
 	}
 	
-	//metodo para excluir por 'ID'
-	@RequestMapping(value = "/{nif}", method = RequestMethod.DELETE)
-	public ResponseEntity<Object> excluirUser (@PathVariable("nif") String nif, Usuario user,HttpServletRequest request){// Verificando se o id do 'user' é igual ao do passado
-		if(user.getNif() == nif) {
-			usuarioRepository.delete(user);
-			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
-			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
-		}else {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel inativar o Usuario", null);
-			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	@RequestMapping(value = "/desativar/{nif}", method = RequestMethod.PUT)
+	public ResponseEntity<Object> desativarUsuario(@PathVariable("nif") String nif, Usuario user, HttpServletRequest request){
+
+		//buscando ele pelo id para alterar
+		user = usuarioRepository.findById(nif).get();
+		//setando ela como inativo
+		user.setAtivo(false);
+		//salvando no banco como inativo
+		usuarioRepository.save(user);
+			
+		Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+		return new ResponseEntity<Object>(sucesso, HttpStatus.OK);	
 	}
 	
 	//Buscando todos os dados no banco

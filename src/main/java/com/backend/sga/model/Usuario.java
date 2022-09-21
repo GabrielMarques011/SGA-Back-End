@@ -23,4 +23,7 @@ public class Usuario {
 	
 	private TipoUsuario tipoUsuario;
 	
+	//utilizando para setar o usuario como ativo ou inativo
+	private Boolean ativo;
+	
 }

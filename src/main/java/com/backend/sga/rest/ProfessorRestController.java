@@ -27,30 +27,35 @@ public class ProfessorRestController {
 	@Autowired
 	private ProfessorRepository professorRepository;
 	
+	
 	//metodo para criar o professor
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarProf (@RequestBody Professor prof, HttpServletRequest request){
-			if(prof != null) {
-				professorRepository.save(prof);
-				Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
-				return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
-			}else {
-				Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel cadastrar o Professor", null);							
-				return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-	}
-	
-	//metodo para excluir por 'ID'
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Object> excluirProf (@PathVariable("id") Long id, Professor prof,HttpServletRequest request){// Verificando se o id do 'prof' é igual ao do passado
-		if(prof.getId() == id) {
-			professorRepository.delete(prof);
+		if(prof != null) {
+			//setando o professor como ativo no banco de dados
+			prof.setAtivo(true);
+			//salvando professor no banco de dados
+			professorRepository.save(prof);
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}else {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel excluir um professor", null);
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel cadastrar o Professor", null);							
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	@RequestMapping(value = "/desativar/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<Object> desativarProf(@PathVariable("id") Long id, Professor prof, HttpServletRequest request){
+
+		//buscando ele pelo id para alterar
+		prof = professorRepository.findById(id).get();
+		//setando ela como inativo
+		prof.setAtivo(false);
+		//salvando no banco como inativo
+		professorRepository.save(prof);
+			
+		Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+		return new ResponseEntity<Object>(sucesso, HttpStatus.OK);	
 	}
 	
 	//Buscando todos os dados no banco
