@@ -13,6 +13,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import lombok.Data;
 
 @Data
@@ -31,6 +34,10 @@ public class Professor {
 	
 	private Boolean ativo;
 	
+	
+	//evitar de criar uma tabela associativa
+	@OneToMany(mappedBy = "professor")
+	private List<Competencia> competencia;
 	
 	
 	//removi do diagrama pois não fazeria sentido ambos terem relação

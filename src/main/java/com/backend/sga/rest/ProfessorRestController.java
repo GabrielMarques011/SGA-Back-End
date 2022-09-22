@@ -1,5 +1,7 @@
 package com.backend.sga.rest;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,5 +78,7 @@ public class ProfessorRestController {
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
 	}
+	
+	
 	
 }
