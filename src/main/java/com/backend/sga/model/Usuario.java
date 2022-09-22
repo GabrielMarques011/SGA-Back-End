@@ -1,7 +1,9 @@
 package com.backend.sga.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -13,10 +15,12 @@ public class Usuario {
 	private String nome;
 	
 	@NotNull
+	@Column(unique = true)
+	@Email
 	private String email;
 	
 	@NotNull
-	private String senha;//fazer o hash
+	private String senha;//Ja fizemos a criptografia da senha
 	
 	@Id
 	private String nif;
