@@ -39,9 +39,4 @@ public class Professor {
 	@OneToMany(mappedBy = "professor")
 	private List<Competencia> competencia;
 	
-	
-	//removi do diagrama pois não fazeria sentido ambos terem relação
-	//@OneToMany(mappedBy = "professor")
-	//private List<Ausencia> ausencias;
-	
 }

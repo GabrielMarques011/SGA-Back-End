@@ -1,5 +1,6 @@
 package com.backend.sga.rest;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -78,7 +79,5 @@ public class ProfessorRestController {
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
 	}
-	
-	
 	
 }

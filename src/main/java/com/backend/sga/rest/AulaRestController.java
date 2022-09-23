@@ -1,5 +1,11 @@
 package com.backend.sga.rest;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +18,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.annotation.RequestScope;
 
 import com.backend.sga.model.Aula;
 import com.backend.sga.model.Erro;
+import com.backend.sga.model.Professor;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.repository.AulaRepository;
+import com.backend.sga.repository.ProfessorRepository;
 
 //CrossOrigin serve para que o projeto receba JSON
 @CrossOrigin
@@ -29,6 +38,11 @@ public class AulaRestController {
 	@Autowired
 	private AulaRepository aulaRepository;
 	
+	@Autowired
+	private ProfessorRepository professorRepository;
+	
+	
+	//AJEITAR O METODO DE SALVAR AS AULAS
 	// método para cadastrar uma aula 
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarAula(@RequestBody Aula aula, HttpServletRequest request){
@@ -72,6 +86,48 @@ public class AulaRestController {
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
+	}
+	
+	//metodo para consultar a carga Semanal do professor
+	@RequestMapping(value = "/diaria", method = RequestMethod.GET)
+	public double[] busca (@RequestParam("id") Long id, @RequestParam("data_inicio") String data_inicio, @RequestParam("data_final") String data_final, Professor prof){
+		
+		//formatando o formato da Data
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		
+		//transcrevendo para Calendar
+		Calendar calendar = Calendar.getInstance();
+		try {
+			calendar.setTime(sdf.parse(data_inicio));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		Calendar calendar2 = Calendar.getInstance();
+		try {
+			calendar2.setTime(sdf.parse(data_final));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		List<Aula> lista = aulaRepository.buscaTempo(id, calendar, calendar2);
+		
+		double diaria = 0;
+
+		//percorrer o for para que recebemos o valor
+		for (int l = 0; l < lista.size(); l++) {
+			diaria += lista.get(l).getCargaDiaria();
+			System.out.println(diaria);
+		}
+		
+		Optional<Professor> profe = professorRepository.findById(id); 
+		
+		double[] horas = new double[2];
+		horas[0] = diaria;
+		horas[1] = profe.get().getCargaSemanal();
+		
+		return horas;
+		
 	}
 	
 }
