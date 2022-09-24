@@ -32,7 +32,7 @@ public class AppConfig implements WebMvcConfigurer  {
                 drivManargerDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");// DRIVER DE CONEXÃO COM O BD
                 drivManargerDataSource.setUrl("jdbc:mysql://localhost:3306/sga");
                 drivManargerDataSource.setUsername("root");
-                drivManargerDataSource.setPassword("g08182023");
+                drivManargerDataSource.setPassword("root");
                 
                 return drivManargerDataSource;
             }

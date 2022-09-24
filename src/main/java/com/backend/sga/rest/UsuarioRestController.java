@@ -1,5 +1,9 @@
 package com.backend.sga.rest;
 
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +19,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Sucesso;
+import com.backend.sga.model.TokenJWT;
 import com.backend.sga.model.Usuario;
 import com.backend.sga.repository.UsuarioRepository;
 
@@ -28,6 +35,10 @@ public class UsuarioRestController {
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+
+	public static final String SECRET = "$!$t3m4D3G3r3nç!4m3nt0D34vd!t0r!0";
+	
+	public static final String EMISSOR = "SGA";
 	
 	//passando o parametro do BCrypto dentro encoder para que salva a criptografia
 	private PasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -98,7 +109,7 @@ public class UsuarioRestController {
 	
 	//metodo feito para validar quando criamos o login
 	//metodo feito para comparar se a senha bate com a do banco de dados
-	public Boolean validarSenha (Usuario user){
+	public Boolean validarSenha(Usuario user){
 		//pegando a senha do banco de dados
 		String senha = usuarioRepository.findById(user.getNif()).get().getSenha();
 		//pegando a senha do banco e comparando com a atual
@@ -106,9 +117,8 @@ public class UsuarioRestController {
 		return valid;
 	}
 	
-	//metodo para verificar se o login do Usuario esta correto
-	@RequestMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> login (@RequestBody Usuario user, HttpServletRequest request){
+	
+	/*public ResponseEntity<Object> senhaValida(@RequestBody Usuario user, HttpServletRequest request){
 		//trazendo valores do valid do 'validarSenha'
 		Boolean valid = validarSenha(user);
 		//verificando se a senha foi digitada corretamente
@@ -119,6 +129,67 @@ public class UsuarioRestController {
 		//mensagem de OK, caso esteja tudo certo
 		Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso ao Logar");
 		return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+	}*/
+	
+	//metodo para login com tokien (teste)
+	@RequestMapping(value = "/login", method = RequestMethod.POST , consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> login(@RequestBody Usuario usuario, HttpServletRequest request){
+		
+		
+		//ResponseEntity<Object> validar = senhaValida(usuario, request);
+		//Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso ao Logar");
+		//ResponseEntity<Object> ok =  ResponseEntity<Object>(sucesso, HttpStatus.OK);
+		
+		Boolean validar = validarSenha(usuario);
+	
+		
+		if (validar = true) {
+			// insere nif e senha dentro da variavel usuario
+						usuario = usuarioRepository.findByNifAndSenha(usuario.getNif(), usuario.getSenha());
+						
+						// verifica se há usuario 
+						if (usuario != null) {
+							System.out.println(usuario.getNome());
+							
+							// cria uma variavel payload e insere os dados do usuario no payload
+							Map<String, Object> payload = new HashMap<String, Object>();
+							
+							payload.put("nif", usuario.getNome());
+							payload.put("nif", usuario.getEmail());
+							payload.put("nif", usuario.getSenha());
+							payload.put("nif", usuario.getNif());
+							payload.put("nif", usuario.getTipoUsuario());
+							payload.put("nif", usuario.getAtivo());
+							
+							//cria variavel para data de expiração
+							Calendar expiracao = Calendar.getInstance();
+							
+							//adiciona expiração a variavel para expirar o token
+							expiracao.add(Calendar.DAY_OF_MONTH, Calendar.DAY_OF_MONTH + 7);
+							
+							//coloca assinatura do algoritmo no token 
+							Algorithm algoritmo = Algorithm.HMAC512(SECRET);
+							
+							//instancia a classe token
+							TokenJWT tokenJwt = new TokenJWT();
+							
+							// adiciona os recursos no token
+							tokenJwt.setToken(JWT.create()
+									.withPayload(payload)
+									.withIssuer(EMISSOR)
+									.withExpiresAt(expiracao.getTime())
+									.sign(algoritmo));
+							
+							System.out.println(tokenJwt);
+							
+							//envia o token
+							return ResponseEntity.ok(tokenJwt);
+						}
+		}
+		
+		return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 	}
+	
+	
 	
 }
