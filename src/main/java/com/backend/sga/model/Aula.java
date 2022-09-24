@@ -38,6 +38,10 @@ public class Aula {
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private Calendar dataFinal;
 	
+	@NotNull
+	@JsonFormat(pattern = "dd/MM/yyyy")
+	private Calendar data;
+	
 	@OneToOne
 	private UnidadeCurricular unidadeCurricular;
 	
