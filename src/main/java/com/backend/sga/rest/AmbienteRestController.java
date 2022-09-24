@@ -1,5 +1,12 @@
 package com.backend.sga.rest;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,15 +15,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import com.backend.sga.model.Ambiente;
+import com.backend.sga.model.Aula;
 import com.backend.sga.model.Erro;
+import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.repository.AmbienteRepository;
+import com.backend.sga.repository.AulaRepository;
 
 //CrossOrigin serve para que o projeto receba JSON
 @CrossOrigin
@@ -26,6 +37,8 @@ public class AmbienteRestController {
 
 	@Autowired
 	private AmbienteRepository ambienteRepository;
+	@Autowired
+	private AulaRepository aulaRepository;
 	
 	//metodo para criar o ambiente
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -72,6 +85,49 @@ public class AmbienteRestController {
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
+	}
+	
+	// método que busca os ambientes disponíveis
+	@RequestMapping(value = "/disponiveis", method = RequestMethod.GET)
+	public ArrayList<Long> buscarAmbientesDisponiveis(@RequestParam("unidade_id") Long id, @RequestParam("data") String data, @RequestParam("periodo") Periodo periodo){
+		List<Aula> aulas = aulaRepository.findByAmbientesId(id); // buscando as listas de aulas de acordo com a unidade curricular
+		
+		
+		/***
+		 * 
+		 * select ambientes from aulas where dataInicial > data and periodo = periodo
+		 * se trazer significa que ta em aula
+		 * 
+		 * findAllAmbientes []
+		 * 
+		 * 
+		 * retorna array [99999]
+		 * 
+		 * 
+		 */
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // formatador de data
+		
+		Calendar data1 = Calendar.getInstance(); // variável para guardar a data_inicio 
+		try {
+			data1.setTime(sdf.parse(data)); // tranformando a String em calendar
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+				
+		ArrayList<Long> ambiDisponiveis = new ArrayList<Long>(); // lista que vai armazenar os ids dos ambientes que estão disponíveis
+		
+		for(int i = 0; i < aulas.size(); i++) { // for para passar pela lista que veio do bnco de dados
+			
+			if(aulas.get(i).getData().compareTo(data1) != 0) {
+				if(aulas.get(i).getPeriodo() != periodo) {
+					ambiDisponiveis.add(aulas.get(i).getId()); // adicionando o id do ambiente no arrayList
+				}
+			}
+		}
+		
+		return ambiDisponiveis; // retornando a lista de ambientes disponíveis 
 	}
 	
 }
