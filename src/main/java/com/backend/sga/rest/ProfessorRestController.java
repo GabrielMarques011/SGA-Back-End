@@ -1,8 +1,5 @@
 package com.backend.sga.rest;
 
-import java.util.Iterator;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +30,14 @@ public class ProfessorRestController {
 	
 	//metodo para criar o professor
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> criarProf (@RequestBody Professor prof, HttpServletRequest request){
+	public ResponseEntity<Object> criarProf (@RequestBody Professor prof){
 		if(prof != null) {
 			//setando o professor como ativo no banco de dados
-			prof.setAtivo(true);
+			//prof.setAtivo(true);
 			//salvando professor no banco de dados
 			professorRepository.save(prof);
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			System.out.println(prof);
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}else {
 			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel cadastrar o Professor", null);							

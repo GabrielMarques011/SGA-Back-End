@@ -26,14 +26,14 @@ public class Professor {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long id;//aplicar nif
 	
 	@NotNull
 	private String nome;
 	
 	@NotNull
 	@Email
-	@Column(unique = true)
+	//@Column(unique = true)
 	private String email;//fazer a criptografia
 	
 	@NotNull
