@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,7 +26,7 @@ public class UnidadeCurricular {
 	
 	//esse annotation evita de dar loop
 	@JsonProperty(access = Access.WRITE_ONLY)
-	@ManyToOne
+	@OneToOne
 	private Curso curso;
 	
 	//tratar com o grupo oq seria no @annotation

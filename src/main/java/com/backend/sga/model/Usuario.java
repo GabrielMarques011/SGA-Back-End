@@ -18,7 +18,7 @@ public class Usuario {
 	@NotNull
 	@Column(unique = true)
 	@Email
-	private String email;
+	private String email;//fazer a criptografia
 	
 	@NotNull
 	private String senha;//Ja fizemos a criptografia da senha
@@ -30,8 +30,5 @@ public class Usuario {
 	
 	//utilizando para setar o usuario como ativo ou inativo
 	private Boolean ativo;
-	
-	@OneToMany
-	private Chamado chamado;
 	
 }

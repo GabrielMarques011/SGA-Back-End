@@ -30,8 +30,5 @@ public class Competencia {
 	private UnidadeCurricular unidadeCurricular;
 	
 	@NotNull
-	private String nivelHabilidade;
-	
-	@NotNull
 	private int nivel;
 }

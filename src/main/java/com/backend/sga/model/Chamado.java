@@ -18,9 +18,6 @@ public class Chamado {
 	private Long id;
 	
 	@NotNull
-	private String nome;
-	
-	@NotNull
 	private String descricao;
 	
 	private String foto;
