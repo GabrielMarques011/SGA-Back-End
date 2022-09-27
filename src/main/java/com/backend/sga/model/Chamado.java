@@ -1,7 +1,5 @@
 package com.backend.sga.model;
 
-import java.util.Calendar;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,37 +7,27 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.Data;
 
 @Data
 @Entity
-public class Aula {
+public class Chamado {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@OneToOne
-	private Professor professor;
-	
-	@OneToOne
-	private Ambiente ambiente;
+	@NotNull
+	private String nome;
 	
 	@NotNull
-	private double cargaDiaria;
+	private String descricao;
 	
-	@NotNull
-	@JsonFormat(pattern = "dd/MM/yyyy")
-	private Calendar data;
+	private String foto;
 	
 	@OneToOne
-	private UnidadeCurricular unidadeCurricular;
+	private Usuario usuario;
 	
-	@NotNull
-	private String codTurma;
-	
-	private Periodo periodo;
-	
+	private tipoChamado tipoChamado;
+
 }

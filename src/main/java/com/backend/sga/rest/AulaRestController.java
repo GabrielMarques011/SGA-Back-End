@@ -88,47 +88,7 @@ public class AulaRestController {
 		}
 	}
 	
-	//metodo para consultar a carga Semanal do professor
-	@RequestMapping(value = "/diaria", method = RequestMethod.GET)
-	public double[] busca (@RequestParam("id") Long id, @RequestParam("data_inicio") String data_inicio, @RequestParam("data_final") String data_final, Professor prof){
-		
-		//formatando o formato da Data
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		
-		//transcrevendo para Calendar
-		Calendar calendar = Calendar.getInstance();
-		try {
-			calendar.setTime(sdf.parse(data_inicio));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		
-		Calendar calendar2 = Calendar.getInstance();
-		try {
-			calendar2.setTime(sdf.parse(data_final));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		
-		List<Aula> lista = aulaRepository.buscaTempo(id, calendar, calendar2);
-		
-		double diaria = 0;
-
-		//percorrer o for para que recebemos o valor
-		for (int l = 0; l < lista.size(); l++) {
-			diaria += lista.get(l).getCargaDiaria();
-			System.out.println(diaria);
-		}
-		
-		Optional<Professor> profe = professorRepository.findById(id); 
-		
-		double[] horas = new double[2];
-		horas[0] = diaria;
-		horas[1] = profe.get().getCargaSemanal();
-		
-		return horas;
-		
-	}
+	
 	
 }
 
