@@ -7,6 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import lombok.Data;
 
 @Data
@@ -20,6 +23,8 @@ public class UnidadeCurricular {
 	@NotNull
 	private String nome;
 	
+	//esse annotation evita de dar loop
+	@JsonProperty(access = Access.WRITE_ONLY)
 	@ManyToOne
 	private Curso curso;
 	
