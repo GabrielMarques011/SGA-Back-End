@@ -60,7 +60,15 @@ public class UsuarioRestController {
 			usuarioRepository.save(user);
 			
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
-			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+			
+			Object[] filtro = new Object[2];
+			filtro[0] = sucesso;
+			filtro[1] = user.getNif();
+			
+			//setando o o filtro junto com o 'Status OK'
+			ResponseEntity<Object> okpost = new ResponseEntity<Object>(filtro, HttpStatus.OK);
+			
+			return okpost;
 		}else {
 			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel cadastrar um Usuario", null);							
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -154,12 +162,12 @@ public class UsuarioRestController {
 							// cria uma variavel payload e insere os dados do usuario no payload
 							Map<String, Object> payload = new HashMap<String, Object>();
 							
-							payload.put("nif", usuario.getNome());
-							payload.put("nif", usuario.getEmail());
-							payload.put("nif", usuario.getSenha());
+							payload.put("nome", usuario.getNome());
+							payload.put("email", usuario.getEmail());
+							payload.put("senha", usuario.getSenha());
 							payload.put("nif", usuario.getNif());
-							payload.put("nif", usuario.getTipoUsuario());
-							payload.put("nif", usuario.getAtivo());
+							payload.put("tipoUsuario", usuario.getTipoUsuario());
+							payload.put("ativo", usuario.getAtivo());
 							
 							//cria variavel para data de expiração
 							Calendar expiracao = Calendar.getInstance();

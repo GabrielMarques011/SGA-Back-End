@@ -33,7 +33,16 @@ public class CompetenciaRestController {
 		if(competencia != null) { // verifica se a competência não é nula
 			competenciaRepository.save(competencia); // salva a competência no banco de dados
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso"); // moldando a mensagem de sucesso
-			return new ResponseEntity<Object>(sucesso, HttpStatus.OK); // retornando a mensagem de sucesso
+			
+			//criando um vetor para que armazene dois dados para retornar no ResponseEntity
+			Object[] filtro = new Object[2];
+			filtro[0] = sucesso;
+			filtro[1] = competencia.getId();
+			
+			//setando o o filtro junto com o 'Status OK'
+			ResponseEntity<Object> okpost = new ResponseEntity<Object>(filtro, HttpStatus.OK);
+			
+			return okpost; // retornando a mensagem de sucesso
 		}else {
 			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível cadstrar a competência", null); // moldando a mensagem de erro
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR); // retornando a mensagem de erro

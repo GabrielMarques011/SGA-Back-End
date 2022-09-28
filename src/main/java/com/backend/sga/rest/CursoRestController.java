@@ -34,15 +34,17 @@ public class CursoRestController {
 					curso.setAtivo(true); // setando o ativo como true (padrão)
 					cursoRepository.save(curso); // salvando o curso
 					
+					//trazendo a classe 'sucesso e aplicando a mensagem criada
 					Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 					
+					//criando um vetor para que armazene dois dados para retornar no ResponseEntity
 					Object[] filtro = new Object[2];
 					filtro[0] = sucesso;
 					filtro[1] = curso.getId();
 					
-					//ResponseEntity<Object> teste = new ResponseEntity<Object>(sucesso, HttpStatus.OK);
-					ResponseEntity<Object> teste = new ResponseEntity<Object>(filtro, HttpStatus.OK);
-					return teste;
+					//setando o o filtro junto com o 'Status OK'
+					ResponseEntity<Object> okpost = new ResponseEntity<Object>(filtro, HttpStatus.OK);
+					return okpost;
 				}else {
 					Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel cadastrar o curso", null);
 					return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);

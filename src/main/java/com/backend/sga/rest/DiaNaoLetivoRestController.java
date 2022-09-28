@@ -33,7 +33,14 @@ public class DiaNaoLetivoRestController {
 				if(dnl != null) {
 					diaNaoLetivoRepository.save(dnl);
 					Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
-					return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+					
+					Object[] filtro = new Object[2];
+					filtro[0] = sucesso;
+					filtro[1] = dnl.getId();
+					
+					ResponseEntity<Object> okpost = new ResponseEntity<Object>(filtro, HttpStatus.OK);
+					
+					return okpost;
 				}else {
 					Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel cadastrar um Dia não letivo", null);							
 					return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);

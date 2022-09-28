@@ -37,8 +37,17 @@ public class ProfessorRestController {
 			//salvando professor no banco de dados
 			professorRepository.save(prof);
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			
+			//criando um vetor para que armazene dois dados para retornar no ResponseEntity
+			Object[] filtro = new Object[2];
+			filtro[0] = sucesso;
+			filtro[1] = prof.getId();
+			
+			//setando o o filtro junto com o 'Status OK'
+			ResponseEntity<Object> okpost = new ResponseEntity<Object>(filtro, HttpStatus.OK);
+			
 			System.out.println(prof);
-			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+			return okpost;
 		}else {
 			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel cadastrar o Professor", null);							
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
