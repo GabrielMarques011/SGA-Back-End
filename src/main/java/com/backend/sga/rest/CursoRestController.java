@@ -29,12 +29,20 @@ public class CursoRestController {
 	
 		//metodo para criar o curso
 		@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-		public ResponseEntity<Object> criarCurso (@RequestBody Curso curso, HttpServletRequest request){
+		public ResponseEntity<Object> criarCurso (@RequestBody Curso curso, HttpServletRequest request, Long id){
 				if(curso != null) {
 					curso.setAtivo(true); // setando o ativo como true (padrão)
 					cursoRepository.save(curso); // salvando o curso
+					
 					Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
-					return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+					
+					Object[] filtro = new Object[2];
+					filtro[0] = sucesso;
+					filtro[1] = curso.getId();
+					
+					//ResponseEntity<Object> teste = new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+					ResponseEntity<Object> teste = new ResponseEntity<Object>(filtro, HttpStatus.OK);
+					return teste;
 				}else {
 					Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel cadastrar o curso", null);
 					return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
