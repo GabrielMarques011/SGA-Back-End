@@ -16,6 +16,10 @@ public class FeriadosNacionais {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	private String dados;
+	private String date;
+	
+	private String name;
+	
+	private String type;
 	
 }

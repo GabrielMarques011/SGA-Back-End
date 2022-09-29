@@ -23,6 +23,8 @@ import com.backend.sga.model.Erro;
 import com.backend.sga.model.FeriadosNacionais;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.repository.FeriadosNacionaisRepository;
+import com.backend.sga.service.FeriadosNacionaisService;
+
 import org.springframework.http.MediaType;
 
 @RestController
@@ -30,52 +32,40 @@ import org.springframework.http.MediaType;
 @RequestMapping("/api/feriados")
 public class FeriadosNacionaisRestController {
 	
-	private static final String FeriadosNacionais = null;
 	@Autowired
 	private FeriadosNacionaisRepository repository;	
 	
-	@RequestMapping(value = "", method = RequestMethod.GET)
-	public Object[] buscaFeriadosAPI(){
-		int ano = LocalDate.now().getYear();
+	@Autowired
+	private FeriadosNacionaisService service;
 		
-		String url = "https://brasilapi.com.br/api/feriados/v1/" + ano;
-		
-		RestTemplate restTemplate = new RestTemplate();
-		
-		Object[] feriados = restTemplate.getForObject(url, Object[].class);
-				
-		return feriados;
-	}
 	
-	@RequestMapping(value = "/salvar", method = RequestMethod.POST)
-	public ResponseEntity<Object> salvaFeriadosAPI(){
-		int ano = LocalDate.now().getYear();
+	@RequestMapping(value = "", method = RequestMethod.POST)
+	public ResponseEntity<Object> salvarFeriados(){
 		
-		String url = "https://brasilapi.com.br/api/feriados/v1/" + ano;
-		
-		RestTemplate restTemplate = new RestTemplate();
-		
-		Object[] feriados = restTemplate.getForObject(url, Object[].class);
+		FeriadosNacionais feriados[] = service.consultaFeriados();
 		
 		if(feriados != null) {
 			for(int i = 0; i < feriados.length; i++) {
 				FeriadosNacionais feriado = new FeriadosNacionais();
-				feriado.setDados(feriados[i].toString());
+				feriado.setDate(feriados[i].getDate());
+				feriado.setName(feriados[i].getName());
+				feriado.setType(feriados[i].getType());
+				
 				repository.save(feriado);
-				System.out.println("passou no salvar");
 			}
-			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso"); // moldando a mensagem de sucesso
-			return new ResponseEntity<Object>(sucesso, HttpStatus.OK); // retornando a mensagem de sucesso
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}else {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "não foi possível salvar os feriados", null); // moldando a mensagem de erro
-			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR); // retornando a mensagem de erro
-		}	
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel cadastrar os feriados nacionais", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		
 	}
 	
-	
-	
-	
-	
+	// método que retorna os feriados nacionais 
+	@RequestMapping(value = "", method = RequestMethod.GET)
+	public Iterable<FeriadosNacionais> buscarFeriados(){
+		return repository.findAll(); // retorna a lista de feriados nascionais
+	}
 	
 }
