@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.sga.model.Curso;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Sucesso;
+import com.backend.sga.model.TipoCurso;
 import com.backend.sga.repository.CursoRepository;
 
 //CrossOrigin serve para que o projeto receba JSON
@@ -82,6 +83,20 @@ public class CursoRestController {
 				Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 				return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 			}
+		}
+		
+		//Feito o metodo para retornar a ENUM para o Front
+		@RequestMapping(value = "/tipocurso", method = RequestMethod.GET)
+		public TipoCurso[] busca (){
+			return TipoCurso.values();
+		}
+				
+				
+		//Feito o metodo para retornar quais tipos de Cursos forem aplicados
+		@RequestMapping(value = "/buscacurso/{tipo_curso}", method = RequestMethod.GET)
+		public Iterable<Curso> buscaTipoCurso(@PathVariable("tipo_curso") TipoCurso tCurso){
+			//Fazendo uma Query
+			return cursoRepository.buscaTipoCurso(tCurso);
 		}
 	
 }
