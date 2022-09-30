@@ -1,5 +1,7 @@
 package com.backend.sga.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -15,5 +17,9 @@ public interface CursoRepository extends PagingAndSortingRepository<Curso, Long>
 	@Query("SELECT c FROM Curso c WHERE c.tipoCurso = :tipo_curso")
 	public Iterable<Curso> buscaTipoCurso (@Param("tipo_curso") TipoCurso tipoCurso);
 
+	
+	//SELECT * FROM sga.curso WHERE sga.curso.nome LIKE '%Ele%'
+	@Query("SELECT c FROM Curso c WHERE c.nome LIKE %:nome%")
+	public List<Curso> palavraChave(@Param("nome") String nome);
 	
 }

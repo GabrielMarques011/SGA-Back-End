@@ -1,5 +1,7 @@
 package com.backend.sga.rest;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +87,13 @@ public class ProfessorRestController {
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
+	}
+	
+	//metodo para trazer os professores digitados (Pedido Kalebe)
+	@RequestMapping(value = "/buscapalavra/{nome}", method = RequestMethod.GET)
+	public Iterable<Professor> buscaPalavraChave (@PathVariable("nome") String nome){
+		//retorna o like da query que eles irão escrever
+		return professorRepository.palavraChave(nome);
 	}
 	
 }

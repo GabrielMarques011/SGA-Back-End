@@ -11,6 +11,7 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -139,13 +140,32 @@ public class AmbienteRestController {
 			}
 		}
 		
-		return ambiDisponiveis; // retornando a lista de ambientes disponíveis 
+		return ambiDisponiveis; // retornando a lista de ambientes disponíveis
 	}
 	
 	
+	//retornando uma lista das ENUM que contem (Pedido Kalebe)
 	@RequestMapping(value = "/tipoambiente", method = RequestMethod.GET)
 	public TipoAmbiente[] buscaTipoAmbiente() {
+		//passando os valores que tem dentro da ENUM
 		return TipoAmbiente.values();
 	}
+	
+	
+	//busca por palavra chaves por ambientes (Pedido Kalebe)
+	@RequestMapping(value = "/buscapalavra/{nome}", method = RequestMethod.GET)
+	public List<Ambiente> buscaChaveAmbiente(@PathVariable("nome") String nome){
+		//passando um retorno de LIKE na query
+		return ambienteRepository.palavraChave(nome);
+	}
+	
+	//buscando determinados tipos de ambientes dependendo da ENUM que for selecionada (Pedido Kalebe)
+	@RequestMapping(value = "/buscaambiente/{tipo_ambiente}", method = RequestMethod.GET)
+	public Iterable<Ambiente> buscandoAmbiente(@PathVariable("tipo_ambiente") TipoAmbiente tipoAmbiente){
+		return ambienteRepository.buscaAmbiente(tipoAmbiente);
+	}
+	
+	
+	
 	
 }

@@ -85,18 +85,25 @@ public class CursoRestController {
 			}
 		}
 		
-		//Feito o metodo para retornar a ENUM para o Front
+		//Feito o metodo para retornar a ENUM para o Front (Kalebe pediu)
 		@RequestMapping(value = "/tipocurso", method = RequestMethod.GET)
 		public TipoCurso[] busca (){
+			//setando todos os valores relacionados a enum
 			return TipoCurso.values();
 		}
 				
-				
-		//Feito o metodo para retornar quais tipos de Cursos forem aplicados
+		//Feito o metodo para retornar quais tipos de Cursos forem aplicados (Kalebe pediu)
 		@RequestMapping(value = "/buscacurso/{tipo_curso}", method = RequestMethod.GET)
 		public Iterable<Curso> buscaTipoCurso(@PathVariable("tipo_curso") TipoCurso tCurso){
-			//Fazendo uma Query
+			//Fazendo uma Query para que o Front selcione um  tipo de curso e traga so valores relacionas a ele
 			return cursoRepository.buscaTipoCurso(tCurso);
+		}
+		
+		//Feito no intuito para retornar valores escritos na busca (Kalebe pediu)
+		@RequestMapping(value = "/buscapalavra/{nome}", method = RequestMethod.GET)
+		public Iterable<Curso> buscaPalavrasChaves(@PathVariable("nome") String nome){
+			//Fiz um like para que com qualquer palavra que ele digitar aparece algo relacionado aquilo
+			return cursoRepository.palavraChave(nome);
 		}
 	
 }
