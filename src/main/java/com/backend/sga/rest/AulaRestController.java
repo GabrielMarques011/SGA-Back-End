@@ -3,6 +3,7 @@ package com.backend.sga.rest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,10 +23,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.annotation.RequestScope;
 
+import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Aula;
 import com.backend.sga.model.Erro;
+import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Professor;
 import com.backend.sga.model.Sucesso;
+import com.backend.sga.model.UnidadeCurricular;
 import com.backend.sga.repository.AulaRepository;
 import com.backend.sga.repository.ProfessorRepository;
 
@@ -42,19 +46,55 @@ public class AulaRestController {
 	private ProfessorRepository professorRepository;
 	
 	
-	//AJEITAR O METODO DE SALVAR AS AULAS
-	// método para cadastrar uma aula 
+	/*// método para cadastrar uma aula 
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarAula(@RequestBody Aula aula, HttpServletRequest request){
+		
 		if(aula != null) { // verifica se a aula não está nula
-			aulaRepository.save(aula); // salva a aula no banco de dados
+		aulaRepository.save(aula); // salva a aula no banco de dados
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso"); // moldando a mensagem de sucesso
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK); // retornando a mensagem de sucesso
 		}else {
 			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "não foi possível cadastrar uma aula", null); // moldando a mensagem de erro
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR); // retornando a mensagem de erro
 		}
-	}
+		
+	}*/
+	
+	//AJEITAR O METODO DE SALVAR AS AULAS
+	// método para cadastrar uma aula 
+	/*@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> criarAula(@RequestBody UnidadeCurricular uc,String codTurma, Periodo periodo, Calendar dataInicio,@RequestParam("dias") boolean dias[], Ambiente ambiente, Professor prof, double horas, HttpServletRequest request){
+		
+		//criando a aula(trazendo ela)
+		Aula aula = new Aula();
+		
+		//setando os valores que precisam no cadastro de aula
+		aula.setCodTurma(codTurma);
+		aula.setAmbiente(ambiente);
+		aula.setCargaDiaria(horas);
+		aula.setPeriodo(periodo);
+		aula.setProfessor(prof);
+		aula.setUnidadeCurricular(uc);
+		
+		//para retornar uma lista de datas
+		List<Aula> lista = aulaRepository.diaSemanal(dataInicio);
+		
+		//boolean[] semana = new boolean[7];
+				
+		//começando a logica da dias
+		for (int i = 0; i < dias.length; i++) {
+			if (dias[i] = 0) {
+				
+			} else {
+
+			}
+		}
+		
+		
+		return null;
+		
+	}*/
 	
 	// método que deleta a aula pelo ID
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

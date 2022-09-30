@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Sucesso;
+import com.backend.sga.model.TipoAmbiente;
 import com.backend.sga.model.UnidadeCurricular;
 import com.backend.sga.repository.UnidadeCurricularRepository;
 
@@ -79,6 +80,12 @@ public class UnidadeCurricularRestController {
 				Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 				return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 			}
+		}
+		
+		//Feito o metodo para retornar a ENUM para o Front
+		@RequestMapping(value = "/tipoambiente", method = RequestMethod.GET)
+		public TipoAmbiente[] buscaAmbiente (){
+			return TipoAmbiente.values();
 		}
 	
 }

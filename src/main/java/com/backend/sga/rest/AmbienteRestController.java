@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,6 +27,7 @@ import com.backend.sga.model.Aula;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Sucesso;
+import com.backend.sga.model.TipoAmbiente;
 import com.backend.sga.repository.AmbienteRepository;
 import com.backend.sga.repository.AulaRepository;
 
@@ -64,11 +66,12 @@ public class AmbienteRestController {
 	}
 	
 	//metodo para excluir por 'ID'
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Object> desativarAmbiente (@PathVariable("id") Long id, Ambiente ambiente,HttpServletRequest request){// Verificando se o id do 'ambiente' é igual ao do passado
-		if(ambiente.getId() == id) {
-			ambiente.setAtivo(false); // setando o Ativo como false, para estar desativado
-			ambienteRepository.save(ambiente); // salvando o ambiente
+	@RequestMapping(value = "/inativar/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<Object> desativarAmbiente (@PathVariable("id") Long id,HttpServletRequest request){// Verificando se o id do 'ambiente' é igual ao do passado
+		Optional<Ambiente> inativar = ambienteRepository.findById(id); // setando o Ativo como false, para estar desativado
+		if(inativar.get().getId() == id) {
+			inativar.get().setAtivo(false);
+			ambienteRepository.save(inativar.get());
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}else {
@@ -137,6 +140,12 @@ public class AmbienteRestController {
 		}
 		
 		return ambiDisponiveis; // retornando a lista de ambientes disponíveis 
+	}
+	
+	
+	@RequestMapping(value = "/tipoambiente", method = RequestMethod.GET)
+	public TipoAmbiente[] buscaTipoAmbiente() {
+		return TipoAmbiente.values();
 	}
 	
 }

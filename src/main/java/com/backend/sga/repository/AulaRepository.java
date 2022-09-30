@@ -19,4 +19,8 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	@Query("SELECT a FROM Aula a WHERE a.unidadeCurricular.id = :id")
 	public List<Aula> findByAmbientesId(@Param("id") Long id);
 	
+	//SELECT * FROM sga.aula where sga.aula.data >= "2022-09-25"
+	@Query("SELECT a FROM Aula a WHERE a.data >= :data")
+	public List<Aula> diaSemanal(@Param("data") Calendar data);
+	
 }
