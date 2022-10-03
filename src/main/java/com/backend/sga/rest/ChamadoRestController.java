@@ -1,5 +1,7 @@
 package com.backend.sga.rest;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.sga.model.Chamado;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Sucesso;
+import com.backend.sga.model.tipoChamado;
 import com.backend.sga.repository.ChamadoRepository;
 
 @RestController
@@ -79,6 +82,12 @@ public class ChamadoRestController {
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso"); // molda a mensagem de sucesso
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK); // retorna a mensagem de sucesso
 		}
+	}
+	
+	
+	@RequestMapping(value = "/tipochamado")
+	public tipoChamado[] entregaChamado(){
+		return tipoChamado.values();
 	}
 	
 }
