@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 import com.backend.sga.model.Usuario;
 
 @Repository
-public interface UsuarioRepository extends PagingAndSortingRepository<Usuario, String>{
+public interface UsuarioRepository extends PagingAndSortingRepository<Usuario, Long>{
 
-	public Usuario findByNifAndSenha(String nif, @NotNull String senha);
+	public Usuario findByIdAndSenha(Long id, @NotNull String senha);
 	
 }

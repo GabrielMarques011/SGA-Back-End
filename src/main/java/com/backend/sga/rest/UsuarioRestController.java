@@ -28,6 +28,7 @@ import com.backend.sga.model.TokenJWT;
 import com.backend.sga.model.Usuario;
 import com.backend.sga.repository.UsuarioRepository;
 
+
 //CrossOrigin serve para que o projeto receba JSON
 @CrossOrigin
 @RestController
@@ -64,7 +65,7 @@ public class UsuarioRestController {
 
 			Object[] filtro = new Object[2];
 			filtro[0] = sucesso;
-			filtro[1] = user.getNif();
+			filtro[1] = user;//ajeitando o metodo depois que apliquei o id na model
 
 			// setando o o filtro junto com o 'Status OK'
 			ResponseEntity<Object> okpost = new ResponseEntity<Object>(filtro, HttpStatus.OK);
@@ -76,7 +77,7 @@ public class UsuarioRestController {
 		}
 	}
 
-	@RequestMapping(value = "/desativar/{nif}", method = RequestMethod.PUT)
+	/*@RequestMapping(value = "/desativar/{nif}", method = RequestMethod.PUT)
 	public ResponseEntity<Object> desativarUsuario(@PathVariable("nif") String nif, Usuario user,
 			HttpServletRequest request) {
 
@@ -89,6 +90,23 @@ public class UsuarioRestController {
 
 		Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 		return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+	}*/
+	
+	@RequestMapping(value = "/desativar/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<Object> desativaUser(@PathVariable("id") Long id, HttpServletRequest request){
+		
+		Optional<Usuario> inativar = usuarioRepository.findById(id);// setando o Ativo como false, para estar desativado
+		
+		if (inativar.get().getId() == id) {
+			inativar.get().setAtivo(false);
+			usuarioRepository.save(inativar.get());
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+		}else {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel desativar usuario", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
 	}
 
 	// Buscando todos os dados no banco
@@ -98,8 +116,8 @@ public class UsuarioRestController {
 	}
 
 	// metodo para alterar
-	@RequestMapping(value = "/{nif}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> atualizarUser(@PathVariable("nif") String nif, @RequestBody Usuario user,
+	/*@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> atualizarUser(@PathVariable("id") Long id, @RequestBody Usuario user,
 			HttpServletRequest request) {
 
 		Optional<Usuario> nifuser = usuarioRepository.findById(nif);
@@ -130,13 +148,38 @@ public class UsuarioRestController {
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
+	}*/
+	
+	// metodo para alterar
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> atualizarUser(@PathVariable("id") Long id, @RequestBody Usuario user,HttpServletRequest request) {
+
+		if (user.getId() != id) {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		}else {
+			// vendo se o user é existente
+			usuarioRepository.findById(id);
+			
+			// pegando a senha e transformando em criptografia
+			String crip = this.encoder.encode(user.getSenha());
+
+			// mandando criptografada
+			user.setSenha(crip);
+			
+			usuarioRepository.save(user);
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+		}
 	}
+	
+	
 
 	// metodo feito para validar quando criamos o login
 	// metodo feito para comparar se a senha bate com a do banco de dados
 	public Boolean validarSenha(Usuario user) {
 		// pegando a senha do banco de dados
-		String senha = usuarioRepository.findById(user.getNif()).get().getSenha();
+		String senha = usuarioRepository.findById(user.getId()).get().getSenha();
 		// pegando a senha do banco e comparando com a atual
 		Boolean valid = encoder.matches(user.getSenha(), senha);
 		return valid;
@@ -166,7 +209,7 @@ public class UsuarioRestController {
 
 		if (validar = true) {
 			// insere nif e senha dentro da variavel usuario
-			usuario = usuarioRepository.findByNifAndSenha(usuario.getNif(), usuario.getSenha());
+			usuario = usuarioRepository.findByIdAndSenha(usuario.getId(), usuario.getSenha());
 
 			// verifica se há usuario
 			if (usuario != null) {

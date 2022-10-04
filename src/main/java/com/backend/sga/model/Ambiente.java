@@ -24,10 +24,10 @@ public class Ambiente {
 	
 	private TipoAmbiente tipoAmbiente;
 	
-	@NotNull
+	//@NotNull
 	private String cep;
 	
-	@NotNull
+	//@NotNull
 	private String complemento;
 	
 	private boolean ativo;
