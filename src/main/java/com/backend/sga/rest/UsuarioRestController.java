@@ -3,6 +3,7 @@ package com.backend.sga.rest;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -97,16 +98,20 @@ public class UsuarioRestController {
 	
 	//metodo para alterar
 	@RequestMapping(value = "/{nif}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> atualizarUser(@PathVariable("nif") String nif, @RequestBody Usuario user, HttpServletRequest request){
-		if (!user.getNif().equals(nif)) {
+	public ResponseEntity<Object> atualizarUser(@PathVariable("nif") String nif,@RequestBody Usuario user, HttpServletRequest request){
+		if (nif == null) {
 			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "NIF inválido", null);
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+			
+			//vendo se o user é existente
+			usuarioRepository.findById(nif);
 		
 			//pegando a senha e transformando em criptografia
 			String crip = this.encoder.encode(user.getSenha());
 			
 			//mandando criptografada
+			//user.setSenha(crip);
 			user.setSenha(crip);
 		
 			usuarioRepository.save(user);

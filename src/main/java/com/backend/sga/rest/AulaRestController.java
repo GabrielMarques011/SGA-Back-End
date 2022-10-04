@@ -2,6 +2,7 @@ package com.backend.sga.rest;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
@@ -28,6 +29,7 @@ import com.backend.sga.model.Aula;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Professor;
+import com.backend.sga.model.RecebeAula;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.model.UnidadeCurricular;
 import com.backend.sga.repository.AulaRepository;
@@ -63,38 +65,70 @@ public class AulaRestController {
 	
 	//AJEITAR O METODO DE SALVAR AS AULAS
 	// método para cadastrar uma aula 
-	/*@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> criarAula(@RequestBody UnidadeCurricular uc,String codTurma, Periodo periodo, Calendar dataInicio,@RequestParam("dias") boolean dias[], Ambiente ambiente, Professor prof, double horas, HttpServletRequest request){
+	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> criarAula(@RequestBody RecebeAula recebeAula , HttpServletRequest request){
 		
 		//criando a aula(trazendo ela)
 		Aula aula = new Aula();
 		
 		//setando os valores que precisam no cadastro de aula
-		aula.setCodTurma(codTurma);
-		aula.setAmbiente(ambiente);
-		aula.setCargaDiaria(horas);
-		aula.setPeriodo(periodo);
-		aula.setProfessor(prof);
-		aula.setUnidadeCurricular(uc);
+		aula.setCodTurma(recebeAula.getCodTurma());
+		aula.setAmbiente(recebeAula.getAmbiente());
+		aula.setCargaDiaria(recebeAula.getCargaDiaria());
+		aula.setPeriodo(recebeAula.getPeriodo());
+		aula.setProfessor(recebeAula.getProfessor());
+		aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
 		
-		//para retornar uma lista de datas
-		List<Aula> lista = aulaRepository.diaSemanal(dataInicio);
+		boolean dia[] = recebeAula.getDiaSemana();
 		
-		//boolean[] semana = new boolean[7];
-				
-		//começando a logica da dias
-		for (int i = 0; i < dias.length; i++) {
-			if (dias[i] = 0) {
-				
-			} else {
-
-			}
+		ArrayList<Integer> guardaDia = null;
+		
+		
+		
+		/*if (dia[0] == true) {
+			guardaDia.add(Calendar.SUNDAY);//dom
 		}
+		if(dia[1] == true) {
+			guardaDia.add(Calendar.MONDAY);//seg
+		}
+		if(dia[2] == true) {
+			guardaDia.add(Calendar.TUESDAY);//ter
+		}
+		if(dia[3] == true) {
+			guardaDia.add(Calendar.WEDNESDAY);//qua
+		}
+		if(dia[4] == true) {
+			guardaDia.add(Calendar.THURSDAY);//qui
+		}
+		if(dia[5] == true) {
+			guardaDia.add(Calendar.FRIDAY);//sex
+		}
+		if(dia[6] == true){
+			guardaDia.add(Calendar.SATURDAY);//sab
+		}*/
+		
+		//começando a logica da dias
+		//for (int i = 0; i < dia.length; i++) {
+		//}
+		
+		//retornando uma listagem de aula
+		List<Aula> listaAula = aulaRepository.diaSemanal(recebeAula.getDataInicio());
+		
+		//quando a hora chegar a igual a '0' ela para
+		/*while (aula.getUnidadeCurricular().getHoras() > 0) {
+			
+			for (int i = 0; i < listaAula.size(); i++) {
+				
+				listaAula.add(recebeAula.getDataInicio());
+				
+			}
+			
+		}*/
 		
 		
 		return null;
 		
-	}*/
+	}
 	
 	// método que deleta a aula pelo ID
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

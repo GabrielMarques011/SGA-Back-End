@@ -1,5 +1,7 @@
 package com.backend.sga.rest;
 
+import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Curso;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Sucesso;
@@ -53,15 +56,16 @@ public class CursoRestController {
 		}
 		
 		//metodo para excluir por 'ID'
-		@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-		public ResponseEntity<Object> desativarCurso (@PathVariable("id") Long id, Curso curso,HttpServletRequest request){// Verificando se o id do 'ambiente' é igual ao do passado
-			if(curso.getId() == id) {
-				curso.setAtivo(false); // setando o ativo como false, para estar desativado
-				cursoRepository.save(curso); // salvando o curso
+		@RequestMapping(value = "/inativar/{id}", method = RequestMethod.PUT)
+		public ResponseEntity<Object> desativarCurso (@PathVariable("id") Long id,HttpServletRequest request){// Verificando se o id do 'ambiente' é igual ao do passado
+			Optional<Curso> inativar = cursoRepository.findById(id); // setando o Ativo como false, para estar desativado
+			if(inativar.get().getId() == id) {
+				inativar.get().setAtivo(false);
+				cursoRepository.save(inativar.get());
 				Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 				return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 			}else {
-				Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel excluir um curso", null);
+				Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel cadastrar um curso", null);
 				return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
