@@ -2,6 +2,8 @@ package com.backend.sga.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Email;
@@ -13,6 +15,11 @@ import lombok.Data;
 @Entity
 public class Usuario {
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
+	@NotNull
 	private String nome;
 	
 	@NotNull
@@ -23,7 +30,7 @@ public class Usuario {
 	@NotNull
 	private String senha;//Ja fizemos a criptografia da senha
 	
-	@Id
+	@NotNull
 	private String nif;
 	
 	private TipoUsuario tipoUsuario;

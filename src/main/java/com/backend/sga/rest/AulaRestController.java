@@ -20,18 +20,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.annotation.RequestScope;
 
-import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Aula;
 import com.backend.sga.model.Erro;
-import com.backend.sga.model.Periodo;
-import com.backend.sga.model.Professor;
 import com.backend.sga.model.RecebeAula;
 import com.backend.sga.model.Sucesso;
-import com.backend.sga.model.UnidadeCurricular;
 import com.backend.sga.repository.AulaRepository;
 import com.backend.sga.repository.ProfessorRepository;
 

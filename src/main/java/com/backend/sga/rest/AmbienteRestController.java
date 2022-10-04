@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -163,6 +164,13 @@ public class AmbienteRestController {
 	@RequestMapping(value = "/buscaambiente/{tipo_ambiente}", method = RequestMethod.GET)
 	public Iterable<Ambiente> buscandoAmbiente(@PathVariable("tipo_ambiente") TipoAmbiente tipoAmbiente){
 		return ambienteRepository.buscaAmbiente(tipoAmbiente);
+	}
+	
+	
+	//puxando as capacidades de tais valores selecionados (Pedido Matheus e Kalebe)
+	@RequestMapping(value = "/capacidade", method = RequestMethod.GET)
+	public Iterable<Ambiente> retornaCapacidade (@PathParam("capacidadeMin") int capacidadeMin, @PathParam("capacidadeMax") int capacidadeMax){
+		return ambienteRepository.retornaCapacidade(capacidadeMin, capacidadeMax);	
 	}
 	
 	
