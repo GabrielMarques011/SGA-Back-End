@@ -28,4 +28,8 @@ public interface AmbienteRepository extends PagingAndSortingRepository<Ambiente,
 	@Query("SELECT a FROM Ambiente a WHERE a.capacidade BETWEEN :capacidadeMin AND :capacidadeMax")
 	public Iterable<Ambiente> retornaCapacidade (@Param("capacidadeMin") int capacidadeMin, @Param("capacidadeMax") int capacidadeMax);
 	
+	//SELECT * FROM sga.ambiente WHERE sga.ambiente.tipo_ambiente = 2 AND sga.ambiente.capacidade BETWEEN 20 AND 30
+	@Query("SELECT a FROM Ambiente a WHERE a.tipoAmbiente = :tipo_ambiente AND a.capacidade BETWEEN :capacidadeMin AND :capacidadeMax")
+	public Iterable<Ambiente> retornaTipoCapacidade (@Param("tipo_ambiente") TipoAmbiente tipoAmbiente, @Param("capacidadeMin") int capacidadeMin, @Param("capacidadeMax") int capacidadeMax);
+	
 }

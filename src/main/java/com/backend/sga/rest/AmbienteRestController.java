@@ -173,6 +173,11 @@ public class AmbienteRestController {
 		return ambienteRepository.retornaCapacidade(capacidadeMin, capacidadeMax);	
 	}
 	
+	//trazendo valores comforme o tipo e a capacidade selecionada ou escrita (Pedido Matheus e Kalebe)
+	@RequestMapping(value = "/tipoecapacidade", method = RequestMethod.GET)
+	public Iterable<Ambiente> retornaTipoeCapacidade (@PathParam("tipo_ambiente") TipoAmbiente tipoAmbiente,@PathParam("capacidadeMin") int capacidadeMin, @PathParam("capacidadeMax") int capacidadeMax){
+		return ambienteRepository.retornaTipoCapacidade(tipoAmbiente, capacidadeMin, capacidadeMax);
+	}
 	
 	
 	
