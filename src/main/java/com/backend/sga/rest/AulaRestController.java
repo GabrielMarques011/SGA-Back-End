@@ -62,62 +62,46 @@ public class AulaRestController {
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarAula(@RequestBody RecebeAula recebeAula , HttpServletRequest request){
 		
-		//criando a aula(trazendo ela)
-		Aula aula = new Aula();
-		
-		//setando os valores que precisam no cadastro de aula
-		aula.setCodTurma(recebeAula.getCodTurma());
-		aula.setAmbiente(recebeAula.getAmbiente());
-		aula.setCargaDiaria(recebeAula.getCargaDiaria());
-		aula.setPeriodo(recebeAula.getPeriodo());
-		aula.setProfessor(recebeAula.getProfessor());
-		aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
-		
 		boolean dia[] = recebeAula.getDiaSemana();
 		
-		ArrayList<Integer> guardaDia = null;
+		Calendar dataInicio = recebeAula.getDataInicio();
 		
-		
-		
-		/*if (dia[0] == true) {
-			guardaDia.add(Calendar.SUNDAY);//dom
-		}
-		if(dia[1] == true) {
-			guardaDia.add(Calendar.MONDAY);//seg
-		}
-		if(dia[2] == true) {
-			guardaDia.add(Calendar.TUESDAY);//ter
-		}
-		if(dia[3] == true) {
-			guardaDia.add(Calendar.WEDNESDAY);//qua
-		}
-		if(dia[4] == true) {
-			guardaDia.add(Calendar.THURSDAY);//qui
-		}
-		if(dia[5] == true) {
-			guardaDia.add(Calendar.FRIDAY);//sex
-		}
-		if(dia[6] == true){
-			guardaDia.add(Calendar.SATURDAY);//sab
-		}*/
-		
-		//começando a logica da dias
-		//for (int i = 0; i < dia.length; i++) {
-		//}
-		
+		double cargaHoraria = recebeAula.getUnidadeCurricular().getHoras();
+				
 		//retornando uma listagem de aula
 		List<Aula> listaAula = aulaRepository.diaSemanal(recebeAula.getDataInicio());
-		
-		//quando a hora chegar a igual a '0' ela para
-		/*while (aula.getUnidadeCurricular().getHoras() > 0) {
-			
-			for (int i = 0; i < listaAula.size(); i++) {
 				
-				listaAula.add(recebeAula.getDataInicio());
-				
+		if(listaAula.isEmpty()) {
+			while(cargaHoraria > 0) {
+				for(int i = 0; i < dia.length; i++) {
+					if(dia[i] == true) {
+						//criando a aula(trazendo ela)
+						Aula aula = new Aula();
+						
+						//setando os valores que precisam no cadastro de aula
+						aula.setCodTurma(recebeAula.getCodTurma());
+						aula.setAmbiente(recebeAula.getAmbiente());
+						aula.setCargaDiaria(recebeAula.getCargaDiaria());
+						aula.setPeriodo(recebeAula.getPeriodo());
+						aula.setProfessor(recebeAula.getProfessor());
+						aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
+						aula.setData(dataInicio);
+						
+						aulaRepository.save(aula);
+						
+						cargaHoraria = cargaHoraria - aula.getCargaDiaria();
+						
+						if(cargaHoraria == 0) {
+							break;
+						}
+					}
+					dataInicio.add(Calendar.DAY_OF_MONTH, 1);
+					if(cargaHoraria == 0) {
+						break;
+					}
+				}
 			}
-			
-		}*/
+		}
 		
 		
 		return null;
