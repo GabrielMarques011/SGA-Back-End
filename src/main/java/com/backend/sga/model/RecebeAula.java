@@ -25,4 +25,6 @@ public class RecebeAula {
 	
 	private double cargaDiaria;
 	
+	private Calendar semanaldia[];
+	
 }

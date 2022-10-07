@@ -70,10 +70,15 @@ public class AulaRestController {
 				
 		//retornando uma listagem de aula
 		List<Aula> listaAula = aulaRepository.diaSemanal(recebeAula.getDataInicio());
-				
+		
+		
+		//verificando se é vazio
 		if(listaAula.isEmpty()) {
+			//fazendo a repetição das horas até chegar a 0
 			while(cargaHoraria > 0) {
+				
 				for(int i = 0; i < dia.length; i++) {
+					
 					if(dia[i] == true) {
 						//criando a aula(trazendo ela)
 						Aula aula = new Aula();
@@ -85,21 +90,22 @@ public class AulaRestController {
 						aula.setPeriodo(recebeAula.getPeriodo());
 						aula.setProfessor(recebeAula.getProfessor());
 						aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
+						System.out.println(dataInicio);
 						aula.setData(dataInicio);
 						
 						aulaRepository.save(aula);
 						
 						cargaHoraria = cargaHoraria - aula.getCargaDiaria();
 						
-						if(cargaHoraria == 0) {
-							break;
-						}
 					}
+					//atribuindo um valor a mais no dia
 					dataInicio.add(Calendar.DAY_OF_MONTH, 1);
+					//chegando a '0' ele para o for 
 					if(cargaHoraria == 0) {
 						break;
 					}
 				}
+					
 			}
 		}
 		

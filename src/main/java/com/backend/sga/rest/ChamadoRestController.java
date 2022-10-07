@@ -1,6 +1,7 @@
 package com.backend.sga.rest;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -60,9 +61,10 @@ public class ChamadoRestController {
 	
 	// método que deleta o chamado pelo id
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Object> deletarChamado (@PathVariable("id") Long id, @RequestBody Chamado chamado, HttpServletRequest request){
-		if(id == chamado.getId()) { // verifica se o id indicado é igual ao id do chamado
-			repository.deleteById(id); // deleta o chamado do banco de dados
+	public ResponseEntity<Object> deletarChamado (@PathVariable("id") Long id, HttpServletRequest request){
+		Optional<Chamado> del = repository.findById(id);
+		if(del.get().getId() == id) { // verifica se o id indicado é igual ao id do chamado
+			repository.delete(del.get()); // deleta o chamado do banco de dados
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso"); // molda a mensagem de sucesso
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK); // retorna a mensagem de sucesso
 		}else {
