@@ -72,6 +72,9 @@ public class AulaRestController {
 		List<Aula> listaAula = aulaRepository.diaSemanal(recebeAula.getDataInicio());
 		
 		
+		//recebeAula.verificarDiasSemana(dia);
+		System.out.println(recebeAula.verificarDiasSemana(dia));
+		
 		//verificando se é vazio
 		if(listaAula.isEmpty()) {
 			//fazendo a repetição das horas até chegar a 0
