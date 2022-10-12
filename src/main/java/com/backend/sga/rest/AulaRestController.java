@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.bouncycastle.asn1.dvcs.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -34,122 +35,129 @@ import com.backend.sga.repository.ProfessorRepository;
 @RestController
 @RequestMapping("/api/aula")
 public class AulaRestController {
-	
+
 	@Autowired
 	private AulaRepository aulaRepository;
-	
+
 	@Autowired
 	private ProfessorRepository professorRepository;
-	
-	
-	/*// método para cadastrar uma aula 
+
+	/*
+	 * // método para cadastrar uma aula
+	 * 
+	 * @RequestMapping(value = "", method = RequestMethod.POST, consumes =
+	 * MediaType.APPLICATION_JSON_VALUE) public ResponseEntity<Object>
+	 * criarAula(@RequestBody Aula aula, HttpServletRequest request){
+	 * 
+	 * if(aula != null) { // verifica se a aula não está nula
+	 * aulaRepository.save(aula); // salva a aula no banco de dados Sucesso sucesso
+	 * = new Sucesso(HttpStatus.OK, "Sucesso"); // moldando a mensagem de sucesso
+	 * return new ResponseEntity<Object>(sucesso, HttpStatus.OK); // retornando a
+	 * mensagem de sucesso }else { Erro erro = new
+	 * Erro(HttpStatus.INTERNAL_SERVER_ERROR, "não foi possível cadastrar uma aula",
+	 * null); // moldando a mensagem de erro return new ResponseEntity<Object>(erro,
+	 * HttpStatus.INTERNAL_SERVER_ERROR); // retornando a mensagem de erro }
+	 * 
+	 * }
+	 */
+
+	// AJEITAR O METODO DE SALVAR AS AULAS
+	// método para cadastrar uma aula
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> criarAula(@RequestBody Aula aula, HttpServletRequest request){
-		
-		if(aula != null) { // verifica se a aula não está nula
-		aulaRepository.save(aula); // salva a aula no banco de dados
-			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso"); // moldando a mensagem de sucesso
-			return new ResponseEntity<Object>(sucesso, HttpStatus.OK); // retornando a mensagem de sucesso
-		}else {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "não foi possível cadastrar uma aula", null); // moldando a mensagem de erro
-			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR); // retornando a mensagem de erro
-		}
-		
-	}*/
-	
-	//AJEITAR O METODO DE SALVAR AS AULAS
-	// método para cadastrar uma aula 
-	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> criarAula(@RequestBody RecebeAula recebeAula , HttpServletRequest request){
-		
+	public ResponseEntity<Object> criarAula(@RequestBody RecebeAula recebeAula, HttpServletRequest request) {
+
 		boolean dia[] = recebeAula.getDiaSemana();
-		
+
 		Calendar dataInicio = recebeAula.getDataInicio();
+
+		System.out.println(dataInicio.get(Calendar.DAY_OF_WEEK));
 		
 		double cargaHoraria = recebeAula.getUnidadeCurricular().getHoras();
-				
-		//retornando uma listagem de aula
+
+		// retornando uma listagem de aula
 		List<Aula> listaAula = aulaRepository.diaSemanal(recebeAula.getDataInicio());
-		
-		
-		//recebeAula.verificarDiasSemana(dia);
+
+		// recebeAula.verificarDiasSemana(dia);
 		System.out.println(recebeAula.verificarDiasSemana(dia));
-		
-		//verificando se é vazio
-		if(listaAula.isEmpty()) {
-			//fazendo a repetição das horas até chegar a 0
-			while(cargaHoraria > 0) {
+
+		// verificando se é vazio
+		if (listaAula.isEmpty()) {
+			
+			List<Integer> diasVerifica = recebeAula.verificarDiasSemana(dia);
+			// fazendo a repetição das horas até chegar a 0
+			while (cargaHoraria > 0) {
 				
-				for(int i = 0; i < dia.length; i++) {
-					
-					if(dia[i] == true) {
-						//criando a aula(trazendo ela)
-						Aula aula = new Aula();
+						//criando variavel para que sete os valores da dataInicio
+						Calendar data = Calendar.getInstance();
+						data.setTime(dataInicio.getTime());	
 						
-						//setando os valores que precisam no cadastro de aula
-						aula.setCodTurma(recebeAula.getCodTurma());
-						aula.setAmbiente(recebeAula.getAmbiente());
-						aula.setCargaDiaria(recebeAula.getCargaDiaria());
-						aula.setPeriodo(recebeAula.getPeriodo());
-						aula.setProfessor(recebeAula.getProfessor());
-						aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
-						System.out.println(dataInicio);
-						aula.setData(dataInicio);
+						int diaSemana = data.get(Calendar.DAY_OF_WEEK);
 						
-						aulaRepository.save(aula);
+						if(dia[diaSemana - 1] == true) {	
+							// criando a aula(trazendo ela)
+							Aula aula = new Aula();
+							// setando os valores que precisam no cadastro de aula
+							aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
+							aula.setCodTurma(recebeAula.getCodTurma());
+							aula.setPeriodo(recebeAula.getPeriodo());
+							aula.setAmbiente(recebeAula.getAmbiente());
+							aula.setProfessor(recebeAula.getProfessor());
+							aula.setCargaDiaria(recebeAula.getCargaDiaria());
+							aula.setData(data);
+							
+							aulaRepository.save(aula);
+							
+							// Subtraindo a carga horaria depois que o cadastro acontece
+							cargaHoraria = cargaHoraria - aula.getCargaDiaria();
+						}
 						
-						cargaHoraria = cargaHoraria - aula.getCargaDiaria();
 						
+						// Pulando de 1 dia em 1 dia...
+						dataInicio.add(Calendar.DAY_OF_MONTH, 1);
 					}
-					//atribuindo um valor a mais no dia
-					dataInicio.add(Calendar.DAY_OF_MONTH, 1);
-					//chegando a '0' ele para o for 
-					if(cargaHoraria == 0) {
-						break;
-					}
+			
+			
 				}
-					
-			}
-		}
 		
-		
-		return null;
-		
+				return null;
 	}
-	
+
 	// método que deleta a aula pelo ID
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Object> deletarAula(@RequestBody Aula aula, @PathVariable("id") Long id, HttpServletRequest request){
-		if(aula.getId() == id) { // verifica se o id da aula é igual o id selecionado
+	public ResponseEntity<Object> deletarAula(@RequestBody Aula aula, @PathVariable("id") Long id,
+			HttpServletRequest request) {
+		if (aula.getId() == id) { // verifica se o id da aula é igual o id selecionado
 			aulaRepository.deleteById(id); // deleta a aula do banco de dados
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso"); // moldando a mensagem de sucesso
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK); // retornando a mensagem de sucesso
-		}else {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível deletar a aula", null); // moldando a mensagem de erro
+		} else {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível deletar a aula", null); // moldando
+																												// a
+																												// mensagem
+																												// de
+																												// erro
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR); // retornando a mensagem de erro
 		}
 	}
-	
+
 	// método que lista todas as aulas
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public Iterable<Aula> listarAulas(){
+	public Iterable<Aula> listarAulas() {
 		return aulaRepository.findAll(); // retorna a lista de todos os comonentes do banco de dados
 	}
-	
-	//metodo para alterar
+
+	// metodo para alterar
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> atualizarAula(@PathVariable("id") Long id, @RequestBody Aula aula, HttpServletRequest request){
+	public ResponseEntity<Object> atualizarAula(@PathVariable("id") Long id, @RequestBody Aula aula,
+			HttpServletRequest request) {
 		if (aula.getId() != id) {
 			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null);
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-		}else {
+		} else {
 			aulaRepository.save(aula);
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
 	}
-	
-	
-	
-}
 
+}
