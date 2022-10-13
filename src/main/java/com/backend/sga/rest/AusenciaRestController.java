@@ -1,5 +1,8 @@
 package com.backend.sga.rest;
 
+import java.util.List;
+import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Ausencia;
 import com.backend.sga.model.Erro;
+import com.backend.sga.model.Professor;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.repository.AusenciaRepository;
 
@@ -80,6 +84,19 @@ public class AusenciaRestController {
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
+	}
+	
+	@RequestMapping(value = "/professor/{id}", method = RequestMethod.GET)
+	public Object[] buscarAusenciaProfessor(@PathVariable("id") Long id) {
+		List<Ausencia> ausencias = ausenciaRepository.findByProfessorId(id);
+		Professor professor = ausencias.get(0).getProfessor();
+		
+		Object result[] = new Object[2];
+		
+		result[0] = professor;
+		result[1] = ausencias;
+		
+		return result;
 	}
 	
 }

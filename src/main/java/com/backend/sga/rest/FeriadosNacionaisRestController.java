@@ -24,6 +24,7 @@ import com.backend.sga.model.FeriadosNacionais;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.repository.FeriadosNacionaisRepository;
 import com.backend.sga.service.FeriadosNacionaisService;
+import com.google.common.util.concurrent.Service;
 
 import org.springframework.http.MediaType;
 
@@ -34,34 +35,7 @@ public class FeriadosNacionaisRestController {
 	
 	@Autowired
 	private FeriadosNacionaisRepository repository;	
-	
-	@Autowired
-	private FeriadosNacionaisService service;
-		
-	
-	@RequestMapping(value = "", method = RequestMethod.POST)
-	public ResponseEntity<Object> salvarFeriados(){
-		
-		FeriadosNacionais feriados[] = service.consultaFeriados();
-		
-		if(feriados != null) {
-			for(int i = 0; i < feriados.length; i++) {
-				FeriadosNacionais feriado = new FeriadosNacionais();
-				feriado.setDate(feriados[i].getDate());
-				feriado.setName(feriados[i].getName());
-				feriado.setType(feriados[i].getType());
-				
-				repository.save(feriado);
-			}
-			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
-			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
-		}else {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel cadastrar os feriados nacionais", null);
-			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		
-	}
-	
+			
 	// método que retorna os feriados nacionais 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<FeriadosNacionais> buscarFeriados(){
