@@ -17,6 +17,7 @@ import com.backend.sga.model.DiaNaoLetivo;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.repository.DiaNaoLetivoRepository;
+import com.backend.sga.service.FeriadosNacionaisService;
 
 //CrossOrigin serve para que o projeto receba JSON
 @CrossOrigin
@@ -26,6 +27,9 @@ public class DiaNaoLetivoRestController {
 
 	@Autowired
 	private DiaNaoLetivoRepository diaNaoLetivoRepository;
+	
+	@Autowired
+	private FeriadosNacionaisService service;
 	
 		//metodo para criar o dia não letivo
 		@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -37,6 +41,8 @@ public class DiaNaoLetivoRestController {
 					Object[] filtro = new Object[2];
 					filtro[0] = sucesso;
 					filtro[1] = dnl.getId();
+					
+					service.salvarFeriados();
 					
 					ResponseEntity<Object> okpost = new ResponseEntity<Object>(filtro, HttpStatus.OK);
 					
