@@ -24,10 +24,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.sga.model.Aula;
+import com.backend.sga.model.DiaNaoLetivo;
 import com.backend.sga.model.Erro;
+import com.backend.sga.model.FeriadosNacionais;
 import com.backend.sga.model.RecebeAula;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.repository.AulaRepository;
+import com.backend.sga.repository.DiaNaoLetivoRepository;
+import com.backend.sga.repository.FeriadosNacionaisRepository;
 import com.backend.sga.repository.ProfessorRepository;
 
 //CrossOrigin serve para que o projeto receba JSON
@@ -41,25 +45,12 @@ public class AulaRestController {
 
 	@Autowired
 	private ProfessorRepository professorRepository;
-
-	/*
-	 * // método para cadastrar uma aula
-	 * 
-	 * @RequestMapping(value = "", method = RequestMethod.POST, consumes =
-	 * MediaType.APPLICATION_JSON_VALUE) public ResponseEntity<Object>
-	 * criarAula(@RequestBody Aula aula, HttpServletRequest request){
-	 * 
-	 * if(aula != null) { // verifica se a aula não está nula
-	 * aulaRepository.save(aula); // salva a aula no banco de dados Sucesso sucesso
-	 * = new Sucesso(HttpStatus.OK, "Sucesso"); // moldando a mensagem de sucesso
-	 * return new ResponseEntity<Object>(sucesso, HttpStatus.OK); // retornando a
-	 * mensagem de sucesso }else { Erro erro = new
-	 * Erro(HttpStatus.INTERNAL_SERVER_ERROR, "não foi possível cadastrar uma aula",
-	 * null); // moldando a mensagem de erro return new ResponseEntity<Object>(erro,
-	 * HttpStatus.INTERNAL_SERVER_ERROR); // retornando a mensagem de erro }
-	 * 
-	 * }
-	 */
+	
+	@Autowired
+	private DiaNaoLetivoRepository DiaNaorepository;
+	
+	@Autowired
+	private FeriadosNacionaisRepository feriadosRepository;
 
 	// AJEITAR O METODO DE SALVAR AS AULAS
 	// método para cadastrar uma aula
@@ -79,6 +70,8 @@ public class AulaRestController {
 
 		// recebeAula.verificarDiasSemana(dia);
 		System.out.println(recebeAula.verificarDiasSemana(dia));
+		
+		System.out.println(dataInicio);
 
 		// verificando se é vazio
 		if (listaAula.isEmpty()) {
@@ -89,9 +82,12 @@ public class AulaRestController {
 				
 						//criando variavel para que sete os valores da dataInicio
 						Calendar data = Calendar.getInstance();
-						data.setTime(dataInicio.getTime());	
+						data.setTime(dataInicio.getTime());
 						
-						int diaSemana = data.get(Calendar.DAY_OF_WEEK);
+						//! necessario
+						data.add(Calendar.DAY_OF_MONTH, 1);
+						
+						int diaSemana = data.get(Calendar.DAY_OF_WEEK);					
 						
 						if(dia[diaSemana - 1] == true) {	
 							// criando a aula(trazendo ela)
