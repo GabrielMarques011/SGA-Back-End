@@ -1,5 +1,6 @@
 package com.backend.sga.rest;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,9 +70,9 @@ public class AulaRestController {
 		List<Aula> listaAula = aulaRepository.diaSemanal(recebeAula.getDataInicio());
 
 		// recebeAula.verificarDiasSemana(dia);
-		System.out.println(recebeAula.verificarDiasSemana(dia));
+		/*System.out.println(recebeAula.verificarDiasSemana(dia));
 		
-		System.out.println(dataInicio);
+		System.out.println(dataInicio);*/
 
 		// verificando se é vazio
 		if (listaAula.isEmpty()) {
@@ -89,22 +90,47 @@ public class AulaRestController {
 						
 						int diaSemana = data.get(Calendar.DAY_OF_WEEK);					
 						
-						if(dia[diaSemana - 1] == true) {	
-							// criando a aula(trazendo ela)
-							Aula aula = new Aula();
-							// setando os valores que precisam no cadastro de aula
-							aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
-							aula.setCodTurma(recebeAula.getCodTurma());
-							aula.setPeriodo(recebeAula.getPeriodo());
-							aula.setAmbiente(recebeAula.getAmbiente());
-							aula.setProfessor(recebeAula.getProfessor());
-							aula.setCargaDiaria(recebeAula.getCargaDiaria());
-							aula.setData(data);
+						if(dia[diaSemana - 1] == true) {
 							
-							aulaRepository.save(aula);
+							String dataStr;
+							int mes;
+							mes = data.get(Calendar.MONTH) + 1 ;
 							
-							// Subtraindo a carga horaria depois que o cadastro acontece
-							cargaHoraria = cargaHoraria - aula.getCargaDiaria();
+							//formatado a variável Calendar para String
+							 if(data.get(Calendar.MONTH+1) < 10 && data.get(Calendar.DAY_OF_MONTH) < 10) {
+								 dataStr = data.get(Calendar.YEAR) + "-0" + mes + "-0" + data.get(Calendar.DAY_OF_MONTH);
+							 }else if(data.get(Calendar.DAY_OF_MONTH) < 10){
+								 dataStr = data.get(Calendar.YEAR) + "-" + mes + "-0" + data.get(Calendar.DAY_OF_MONTH);
+							 }else if(data.get(Calendar.MONTH+1) < 10){
+								 dataStr = data.get(Calendar.YEAR) + "-0" + mes + "-" + data.get(Calendar.DAY_OF_MONTH);
+							 }else {
+								 dataStr = data.get(Calendar.YEAR) + "-" + mes + "-" + data.get(Calendar.DAY_OF_MONTH);
+							 }
+							 //System.out.println(dataStr);
+
+							System.out.println(DiaNaorepository.buscaDNL(data));//aguarde
+							//System.out.println(feriadosRepository.buscaData(dataStr));//testado
+							
+							if(DiaNaorepository.buscaDNL(data).isEmpty() && feriadosRepository.buscaData(dataStr).isEmpty()){
+								
+								// criando a aula(trazendo ela)
+								Aula aula = new Aula();
+								
+								// setando os valores que precisam no cadastro de aula
+								aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
+								aula.setCodTurma(recebeAula.getCodTurma());
+								aula.setPeriodo(recebeAula.getPeriodo());
+								aula.setAmbiente(recebeAula.getAmbiente());
+								aula.setProfessor(recebeAula.getProfessor());
+								aula.setCargaDiaria(recebeAula.getCargaDiaria());
+								aula.setData(data);
+								
+								aulaRepository.save(aula);
+								
+								// Subtraindo a carga horaria depois que o cadastro acontece
+								cargaHoraria = cargaHoraria - aula.getCargaDiaria();
+							}
+							
 						}
 						
 						

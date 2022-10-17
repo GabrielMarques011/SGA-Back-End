@@ -25,10 +25,6 @@ public class DiaNaoLetivo {
 	private Calendar dataInicio;
 	
 	@NotNull
-	@JsonFormat(pattern = "dd/MM/yyyy")
-	private Calendar dataFinal;
-	
-	@NotNull
 	private String nome;
 	
 	private TipoDeDia tipoDeDia;
