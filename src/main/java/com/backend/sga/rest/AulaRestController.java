@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -87,7 +89,8 @@ public class AulaRestController {
 			while (cargaHoraria > 0) {
 				
 						//criando variavel para que sete os valores da dataInicio
-						Calendar data = Calendar.getInstance();
+						//!necessario (TimeZone.getTimeZone("GMT-00:00"))
+						Calendar data = Calendar.getInstance(TimeZone.getTimeZone("GMT-00:00"));
 						data.setTime(dataInicio.getTime());
 						
 						//! necessario
@@ -113,14 +116,6 @@ public class AulaRestController {
 							 }else {
 								 dataStr = data.get(Calendar.YEAR) + "-" + mes + "-" + data.get(Calendar.DAY_OF_MONTH);
 							 }
-							 //System.out.println(dataStr);
-							 
-							 Calendar cad = Calendar.getInstance();
-
-							 
-							System.out.println("cad"+cad);
-							System.out.println("..................."+diaNaorepository.buscaDNL(data));//aguarde
-							//System.out.println(feriadosRepository.buscaData(dataStr));//testado
 							
 							if(feriadosRepository.buscaData(dataStr).isEmpty()){
 								

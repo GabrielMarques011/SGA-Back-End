@@ -7,6 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -31,6 +33,7 @@ public class Aula {
 	private double cargaDiaria;
 	
 	@NotNull
+	@Temporal(TemporalType.DATE)
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private Calendar data;
 	
