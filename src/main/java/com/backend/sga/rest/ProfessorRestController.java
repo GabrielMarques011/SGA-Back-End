@@ -1,5 +1,6 @@
 package com.backend.sga.rest;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,8 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.sga.model.Competencia;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Professor;
-import com.backend.sga.model.RecebeProfComp;
 import com.backend.sga.model.Sucesso;
+import com.backend.sga.model.UnidadeCurricular;
+import com.backend.sga.repository.CompetenciaRepository;
 import com.backend.sga.repository.ProfessorRepository;
 
 //CrossOrigin serve para que o projeto receba JSON
@@ -31,6 +33,9 @@ public class ProfessorRestController {
 	@Autowired
 	private ProfessorRepository professorRepository;
 	
+	@Autowired
+	private CompetenciaRepository competenciaRepository;
+	
 	
 	//metodo para criar o professor
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -40,16 +45,19 @@ public class ProfessorRestController {
 			//prof.setAtivo(true);
 			//salvando professor no banco de dados
 			professorRepository.save(prof);
-			Competencia c = new Competencia();
-			prof.getCompetencia().forEach((Competencia t)->{
-				System.out.println(t);
-				c.setUnidadeCurricular(t.getUnidadeCurricular());
-				c.setNivel(t.getNivel());
-				c.setProfessor(prof);
-				
-				//int i = (int) t.getId();
-				//prof.getCompetencia().set(i, c);
-			});
+			
+			List<Competencia> un = prof.getCompetencia();
+			
+			for(int i = 0; i < un.size(); i++) {
+				Competencia competencia = new Competencia();
+				//setando os valores da unidade para competencia
+				competencia.setUnidadeCurricular(un.get(i).getUnidadeCurricular());
+				//setando o nivel
+				competencia.setNivel(un.get(i).getNivel());
+				//trazendo os atributos dos professore
+				competencia.setProfessor(prof);
+				competenciaRepository.save(competencia);
+			}
 			
 			professorRepository.save(prof);
 			

@@ -32,4 +32,6 @@ public class Ambiente {
 	
 	private boolean ativo;
 	
+	private String endereco;
+	
 }

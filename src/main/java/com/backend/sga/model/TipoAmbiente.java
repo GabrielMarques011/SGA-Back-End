@@ -2,6 +2,6 @@ package com.backend.sga.model;
 
 public enum TipoAmbiente {
 
-	UNIDADE_MOVEL, PRESENCIAL, EAD, ENTIDADE, EMPRESA;
+	UNIDADE_MOVEL, PRESENCIAL, REMOTO, ENTIDADE, EMPRESA;
 	
 }
