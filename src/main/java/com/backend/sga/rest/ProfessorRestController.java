@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.sga.model.Competencia;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Professor;
+import com.backend.sga.model.RecebeProfComp;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.repository.ProfessorRepository;
 
@@ -38,6 +40,19 @@ public class ProfessorRestController {
 			//prof.setAtivo(true);
 			//salvando professor no banco de dados
 			professorRepository.save(prof);
+			Competencia c = new Competencia();
+			prof.getCompetencia().forEach((Competencia t)->{
+				System.out.println(t);
+				c.setUnidadeCurricular(t.getUnidadeCurricular());
+				c.setNivel(t.getNivel());
+				c.setProfessor(prof);
+				
+				//int i = (int) t.getId();
+				//prof.getCompetencia().set(i, c);
+			});
+			
+			professorRepository.save(prof);
+			
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			
 			//criando um vetor para que armazene dois dados para retornar no ResponseEntity
