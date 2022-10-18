@@ -48,7 +48,7 @@ public class AulaRestController {
 	private ProfessorRepository professorRepository;
 	
 	@Autowired
-	private DiaNaoLetivoRepository DiaNaorepository;
+	private DiaNaoLetivoRepository diaNaorepository;
 	
 	@Autowired
 	private FeriadosNacionaisRepository feriadosRepository;
@@ -71,8 +71,13 @@ public class AulaRestController {
 
 		// recebeAula.verificarDiasSemana(dia);
 		/*System.out.println(recebeAula.verificarDiasSemana(dia));
+		 * 
 		
 		System.out.println(dataInicio);*/
+		
+		
+		
+		
 
 		// verificando se é vazio
 		if (listaAula.isEmpty()) {
@@ -88,10 +93,12 @@ public class AulaRestController {
 						//! necessario
 						data.add(Calendar.DAY_OF_MONTH, 1);
 						
-						int diaSemana = data.get(Calendar.DAY_OF_WEEK);					
+						int diaSemana = data.get(Calendar.DAY_OF_WEEK);	
+						
 						
 						if(dia[diaSemana - 1] == true) {
 							
+							System.out.println(diaNaorepository.buscaDNL(data));
 							String dataStr;
 							int mes;
 							mes = data.get(Calendar.MONTH) + 1 ;
@@ -107,28 +114,37 @@ public class AulaRestController {
 								 dataStr = data.get(Calendar.YEAR) + "-" + mes + "-" + data.get(Calendar.DAY_OF_MONTH);
 							 }
 							 //System.out.println(dataStr);
+							 
+							 Calendar cad = Calendar.getInstance();
 
-							System.out.println(DiaNaorepository.buscaDNL(data));//aguarde
+							 
+							System.out.println("cad"+cad);
+							System.out.println("..................."+diaNaorepository.buscaDNL(data));//aguarde
 							//System.out.println(feriadosRepository.buscaData(dataStr));//testado
 							
-							if(DiaNaorepository.buscaDNL(data).isEmpty() && feriadosRepository.buscaData(dataStr).isEmpty()){
+							if(feriadosRepository.buscaData(dataStr).isEmpty()){
 								
-								// criando a aula(trazendo ela)
-								Aula aula = new Aula();
+								if (diaNaorepository.buscaDNL(data).isEmpty()) {
 								
-								// setando os valores que precisam no cadastro de aula
-								aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
-								aula.setCodTurma(recebeAula.getCodTurma());
-								aula.setPeriodo(recebeAula.getPeriodo());
-								aula.setAmbiente(recebeAula.getAmbiente());
-								aula.setProfessor(recebeAula.getProfessor());
-								aula.setCargaDiaria(recebeAula.getCargaDiaria());
-								aula.setData(data);
+									// criando a aula(trazendo ela)
+									Aula aula = new Aula();
+									
+									// setando os valores que precisam no cadastro de aula
+									aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
+									aula.setCodTurma(recebeAula.getCodTurma());
+									aula.setPeriodo(recebeAula.getPeriodo());
+									aula.setAmbiente(recebeAula.getAmbiente());
+									aula.setProfessor(recebeAula.getProfessor());
+									aula.setCargaDiaria(recebeAula.getCargaDiaria());
+									aula.setData(data);
+									
+									aulaRepository.save(aula);
+									
+									// Subtraindo a carga horaria depois que o cadastro acontece
+									cargaHoraria = cargaHoraria - aula.getCargaDiaria();
+									
+								}
 								
-								aulaRepository.save(aula);
-								
-								// Subtraindo a carga horaria depois que o cadastro acontece
-								cargaHoraria = cargaHoraria - aula.getCargaDiaria();
 							}
 							
 						}
