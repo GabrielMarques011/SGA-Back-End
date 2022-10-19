@@ -70,8 +70,6 @@ public class AulaRestController {
 
 		Calendar dataInicio = recebeAula.getDataInicio();
 
-		System.out.println(dataInicio.get(Calendar.DAY_OF_WEEK));
-
 		double cargaHoraria = recebeAula.getUnidadeCurricular().getHoras();
 
 		// retornando uma listagem de aula
@@ -189,7 +187,76 @@ public class AulaRestController {
 		}
 	}
 	
-	public ResponseEntity<Object> attAulas(@PathVariable("codTurma") String codTurma, @RequestBody Aula aula){
+	@RequestMapping(value = "/turma/{codTurma}", method = RequestMethod.PUT)
+	public ResponseEntity<Object> attAulas(@PathVariable("codTurma") String codTurma, @RequestBody RecebeAula recebeAula){
+		List<Aula> aulasCod = aulaRepository.buscaCodTurma(codTurma);
+		
+		for(int i = 0; i < aulasCod.size(); i++) {
+			aulasCod.get(i).setAmbiente(recebeAula.getAmbiente());
+			aulasCod.get(i).setProfessor(recebeAula.getProfessor());
+			
+			if(aulasCod.get(0).getData() != recebeAula.getDataInicio()) {
+				boolean dia[] = recebeAula.getDiaSemana();
+				Calendar dataInicio = recebeAula.getDataInicio();
+				double cargaHoraria = recebeAula.getUnidadeCurricular().getHoras();
+				
+				while (cargaHoraria > 0) {
+
+					// criando variavel para que sete os valores da dataInicio
+					// !necessario (TimeZone.getTimeZone("GMT-00:00"))
+					Calendar data = Calendar.getInstance(TimeZone.getTimeZone("GMT-00:00"));
+					data.setTime(dataInicio.getTime());
+
+					// ! necessario
+					int diaSemana = data.get(Calendar.DAY_OF_WEEK);
+
+					if (dia[diaSemana - 1] == true) {
+
+						String dataStr;
+						int mes;
+						mes = data.get(Calendar.MONTH) + 1;
+
+						// formatado a variável Calendar para String
+						if (data.get(Calendar.MONTH + 1) < 10 && data.get(Calendar.DAY_OF_MONTH) < 10) {
+							dataStr = data.get(Calendar.YEAR) + "-0" + mes + "-0" + data.get(Calendar.DAY_OF_MONTH);
+						} else if (data.get(Calendar.DAY_OF_MONTH) < 10) {
+							dataStr = data.get(Calendar.YEAR) + "-" + mes + "-0" + data.get(Calendar.DAY_OF_MONTH);
+						} else if (data.get(Calendar.MONTH + 1) < 10) {
+							dataStr = data.get(Calendar.YEAR) + "-0" + mes + "-" + data.get(Calendar.DAY_OF_MONTH);
+						} else {
+							dataStr = data.get(Calendar.YEAR) + "-" + mes + "-" + data.get(Calendar.DAY_OF_MONTH);
+						}
+
+						if (feriadosRepository.buscaData(dataStr).isEmpty()) {
+
+							if (diaNaorepository.buscaDNL(data).isEmpty()) {
+
+								List<Aula> auladata = aulaRepository.diaAula(data, recebeAula.getPeriodo(),
+										recebeAula.getAmbiente());
+
+								if (auladata.isEmpty() || auladata.get(0).getCodTurma() == aulasCod.get(0).getCodTurma()) {
+
+									// setando os valores que precisam no cadastro de aula
+									aulasCod.get(i).setData(data);
+
+									aulaRepository.save(aulasCod.get(i));
+
+									// Subtraindo a carga horaria depois que o cadastro acontece
+									cargaHoraria = cargaHoraria - aulasCod.get(i).getCargaDiaria();
+
+								}
+
+							}
+
+						}
+
+					}
+
+					// Pulando de 1 dia em 1 dia...
+					dataInicio.add(Calendar.DAY_OF_MONTH, 1);
+				}
+			}
+		}
 		return null;
 	}
 

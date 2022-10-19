@@ -33,5 +33,6 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	@Query("SELECT a from Aula a where a.periodo = :periodo and a.data = :data")
 	public Iterable<Aula> retornaPeriodo (@Param("periodo") Periodo periodo, @Param("data") Calendar data);
 	
-	
+	@Query("SELECT a FROM Aula a WHERE a.codTurma = :codTurma")
+	public List<Aula> buscaCodTurma(@Param("codTurma") String codTurma);
 }
