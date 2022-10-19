@@ -195,14 +195,12 @@ public class AulaRestController {
 			aulasCod.get(i).setAmbiente(recebeAula.getAmbiente());
 			aulasCod.get(i).setProfessor(recebeAula.getProfessor());
 			
-			if(aulasCod.get(i).getId() receb) {
-				
-			}
+		
 			
 			aulaRepository.save(aulasCod.get(i));
 
-					// Pulando de 1 dia em 1 dia...
-					//dataInicio.add(Calendar.DAY_OF_MONTH, 1);
+			// Pulando de 1 dia em 1 dia...
+			//dataInicio.add(Calendar.DAY_OF_MONTH, 1);
 		}
 			
 		
