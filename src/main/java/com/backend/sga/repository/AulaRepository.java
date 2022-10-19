@@ -8,7 +8,9 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Aula;
+import com.backend.sga.model.Periodo;
 
 @Repository
 public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
@@ -22,5 +24,14 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	//SELECT * FROM sga.aula where sga.aula.data >= "2022-09-25"
 	@Query("SELECT a FROM Aula a WHERE a.data >= :data")
 	public List<Aula> diaSemanal(@Param("data") Calendar data);
+	
+	//SELECT * FROM sga.aula where sga.aula.data = "2022-10-26";
+	@Query("SELECT a FROM Aula a WHERE a.data = :data AND a.periodo = :periodo and ambiente = :ambiente")
+	public List<Aula> diaAula(@Param("data") Calendar data, @Param("periodo") Periodo periodo, @Param("ambiente") Ambiente ambiente);
+	
+	//SELECT * FROM sga.aula where sga.aula.periodo = 1 
+	@Query("SELECT a from Aula a where a.periodo = :periodo and a.data = :data")
+	public Iterable<Aula> retornaPeriodo (@Param("periodo") Periodo periodo, @Param("data") Calendar data);
+	
 	
 }

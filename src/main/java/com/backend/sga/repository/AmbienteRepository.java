@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.backend.sga.model.Ambiente;
+import com.backend.sga.model.Periodo;
 import com.backend.sga.model.TipoAmbiente;
 
 @Repository
@@ -31,5 +32,8 @@ public interface AmbienteRepository extends PagingAndSortingRepository<Ambiente,
 	//SELECT * FROM sga.ambiente WHERE sga.ambiente.tipo_ambiente = 2 AND sga.ambiente.capacidade BETWEEN 20 AND 30
 	@Query("SELECT a FROM Ambiente a WHERE a.tipoAmbiente = :tipo_ambiente AND a.capacidade BETWEEN :capacidadeMin AND :capacidadeMax")
 	public Iterable<Ambiente> retornaTipoCapacidade (@Param("tipo_ambiente") TipoAmbiente tipoAmbiente, @Param("capacidadeMin") int capacidadeMin, @Param("capacidadeMax") int capacidadeMax);
+	
+	
+	
 	
 }
