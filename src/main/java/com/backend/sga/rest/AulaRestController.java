@@ -195,68 +195,17 @@ public class AulaRestController {
 			aulasCod.get(i).setAmbiente(recebeAula.getAmbiente());
 			aulasCod.get(i).setProfessor(recebeAula.getProfessor());
 			
-			if(aulasCod.get(0).getData() != recebeAula.getDataInicio()) {
-				boolean dia[] = recebeAula.getDiaSemana();
-				Calendar dataInicio = recebeAula.getDataInicio();
-				double cargaHoraria = recebeAula.getUnidadeCurricular().getHoras();
+			if(aulasCod.get(i).getId() receb) {
 				
-				while (cargaHoraria > 0) {
-
-					// criando variavel para que sete os valores da dataInicio
-					// !necessario (TimeZone.getTimeZone("GMT-00:00"))
-					Calendar data = Calendar.getInstance(TimeZone.getTimeZone("GMT-00:00"));
-					data.setTime(dataInicio.getTime());
-
-					// ! necessario
-					int diaSemana = data.get(Calendar.DAY_OF_WEEK);
-
-					if (dia[diaSemana - 1] == true) {
-
-						String dataStr;
-						int mes;
-						mes = data.get(Calendar.MONTH) + 1;
-
-						// formatado a variável Calendar para String
-						if (data.get(Calendar.MONTH + 1) < 10 && data.get(Calendar.DAY_OF_MONTH) < 10) {
-							dataStr = data.get(Calendar.YEAR) + "-0" + mes + "-0" + data.get(Calendar.DAY_OF_MONTH);
-						} else if (data.get(Calendar.DAY_OF_MONTH) < 10) {
-							dataStr = data.get(Calendar.YEAR) + "-" + mes + "-0" + data.get(Calendar.DAY_OF_MONTH);
-						} else if (data.get(Calendar.MONTH + 1) < 10) {
-							dataStr = data.get(Calendar.YEAR) + "-0" + mes + "-" + data.get(Calendar.DAY_OF_MONTH);
-						} else {
-							dataStr = data.get(Calendar.YEAR) + "-" + mes + "-" + data.get(Calendar.DAY_OF_MONTH);
-						}
-
-						if (feriadosRepository.buscaData(dataStr).isEmpty()) {
-
-							if (diaNaorepository.buscaDNL(data).isEmpty()) {
-
-								List<Aula> auladata = aulaRepository.diaAula(data, recebeAula.getPeriodo(),
-										recebeAula.getAmbiente());
-
-								if (auladata.isEmpty() || auladata.get(0).getCodTurma() == aulasCod.get(0).getCodTurma()) {
-
-									// setando os valores que precisam no cadastro de aula
-									aulasCod.get(i).setData(data);
-
-									aulaRepository.save(aulasCod.get(i));
-
-									// Subtraindo a carga horaria depois que o cadastro acontece
-									cargaHoraria = cargaHoraria - aulasCod.get(i).getCargaDiaria();
-
-								}
-
-							}
-
-						}
-
-					}
+			}
+			
+			aulaRepository.save(aulasCod.get(i));
 
 					// Pulando de 1 dia em 1 dia...
-					dataInicio.add(Calendar.DAY_OF_MONTH, 1);
-				}
-			}
+					//dataInicio.add(Calendar.DAY_OF_MONTH, 1);
 		}
+			
+		
 		return null;
 	}
 
