@@ -115,27 +115,29 @@ public class AulaRestController {
 
 						if (diaNaorepository.buscaDNL(data).isEmpty()) {
 
-							List<Aula> auladata = aulaRepository.diaAula(data, recebeAula.getPeriodo(),
-									recebeAula.getAmbiente());
+							if(aulaRepository.buscaProf(recebeAula.getProfessor(), data, recebeAula.getPeriodo()).isEmpty()) {
+								List<Aula> auladata = aulaRepository.diaAula(data, recebeAula.getPeriodo(),
+										recebeAula.getAmbiente());
 
-							if (auladata.isEmpty()) {
-								// criando a aula(trazendo ela)
-								Aula aula = new Aula();
+								if (auladata.isEmpty()) {
+									// criando a aula(trazendo ela)
+									Aula aula = new Aula();
 
-								// setando os valores que precisam no cadastro de aula
-								aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
-								aula.setCodTurma(recebeAula.getCodTurma());
-								aula.setPeriodo(recebeAula.getPeriodo());
-								aula.setAmbiente(recebeAula.getAmbiente());
-								aula.setProfessor(recebeAula.getProfessor());
-								aula.setCargaDiaria(recebeAula.getCargaDiaria());
-								aula.setData(data);
+									// setando os valores que precisam no cadastro de aula
+									aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
+									aula.setCodTurma(recebeAula.getCodTurma());
+									aula.setPeriodo(recebeAula.getPeriodo());
+									aula.setAmbiente(recebeAula.getAmbiente());
+									aula.setProfessor(recebeAula.getProfessor());
+									aula.setCargaDiaria(recebeAula.getCargaDiaria());
+									aula.setData(data);
 
-								aulaRepository.save(aula);
+									aulaRepository.save(aula);
 
-								// Subtraindo a carga horaria depois que o cadastro acontece
-								cargaHoraria = cargaHoraria - aula.getCargaDiaria();
+									// Subtraindo a carga horaria depois que o cadastro acontece
+									cargaHoraria = cargaHoraria - aula.getCargaDiaria();
 
+								}
 							}
 
 						}

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Aula;
 import com.backend.sga.model.Periodo;
+import com.backend.sga.model.Professor;
 
 @Repository
 public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
@@ -39,4 +40,7 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	//SELECT * FROM sga.aula AS a WHERE a.cod_turma = "02" AND a.data >= "2022-10-31" AND a.data <= "2022-11-09";
 	@Query("SELECT a FROM Aula a WHERE a.codTurma = :cod_turma AND a.data >= :dataInicio AND a.data <= :dataFinal")
 	public List<Aula> buscaDatasECod (@Param("cod_turma") String cod_turma, @Param("dataInicio") Calendar dataInicio,@Param("dataFinal") Calendar dataFinal);
+	
+	@Query("SELECT a FROM Aula a WHERE a.professor = :prof AND a.data = :data AND periodo = :periodo")
+	public List<Aula> buscaProf (@Param("prof") Professor prof, @Param("data") Calendar data, @Param("periodo") Periodo perido);
 }
