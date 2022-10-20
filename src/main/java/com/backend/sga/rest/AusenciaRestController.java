@@ -1,5 +1,8 @@
 package com.backend.sga.rest;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,8 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Ausencia;
 import com.backend.sga.model.Erro;
+import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Professor;
 import com.backend.sga.model.Sucesso;
+import com.backend.sga.repository.AulaRepository;
 import com.backend.sga.repository.AusenciaRepository;
 
 //CrossOrigin serve para que o projeto receba JSON
@@ -31,6 +36,9 @@ public class AusenciaRestController {
 
 	@Autowired
 	private AusenciaRepository ausenciaRepository;
+	
+	@Autowired
+	private AulaRepository aulaRepository;
 	
 	//método para cadastrar uma ausencia
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -90,11 +98,31 @@ public class AusenciaRestController {
 	public Object[] buscarAusenciaProfessor(@PathVariable("id") Long id) {
 		List<Ausencia> ausencias = ausenciaRepository.findByProfessorId(id);
 		Professor professor = ausencias.get(0).getProfessor();
+		int hora = LocalTime.now().getHour();
+		Calendar data = Calendar.getInstance();
+		Periodo periodo = null;
+		boolean emAula;
 		
-		Object result[] = new Object[2];
+		if(hora < 12) {
+			periodo = Periodo.MANHA;
+		}else if(hora > 12 && hora < 18) {
+			periodo = Periodo.TARDE;
+		}else if(hora >= 18) {
+			periodo = Periodo.NOITE;
+		}
+		
+		if(aulaRepository.buscaProf(professor, data, periodo).isEmpty()) {
+			emAula = false;
+		}else {
+			emAula = true;
+		}
+		
+		
+		Object result[] = new Object[3];
 		
 		result[0] = professor;
 		result[1] = ausencias;
+		result[2] = emAula;
 		
 		return result;
 	}

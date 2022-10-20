@@ -19,7 +19,7 @@ public interface CursoRepository extends PagingAndSortingRepository<Curso, Long>
 
 	
 	//SELECT * FROM sga.curso WHERE sga.curso.nome LIKE '%Ele%'
-	@Query("SELECT c FROM Curso c WHERE c.nome LIKE %:nome% OR c.")
+	@Query("SELECT c FROM Curso c WHERE c.nome LIKE %:nome%")
 	public List<Curso> palavraChave(@Param("nome") String nome);
 	
 }
