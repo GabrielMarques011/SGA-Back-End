@@ -1,10 +1,8 @@
 package com.backend.sga.rest;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Ausencia;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Periodo;
@@ -94,6 +91,7 @@ public class AusenciaRestController {
 		}
 	}
 	
+	//retorna apenas o prof, ausencia e se esta em aula
 	@RequestMapping(value = "/professor/{id}", method = RequestMethod.GET)
 	public Object[] buscarAusenciaProfessor(@PathVariable("id") Long id) {
 		List<Ausencia> ausencias = ausenciaRepository.findByProfessorId(id);

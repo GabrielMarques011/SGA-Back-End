@@ -1,5 +1,8 @@
 package com.backend.sga.rest;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,11 +19,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.sga.model.Ambiente;
+import com.backend.sga.model.Aula;
 import com.backend.sga.model.Competencia;
+import com.backend.sga.model.DevolveDisp;
 import com.backend.sga.model.Erro;
+import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Professor;
 import com.backend.sga.model.Sucesso;
-import com.backend.sga.model.UnidadeCurricular;
+import com.backend.sga.repository.AulaRepository;
 import com.backend.sga.repository.CompetenciaRepository;
 import com.backend.sga.repository.ProfessorRepository;
 
@@ -35,6 +42,9 @@ public class ProfessorRestController {
 	
 	@Autowired
 	private CompetenciaRepository competenciaRepository;
+	
+	@Autowired
+	private AulaRepository aulaRepository;
 	
 	
 	//metodo para criar o professor
@@ -118,5 +128,48 @@ public class ProfessorRestController {
 		//retorna o like da query que eles irão escrever
 		return professorRepository.palavraChave(nome);
 	}
+	
+	//retorna apenas o prof, ambiente e se esta em aula
+		@RequestMapping(value = "/professorDisp/", method = RequestMethod.GET)
+		public ArrayList<DevolveDisp> buscarDisponibilidadeProfessor() {
+			List<Professor> listaProf = (List<Professor>) professorRepository.findAll();
+			int hora = LocalTime.now().getHour();
+			Calendar data = Calendar.getInstance();
+			Ambiente ambiente = null;
+			Periodo periodo = null;
+			boolean emAula;
+			
+			if(hora < 12) {
+				periodo = Periodo.MANHA;
+			}else if(hora > 12 && hora < 18) {
+				periodo = Periodo.TARDE;
+			}else if(hora >= 18) {
+				periodo = Periodo.NOITE;
+			}
+			
+			ArrayList<DevolveDisp> listaDisp = new ArrayList<DevolveDisp>();
+			
+			for(int i = 0; i < listaProf.size(); i++) {
+				
+				DevolveDisp devolveDisp = new DevolveDisp();
+				
+				devolveDisp.setProfessor(listaProf.get(i));
+				
+				List<Aula> listaAula = aulaRepository.buscaProf(listaProf.get(i), data, periodo);
+				
+				if(listaAula.isEmpty()) {
+					devolveDisp.setEmAula(false);
+					devolveDisp.setAmbiente(null);
+				}else {
+					devolveDisp.setEmAula(true);
+					devolveDisp.setAmbiente(listaAula.get(i).getAmbiente());
+				}
+				
+				listaDisp.add(devolveDisp);
+				
+			}
+			
+			return listaDisp;
+		}
 	
 }

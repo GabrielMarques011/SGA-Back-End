@@ -22,15 +22,13 @@ public class AppConfig implements WebMvcConfigurer  {
     
     // ESTRUTURA DO BANCO, dataSource e jpaVendorAdapter, se for migrar para outro bd esse dois método já cria a estrutura, claro que mudando os parametros passados
 
- 
-
             // COMO SE FOSSE UM ONJ INSTÂNCIADO, FAZ COK QUE A APLICAÇÃO INSTANCIE O DATASOURCE
             @Bean
             public DataSource dataSource() {
                 
                 DriverManagerDataSource drivManargerDataSource = new DriverManagerDataSource();
                 drivManargerDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");// DRIVER DE CONEXÃO COM O BD
-                drivManargerDataSource.setUrl("jdbc:mysql://localhost:3306/sga");
+                drivManargerDataSource.setUrl("jdbc:mysql://localhost:3307/sga");
                 drivManargerDataSource.setUsername("root");
                 drivManargerDataSource.setPassword("root");	
                 

@@ -106,20 +106,6 @@ public class AmbienteRestController {
 	public ArrayList<Long> buscarAmbientesDisponiveis(@RequestParam("unidade_id") Long id, @RequestParam("data") String data, @RequestParam("periodo") Periodo periodo){
 		List<Aula> aulas = aulaRepository.findByAmbientesId(id); // buscando as listas de aulas de acordo com a unidade curricular
 		
-		
-		/***
-		 * 
-		 * select ambientes from aulas where dataInicial > data and periodo = periodo
-		 * se trazer significa que ta em aula
-		 * 
-		 * findAllAmbientes []
-		 * 
-		 * 
-		 * retorna array [99999]
-		 * 
-		 * 
-		 */
-		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // formatador de data
 		
 		Calendar data1 = Calendar.getInstance(); // variável para guardar a data_inicio 

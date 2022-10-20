@@ -1,21 +1,12 @@
 package com.backend.sga.rest;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.bouncycastle.asn1.dvcs.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Aula;
-import com.backend.sga.model.DiaNaoLetivo;
 import com.backend.sga.model.Erro;
-import com.backend.sga.model.FeriadosNacionais;
-import com.backend.sga.model.Periodo;
 import com.backend.sga.model.RecebeAula;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.repository.AmbienteRepository;
