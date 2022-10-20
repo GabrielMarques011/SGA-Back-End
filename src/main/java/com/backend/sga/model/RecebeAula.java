@@ -19,6 +19,8 @@ public class RecebeAula {
 	
 	private Calendar dataInicio;
 	
+	private Calendar dataFinal;
+	
 	private boolean diaSemana[];
 
 	private Ambiente ambiente;

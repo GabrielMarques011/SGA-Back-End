@@ -189,22 +189,29 @@ public class AulaRestController {
 	
 	@RequestMapping(value = "/turma/{codTurma}", method = RequestMethod.PUT)
 	public ResponseEntity<Object> attAulas(@PathVariable("codTurma") String codTurma, @RequestBody RecebeAula recebeAula){
-		List<Aula> aulasCod = aulaRepository.buscaCodTurma(codTurma);
 		
-		for(int i = 0; i < aulasCod.size(); i++) {
-			aulasCod.get(i).setAmbiente(recebeAula.getAmbiente());
-			aulasCod.get(i).setProfessor(recebeAula.getProfessor());
-			
+		List<Aula> codData = aulaRepository.buscaDatasECod(codTurma, recebeAula.getDataInicio(), recebeAula.getDataFinal());
 		
+		if (!codData.isEmpty()) {
 			
-			aulaRepository.save(aulasCod.get(i));
-
-			// Pulando de 1 dia em 1 dia...
-			//dataInicio.add(Calendar.DAY_OF_MONTH, 1);
+			for(int i = 0; i < codData.size(); i++) {
+				
+				//setando novos valores
+				codData.get(i).setProfessor(recebeAula.getProfessor());
+				codData.get(i).setAmbiente(recebeAula.getAmbiente());
+				
+				aulaRepository.save(codData.get(i));
+				
+			}
+			
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+			
 		}
-			
 		
-		return null;
+		Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ERRO ARROMBADO, VERIFICA ESSA PORRA", null);
+		return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+	
 	}
 
 }
