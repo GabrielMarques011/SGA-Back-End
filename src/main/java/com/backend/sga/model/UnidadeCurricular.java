@@ -29,7 +29,6 @@ public class UnidadeCurricular {
 	@OneToOne
 	private Curso curso;
 	
-	//tratar com o grupo oq seria no @annotation
 	@NotNull
 	private double horas;
 	

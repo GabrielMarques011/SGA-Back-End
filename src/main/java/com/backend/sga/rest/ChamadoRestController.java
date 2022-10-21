@@ -1,6 +1,5 @@
 package com.backend.sga.rest;
 
-import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,69 +25,61 @@ import com.backend.sga.repository.ChamadoRepository;
 @CrossOrigin
 @RequestMapping("/api/chamado")
 public class ChamadoRestController {
-	
+
 	@Autowired
 	private ChamadoRepository repository;
-	
-	// método que cria uma novo chamado
+
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> criarChamado (@RequestBody Chamado chamado, HttpServletRequest request){
-		if(chamado != null) {  // verifica se o chamado não é nulo
-			repository.save(chamado); // salva o chamado no banco de dados
-			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso"); // molda a mensagem de sucesso
-			
-			//criando um vetor para que armazene dois dados para retornar no ResponseEntity
+	public ResponseEntity<Object> criarChamado(@RequestBody Chamado chamado, HttpServletRequest request) {
+		if (chamado != null) {
+			repository.save(chamado);
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+
 			Object[] filtro = new Object[2];
 			filtro[0] = sucesso;
 			filtro[1] = chamado.getId();
-			
-			//setando o o filtro junto com o 'Status OK'
+
 			ResponseEntity<Object> okpost = new ResponseEntity<Object>(filtro, HttpStatus.OK);
-			
-			return okpost; //retorna a mensagem de sucesso
-		}else {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível criar um chamado", null); // molda a mensagem de erro
-			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR); // retorna a mensagem de erro
+			return okpost;
+		} else {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível criar um chamado", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	// método que busca todos os chamados
+
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public Iterable<Chamado> buscaChamados(){ 
-		return repository.findAll(); // retorna a lista de todos os chamados
+	public Iterable<Chamado> buscaChamados() {
+		return repository.findAll();
 	}
-	
-	// método que deleta o chamado pelo id
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Object> deletarChamado (@PathVariable("id") Long id, HttpServletRequest request){
+	public ResponseEntity<Object> deletarChamado(@PathVariable("id") Long id, HttpServletRequest request) {
 		Optional<Chamado> del = repository.findById(id);
-		if(del.get().getId() == id) { // verifica se o id indicado é igual ao id do chamado
-			repository.delete(del.get()); // deleta o chamado do banco de dados
-			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso"); // molda a mensagem de sucesso
-			return new ResponseEntity<Object>(sucesso, HttpStatus.OK); // retorna a mensagem de sucesso
-		}else {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível deletar o chamado", null); // molda a mensagem de erro
-			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR); // retorna a mensagem de erro
+		if (del.get().getId() == id) {
+			repository.delete(del.get());
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+		} else {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível deletar o chamado", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	// método para alterar o chamado
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> alterarChamado(@PathVariable("id") Long id, @RequestBody Chamado chamado, HttpServletRequest request){
-		if(id != chamado.getId()) { // verifica se o id passado é diferente do id do chamado
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null); // molda a mensagem de erro
-			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR); // retorna a mensagem de erro
-		}else {
-			repository.save(chamado); // salva o chamado no banco de dados
-			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso"); // molda a mensagem de sucesso
-			return new ResponseEntity<Object>(sucesso, HttpStatus.OK); // retorna a mensagem de sucesso
+	public ResponseEntity<Object> alterarChamado(@PathVariable("id") Long id, @RequestBody Chamado chamado,
+			HttpServletRequest request) {
+		if (id != chamado.getId()) {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		} else {
+			repository.save(chamado);
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/tipochamado")
-	public tipoChamado[] entregaChamado(){
+	public tipoChamado[] entregaChamado() {
 		return tipoChamado.values();
 	}
-	
 }

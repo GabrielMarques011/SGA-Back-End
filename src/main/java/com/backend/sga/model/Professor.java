@@ -26,7 +26,7 @@ public class Professor {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;//aplicar nif
+	private Long id;
 	
 	@NotNull
 	private String nome;
@@ -40,7 +40,6 @@ public class Professor {
 	private int cargaSemanal;
 	
 	private Boolean ativo;
-	
 	
 	//evitar de criar uma tabela associativa
 	@OneToMany(mappedBy = "professor")

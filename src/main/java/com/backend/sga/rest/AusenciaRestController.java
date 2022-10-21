@@ -25,7 +25,6 @@ import com.backend.sga.model.Sucesso;
 import com.backend.sga.repository.AulaRepository;
 import com.backend.sga.repository.AusenciaRepository;
 
-//CrossOrigin serve para que o projeto receba JSON
 @CrossOrigin
 @RestController
 @RequestMapping("/api/ausencia")
@@ -33,65 +32,60 @@ public class AusenciaRestController {
 
 	@Autowired
 	private AusenciaRepository ausenciaRepository;
-	
+
 	@Autowired
 	private AulaRepository aulaRepository;
-	
-	//método para cadastrar uma ausencia
+
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> criarAusencia(@RequestBody Ausencia ausencia, HttpServletRequest request){
-		if(ausencia != null) { // verificando se a ausencia não é nula
-			ausenciaRepository.save(ausencia); // salvando a ausência no banco de dados
-			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso"); // moldando a mensagem de sucesso
-			
-			//criando um vetor para que armazene dois dados para retornar no ResponseEntity
+	public ResponseEntity<Object> criarAusencia(@RequestBody Ausencia ausencia, HttpServletRequest request) {
+		if (ausencia != null) {
+			ausenciaRepository.save(ausencia);
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+
 			Object[] filtro = new Object[2];
 			filtro[0] = sucesso;
 			filtro[1] = ausencia.getId();
-			
-			//setando o o filtro junto com o 'Status OK'
+
 			ResponseEntity<Object> okpost = new ResponseEntity<Object>(filtro, HttpStatus.OK);
-			
-			return okpost; // retornando a mensagem de sucesso
-		}else {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível cadstrar a ausência", null); // moldando a mensagem de erro
-			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR); // retornando a mensagem de erro
+			return okpost;
+		} else {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível cadstrar a ausência", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	// método que deleta a usencia pelo ID
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Object> deletarAusencia(@PathVariable("id") Long id, Ausencia ausencia, HttpServletRequest request){
-		if(ausencia.getId() == id) { // verifica se o id da ausencia é igual ao id selecionado
-			ausenciaRepository.deleteById(id); // deleta a ausencia do banco de dados
-			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso"); // moldando a mensagem de sucesso
-			return new ResponseEntity<Object>(sucesso, HttpStatus.OK); // retornando a mesnagem de sucesso
-		}else {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível deletar a ausência", null); // moldando a mensagem de erro
-			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR); // retornando a mensagem de erro
+	public ResponseEntity<Object> deletarAusencia(@PathVariable("id") Long id, Ausencia ausencia,
+			HttpServletRequest request) {
+		if (ausencia.getId() == id) {
+			ausenciaRepository.deleteById(id);
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+		} else {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível deletar a ausência", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	// método que lista as aus~encias
+
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public Iterable<Ausencia> listarAusencias(){
-		return ausenciaRepository.findAll(); // retorna todos os itenas do banco de dados
+	public Iterable<Ausencia> listarAusencias() {
+		return ausenciaRepository.findAll();
 	}
-	
-	//metodo para alterar
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> atualizarAusencia(@PathVariable("id") Long id, @RequestBody Ausencia ausencia, HttpServletRequest request){
+	public ResponseEntity<Object> atualizarAusencia(@PathVariable("id") Long id, @RequestBody Ausencia ausencia,
+			HttpServletRequest request) {
 		if (ausencia.getId() != id) {
 			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID invalido!", null);
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-		}else {
+		} else {
 			ausenciaRepository.save(ausencia);
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
 	}
-	
-	//retorna apenas o prof, ausencia e se esta em aula
+
+	// retorna apenas o prof, ausencia e se esta em aula
 	@RequestMapping(value = "/professor/{id}", method = RequestMethod.GET)
 	public Object[] buscarAusenciaProfessor(@PathVariable("id") Long id) {
 		List<Ausencia> ausencias = ausenciaRepository.findByProfessorId(id);
@@ -100,29 +94,27 @@ public class AusenciaRestController {
 		Calendar data = Calendar.getInstance();
 		Periodo periodo = null;
 		boolean emAula;
-		
-		if(hora < 12) {
+
+		if (hora < 12) {
 			periodo = Periodo.MANHA;
-		}else if(hora > 12 && hora < 18) {
+		} else if (hora > 12 && hora < 18) {
 			periodo = Periodo.TARDE;
-		}else if(hora >= 18) {
+		} else if (hora >= 18) {
 			periodo = Periodo.NOITE;
 		}
-		
-		if(aulaRepository.buscaProf(professor, data, periodo).isEmpty()) {
+
+		if (aulaRepository.buscaProf(professor, data, periodo).isEmpty()) {
 			emAula = false;
-		}else {
+		} else {
 			emAula = true;
 		}
-		
-		
+
 		Object result[] = new Object[3];
-		
 		result[0] = professor;
 		result[1] = ausencias;
 		result[2] = emAula;
-		
+
 		return result;
 	}
-	
+
 }

@@ -28,14 +28,13 @@ public class Usuario {
 	private String email;//fazer a criptografia
 	
 	@NotNull
-	private String senha;//Ja fizemos a criptografia da senha
+	private String senha;
 	
 	@NotNull
 	private String nif;
 	
 	private TipoUsuario tipoUsuario;
 	
-	//utilizando para setar o usuario como ativo ou inativo
 	private Boolean ativo;
 	
 }

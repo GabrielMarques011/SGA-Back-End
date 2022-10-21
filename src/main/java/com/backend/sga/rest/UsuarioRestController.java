@@ -28,8 +28,6 @@ import com.backend.sga.model.TokenJWT;
 import com.backend.sga.model.Usuario;
 import com.backend.sga.repository.UsuarioRepository;
 
-
-//CrossOrigin serve para que o projeto receba JSON
 @CrossOrigin
 @RestController
 @RequestMapping("/api/usuario")
@@ -65,7 +63,7 @@ public class UsuarioRestController {
 
 			Object[] filtro = new Object[2];
 			filtro[0] = sucesso;
-			filtro[1] = user;//ajeitando o metodo depois que apliquei o id na model
+			filtro[1] = user;// ajeitando o metodo depois que apliquei o id na model
 
 			// setando o o filtro junto com o 'Status OK'
 			ResponseEntity<Object> okpost = new ResponseEntity<Object>(filtro, HttpStatus.OK);
@@ -77,36 +75,21 @@ public class UsuarioRestController {
 		}
 	}
 
-	/*@RequestMapping(value = "/desativar/{nif}", method = RequestMethod.PUT)
-	public ResponseEntity<Object> desativarUsuario(@PathVariable("nif") String nif, Usuario user,
-			HttpServletRequest request) {
-
-		// buscando ele pelo id para alterar
-		user = usuarioRepository.findById(nif).get();
-		// setando ela como inativo
-		user.setAtivo(false);
-		// salvando no banco como inativo
-		usuarioRepository.save(user);
-
-		Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
-		return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
-	}*/
-	
 	@RequestMapping(value = "/desativar/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Object> desativaUser(@PathVariable("id") Long id, HttpServletRequest request){
-		
+	public ResponseEntity<Object> desativaUser(@PathVariable("id") Long id, HttpServletRequest request) {
+
 		Optional<Usuario> inativar = usuarioRepository.findById(id);// setando o Ativo como false, para estar desativado
-		
+
 		if (inativar.get().getId() == id) {
 			inativar.get().setAtivo(false);
 			usuarioRepository.save(inativar.get());
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
-		}else {
+		} else {
 			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel desativar usuario", null);
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+
 	}
 
 	// Buscando todos os dados no banco
@@ -115,65 +98,28 @@ public class UsuarioRestController {
 		return usuarioRepository.findAll();
 	}
 
-	// metodo para alterar
-	/*@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> atualizarUser(@PathVariable("id") Long id, @RequestBody Usuario user,
 			HttpServletRequest request) {
-
-		Optional<Usuario> nifuser = usuarioRepository.findById(nif);
-
-		// String nifuser = user;
-
-		if (nifuser == null) {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "NIF inválido", null);
-			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-		} else {
-
-			// vendo se o user é existente
-			usuarioRepository.findById(nif);
-
-			// pegando a senha e transformando em criptografia
-			String crip = this.encoder.encode(user.getSenha());
-
-			// mandando criptografada
-			user.setSenha(crip);
-
-			// if (nifuser.get().getNif() != user.getNif()) {
-				// nifuser.get().setNif(user.getNif());
-			// }
-			System.out.println(nif);
-			nifuser.get().setNif(user.getNif());
-			
-			usuarioRepository.save(nifuser.get());
-			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
-			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
-		}
-	}*/
-	
-	// metodo para alterar
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> atualizarUser(@PathVariable("id") Long id, @RequestBody Usuario user,HttpServletRequest request) {
 
 		if (user.getId() != id) {
 			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null);
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-		}else {
+		} else {
 			// vendo se o user é existente
 			usuarioRepository.findById(id);
-			
+
 			// pegando a senha e transformando em criptografia
 			String crip = this.encoder.encode(user.getSenha());
 
 			// mandando criptografada
 			user.setSenha(crip);
-			
+
 			usuarioRepository.save(user);
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
 	}
-	
-	
 
 	// metodo feito para validar quando criamos o login
 	// metodo feito para comparar se a senha bate com a do banco de dados
@@ -185,19 +131,6 @@ public class UsuarioRestController {
 		return valid;
 	}
 
-	/*
-	 * public ResponseEntity<Object> senhaValida(@RequestBody Usuario user,
-	 * HttpServletRequest request){ //trazendo valores do valid do 'validarSenha'
-	 * Boolean valid = validarSenha(user); //verificando se a senha foi digitada
-	 * corretamente if (!valid) { Erro erro = new
-	 * Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Login ou Senha incorreta", null);
-	 * return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR); }
-	 * //mensagem de OK, caso esteja tudo certo Sucesso sucesso = new
-	 * Sucesso(HttpStatus.OK, "Sucesso ao Logar"); return new
-	 * ResponseEntity<Object>(sucesso, HttpStatus.OK); }
-	 */
-
-	// metodo para login com tokien (teste)
 	@RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> login(@RequestBody Usuario usuario, HttpServletRequest request) {
 
@@ -247,7 +180,6 @@ public class UsuarioRestController {
 				return ResponseEntity.ok(tokenJwt);
 			}
 		}
-
 		return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 	}
 

@@ -27,7 +27,6 @@ import com.backend.sga.repository.DiaNaoLetivoRepository;
 import com.backend.sga.repository.FeriadosNacionaisRepository;
 import com.backend.sga.repository.ProfessorRepository;
 
-//CrossOrigin serve para que o projeto receba JSON
 @CrossOrigin
 @RestController
 @RequestMapping("/api/aula")
@@ -48,15 +47,11 @@ public class AulaRestController {
 	@Autowired
 	private AmbienteRepository ambRepository;
 
-	// AJEITAR O METODO DE SALVAR AS AULAS
-	// método para cadastrar uma aula
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarAula(@RequestBody RecebeAula recebeAula, HttpServletRequest request) {
 
 		boolean dia[] = recebeAula.getDiaSemana();
-
 		Calendar dataInicio = recebeAula.getDataInicio();
-
 		double cargaHoraria = recebeAula.getUnidadeCurricular().getHoras();
 
 		// retornando uma listagem de aula
@@ -74,10 +69,6 @@ public class AulaRestController {
 				// !necessario (TimeZone.getTimeZone("GMT-00:00"))
 				Calendar data = Calendar.getInstance(TimeZone.getTimeZone("GMT-00:00"));
 				data.setTime(dataInicio.getTime());
-
-				// ! necessario
-				// data.add(Calendar.DAY_OF_MONTH, 1);
-
 				int diaSemana = data.get(Calendar.DAY_OF_WEEK);
 
 				if (dia[diaSemana - 1] == true) {
@@ -102,7 +93,8 @@ public class AulaRestController {
 
 						if (diaNaorepository.buscaDNL(data).isEmpty()) {
 
-							if(aulaRepository.buscaProf(recebeAula.getProfessor(), data, recebeAula.getPeriodo()).isEmpty()) {
+							if (aulaRepository.buscaProf(recebeAula.getProfessor(), data, recebeAula.getPeriodo())
+									.isEmpty()) {
 								List<Aula> auladata = aulaRepository.diaAula(data, recebeAula.getPeriodo(),
 										recebeAula.getAmbiente());
 								System.out.println("passou aqui");
@@ -119,9 +111,9 @@ public class AulaRestController {
 									aula.setCargaDiaria(recebeAula.getCargaDiaria());
 									aula.setData(data);
 
-									try{
+									try {
 										aulaRepository.save(aula);
-									}catch(Exception e) {
+									} catch (Exception e) {
 										e.printStackTrace();
 										System.out.println(e);
 									}
@@ -131,43 +123,36 @@ public class AulaRestController {
 
 								}
 							}
-
 						}
-
 					}
-
 				}
-
 				// Pulando de 1 dia em 1 dia...
 				dataInicio.add(Calendar.DAY_OF_MONTH, 1);
 			}
 		}
-
-		Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso"); // moldando a mensagem de sucesso
-		return new ResponseEntity<Object>(sucesso, HttpStatus.OK); // retornando a mensagem de sucesso
+		Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+		return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 	}
 
-	// método que deleta a aula pelo ID
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> deletarAula(@RequestBody Aula aula, @PathVariable("id") Long id,
 			HttpServletRequest request) {
-		if (aula.getId() == id) { // verifica se o id da aula é igual o id selecionado
-			aulaRepository.deleteById(id); // deleta a aula do banco de dados
-			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso"); // moldando a mensagem de sucesso
-			return new ResponseEntity<Object>(sucesso, HttpStatus.OK); // retornando a mensagem de sucesso
+		if (aula.getId() == id) {
+			aulaRepository.deleteById(id);
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		} else {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível deletar a aula", null); // moldando																									// de																									// erro
-			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR); // retornando a mensagem de erro
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível deletar a aula", null); // de //
+																												// erro
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
-	// método que lista todas as aulas
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<Aula> listarAulas() {
-		return aulaRepository.findAll(); // retorna a lista de todos os comonentes do banco de dados
+		return aulaRepository.findAll();
 	}
 
-	// metodo para alterar
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> atualizarAula(@PathVariable("id") Long id, @RequestBody Aula aula,
 			HttpServletRequest request) {
@@ -180,32 +165,28 @@ public class AulaRestController {
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
 	}
-	
+
 	@RequestMapping(value = "/turma/{codTurma}", method = RequestMethod.PUT)
-	public ResponseEntity<Object> attAulas(@PathVariable("codTurma") String codTurma, @RequestBody RecebeAula recebeAula){
-		
-		List<Aula> codData = aulaRepository.buscaDatasECod(codTurma, recebeAula.getDataInicio(), recebeAula.getDataFinal());
-		
+	public ResponseEntity<Object> attAulas(@PathVariable("codTurma") String codTurma,
+			@RequestBody RecebeAula recebeAula) {
+
+		List<Aula> codData = aulaRepository.buscaDatasECod(codTurma, recebeAula.getDataInicio(),
+				recebeAula.getDataFinal());
+
 		if (!codData.isEmpty()) {
-			
-			for(int i = 0; i < codData.size(); i++) {
-				
-				//setando novos valores
+
+			for (int i = 0; i < codData.size(); i++) {
+				// setando novos valores
 				codData.get(i).setProfessor(recebeAula.getProfessor());
 				codData.get(i).setAmbiente(recebeAula.getAmbiente());
-				
 				aulaRepository.save(codData.get(i));
-				
 			}
-			
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
-			
 		}
-		
 		Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ERRO ARROMBADO, VERIFICA ESSA PORRA", null);
 		return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-	
+
 	}
 
 }

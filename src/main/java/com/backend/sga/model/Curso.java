@@ -23,9 +23,6 @@ public class Curso {
 	@NotNull
 	private String nome;
 	
-	//aqui estamos puxando a Enum do TipoDeCurso, para que apareça os selects depois
-	//Colocar depois o metodo getCargaHoraria
-	
 	private TipoCurso tipoCurso;
 	
 	private boolean ativo;
