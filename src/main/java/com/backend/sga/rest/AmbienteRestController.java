@@ -28,6 +28,7 @@ import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Aula;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Periodo;
+import com.backend.sga.model.RecebeBuscaAmbiente;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.model.TipoAmbiente;
 import com.backend.sga.repository.AmbienteRepository;
@@ -163,6 +164,30 @@ public class AmbienteRestController {
 	@RequestMapping(value = "/tipoecapacidade", method = RequestMethod.GET)
 	public Iterable<Ambiente> retornaTipoeCapacidade (@PathParam("tipo_ambiente") TipoAmbiente tipoAmbiente,@PathParam("capacidadeMin") int capacidadeMin, @PathParam("capacidadeMax") int capacidadeMax){
 		return ambienteRepository.retornaTipoCapacidade(tipoAmbiente, capacidadeMin, capacidadeMax);
+	}
+	
+	@RequestMapping(value = "/disponivel/periodo")
+	public List<Ambiente> retornaDisponivel(@RequestBody RecebeBuscaAmbiente busca){
+		//List<Ambiente> listaOcupados = ambienteRepository.retornaOcupados(busca.getDataInicio(), busca.getDataFinal(), busca.getPeriodo());
+		
+		ArrayList<Ambiente> ocupados = new ArrayList<Ambiente>();
+		Calendar data = busca.getDataInicio();
+		int diaSemana = data.get(Calendar.DAY_OF_WEEK);
+		boolean dia[] = busca.getDiasSemana();
+		
+		List<Ambiente> ambientes = (List<Ambiente>) ambienteRepository.findAll();
+		
+		while(data.before(busca.getDataFinal()) || data.equals(busca.getDataFinal())) {
+			if(dia[diaSemana - 1] == true) {
+				ocupados.add(ambienteRepository.retornaOcupadosDia(data, busca.getPeriodo()).get());
+			}
+		}
+		
+		ambientes.removeAll(ocupados);
+		
+		
+		
+		return ambientes;
 	}
 	
 	

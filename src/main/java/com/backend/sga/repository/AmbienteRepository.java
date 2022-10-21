@@ -1,5 +1,6 @@
 package com.backend.sga.repository;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Periodo;
 import com.backend.sga.model.TipoAmbiente;
+import com.google.common.base.Optional;
 
 @Repository
 public interface AmbienteRepository extends PagingAndSortingRepository<Ambiente, Long>{
@@ -33,7 +35,13 @@ public interface AmbienteRepository extends PagingAndSortingRepository<Ambiente,
 	@Query("SELECT a FROM Ambiente a WHERE a.tipoAmbiente = :tipo_ambiente AND a.capacidade BETWEEN :capacidadeMin AND :capacidadeMax")
 	public Iterable<Ambiente> retornaTipoCapacidade (@Param("tipo_ambiente") TipoAmbiente tipoAmbiente, @Param("capacidadeMin") int capacidadeMin, @Param("capacidadeMax") int capacidadeMax);
 	
+	// SELECT a.* FROM sga.ambiente as a inner join sga.aula as au on a.id = au.ambiente_id where au.data >= "2022-10-24" AND au.data <= "2022-11-08"
+	//and au.periodo = 0 group by ID ;
 	
+	@Query("SELECT a FROM Ambiente a INNER JOIN Aula au ON a.id = au.ambiente.id WHERE au.data >= :datainicio AND au.data <= :dataFinal AND au.periodo = :periodo")
+	public List<Ambiente> retornaOcupados (@Param("datainicio") Calendar dataInicio, @Param("dataFinal") Calendar dataFinal, @Param("periodo") Periodo periodo);
 	
+	@Query("SELECT a FROM Ambiente a INNER JOIN Aula au ON a.id = au.ambiente.id WHERE au.data = :datainicio AND au.periodo = :periodo")
+	public Optional<Ambiente> retornaOcupadosDia (@Param("datainicio") Calendar dataInicio, @Param("periodo") Periodo periodo);
 	
 }
