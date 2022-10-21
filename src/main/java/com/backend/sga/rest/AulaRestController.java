@@ -119,7 +119,12 @@ public class AulaRestController {
 									aula.setCargaDiaria(recebeAula.getCargaDiaria());
 									aula.setData(data);
 
-									aulaRepository.save(aula);
+									try{
+										aulaRepository.save(aula);
+									}catch(Exception e) {
+										e.printStackTrace();
+										System.out.println(e);
+									}
 
 									// Subtraindo a carga horaria depois que o cadastro acontece
 									cargaHoraria = cargaHoraria - aula.getCargaDiaria();
