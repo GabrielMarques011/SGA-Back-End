@@ -40,24 +40,13 @@ public class CursoRestController {
 	
 		//metodo para criar o curso
 		@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-		public ResponseEntity<Object> criarCurso (@RequestBody Curso curso,@RequestBody UnidadeCurricular curricular, HttpServletRequest request, Long id){
+		public ResponseEntity<Object> criarCurso (@RequestBody Curso curso, HttpServletRequest request, Long id){
 				if(curso != null) {
 					curso.setAtivo(true); // setando o ativo como true (padrão)
 					
-					System.out.println(curricular);
+					//System.out.println(curricular);
 					
 					cursoRepository.save(curso); // salvando o curso
-					
-					List<UnidadeCurricular> uc = curso.getUnidadeCurricular();
-					
-					for(int i = 0; i < uc.size(); i++) {
-						
-						curricular.setNome(uc.get(i).getNome());
-						curricular.setHoras(uc.get(i).getHoras());
-						curricularRepository.save(curricular);
-					}
-					
-					cursoRepository.save(curso);
 					
 					//trazendo a classe 'sucesso e aplicando a mensagem criada
 					Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");

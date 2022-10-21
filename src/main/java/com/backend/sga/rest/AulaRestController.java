@@ -105,7 +105,7 @@ public class AulaRestController {
 							if(aulaRepository.buscaProf(recebeAula.getProfessor(), data, recebeAula.getPeriodo()).isEmpty()) {
 								List<Aula> auladata = aulaRepository.diaAula(data, recebeAula.getPeriodo(),
 										recebeAula.getAmbiente());
-
+								System.out.println("passou aqui");
 								if (auladata.isEmpty()) {
 									// criando a aula(trazendo ela)
 									Aula aula = new Aula();
