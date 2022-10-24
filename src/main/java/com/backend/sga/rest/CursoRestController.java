@@ -1,5 +1,6 @@
 package com.backend.sga.rest;
 
+import java.util.Iterator;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import com.backend.sga.model.Curso;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.model.TipoCurso;
+import com.backend.sga.model.UnidadeCurricular;
 import com.backend.sga.repository.CursoRepository;
 import com.backend.sga.repository.UnidadeCurricularRepository;
 
@@ -38,6 +40,15 @@ public class CursoRestController {
 	public ResponseEntity<Object> criarCurso(@RequestBody Curso curso, HttpServletRequest request, Long id) {
 		if (curso != null) {
 			curso.setAtivo(true);
+			
+			for (int i = 0; i < curso.getUnidadeCurricular().size(); i++) {
+				UnidadeCurricular unidade = new UnidadeCurricular();
+				unidade.setNome(curso.getUnidadeCurricular().get(i).getNome());
+				unidade.setHoras(curso.getUnidadeCurricular().get(i).getHoras());
+				curricularRepository.save(unidade);
+				curso.getUnidadeCurricular().get(i).setId(unidade.getId());
+			}
+			
 			cursoRepository.save(curso);
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 
@@ -79,6 +90,18 @@ public class CursoRestController {
 			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null);
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		} else {
+			
+			for(int i = 0; i < curso.getUnidadeCurricular().size(); i++) {
+				UnidadeCurricular unidade = new UnidadeCurricular();
+				if (curso.getUnidadeCurricular().get(i).getId() != null) {
+					unidade.setId(curso.getUnidadeCurricular().get(i).getId());
+				}
+				unidade.setNome(curso.getUnidadeCurricular().get(i).getNome());
+				unidade.setHoras(curso.getUnidadeCurricular().get(i).getHoras());
+				curricularRepository.save(unidade);
+				curso.getUnidadeCurricular().get(i).setId(unidade.getId());
+			}
+			
 			cursoRepository.save(curso);
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);

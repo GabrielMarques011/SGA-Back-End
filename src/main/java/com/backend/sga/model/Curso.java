@@ -27,8 +27,8 @@ public class Curso {
 	
 	private boolean ativo;
 	
-	//aplicando um list, para que ele possa retornar juntamente com o valor do curso (Solicitado pelo Arthur)
-	@OneToMany(mappedBy = "curso")
+	//(mappedBy = "curso")
+	@OneToMany
 	private List<UnidadeCurricular> unidadeCurricular;
 		
 }
