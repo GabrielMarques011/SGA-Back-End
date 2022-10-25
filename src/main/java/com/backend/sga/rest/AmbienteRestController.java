@@ -166,26 +166,79 @@ public class AmbienteRestController {
 		return ambienteRepository.retornaTipoCapacidade(tipoAmbiente, capacidadeMin, capacidadeMax);
 	}
 
-	@RequestMapping(value = "/disponivel/periodo")
-	public List<Ambiente> retornaDisponivel(@RequestBody RecebeBuscaAmbiente busca) {
+	@RequestMapping(value = "/disponivel")
+	public List<Ambiente> retornaDisponivel(@RequestParam("dataInicio") Calendar dataInicio, @RequestParam("dias") 
+	boolean dia[], @RequestParam("dataFinal") Calendar dataFinal, @RequestParam("periodo") Periodo periodo) {
 		// List<Ambiente> listaOcupados = ambienteRepository.retornaOcupados(busca.getDataInicio(),busca.getDataFinal(), busca.getPeriodo());
 
 		ArrayList<Ambiente> ocupados = new ArrayList<Ambiente>();
-		Calendar data = busca.getDataInicio();
-		int diaSemana = data.get(Calendar.DAY_OF_WEEK);
-		boolean dia[] = busca.getDiasSemana();
 
 		List<Ambiente> ambientes = (List<Ambiente>) ambienteRepository.findAll();
+		
+		int diaSemana = dataInicio.get(Calendar.DAY_OF_WEEK);
 
-		while (data.before(busca.getDataFinal()) || data.equals(busca.getDataFinal())) {
+		while (dataInicio.before(dataFinal) || dataInicio.equals(dataFinal)) {
 			if (dia[diaSemana - 1] == true) {
-				ocupados.add(ambienteRepository.retornaOcupadosDia(data, busca.getPeriodo()).get());
+				
+				Optional<Ambiente> ocupado = ambienteRepository.retornaOcupadosDia(dataInicio, periodo);
+				
+				if(!ocupado.isEmpty()) {
+					ocupados.add(ocupado.get());
+				}
+			}
+			dataInicio.add(Calendar.DAY_OF_MONTH, 1);
+		}
+
+		for(int i = 0; i < ambientes.size(); i++) {
+			for(int j = 0; j < ocupados.size(); j++) {
+				if(ambientes.get(i) == ocupados.get(j)) {
+					ambientes.remove(i);
+				}
 			}
 		}
 
-		ambientes.removeAll(ocupados);
-
 		return ambientes;
+	}
+	
+	// Método que retorna os ambientes ocupados de um determinado dia 
+	@RequestMapping(value = "/ocupados/{data}", method = RequestMethod.GET)
+	public List<Ambiente> ambientesOcupadosData(@PathVariable("data") String dataStr){
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar data = Calendar.getInstance();
+		try {
+			data.setTime(sdf.parse(dataStr));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return ambienteRepository.ocupadosPorData(data);
+	}
+	
+	@RequestMapping(value = "/disponibilidade/periodo", method = RequestMethod.GET)
+	public ArrayList<Aula> disponivelDataPeriodo(@RequestBody RecebeBuscaAmbiente busca){
+		Calendar data = busca.getDataInicio();
+		boolean dia[] = busca.getDiasSemana();
+		int diaSemana = data.get(Calendar.DAY_OF_WEEK);
+		
+		ArrayList<Aula> aulas = new ArrayList<Aula>();
+		
+		
+		while(data.before(busca.getDataFinal()) || data.equals(busca.getDataFinal())) {
+			if(dia[diaSemana - 1] == true) {
+				Optional<Aula> ocupado = aulaRepository.ocupadoPorDataPeriodo(data, busca.getPeriodo(), busca.getAmbiente());
+				
+				if(!ocupado.isEmpty()) {
+					aulas.add(ocupado.get());
+				}
+			}
+			data.add(Calendar.DAY_OF_MONTH, 1);
+		}
+		
+		
+		
+		return aulas;
 	}
 
 }

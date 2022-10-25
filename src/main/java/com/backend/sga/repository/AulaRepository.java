@@ -2,6 +2,7 @@ package com.backend.sga.repository;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -32,7 +33,7 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	
 	//SELECT * FROM sga.aula where sga.aula.periodo = 1 
 	@Query("SELECT a from Aula a where a.periodo = :periodo and a.data = :data")
-	public Iterable<Aula> retornaPeriodo (@Param("periodo") Periodo periodo, @Param("data") Calendar data);
+	public Optional<Aula> retornaPeriodo (@Param("periodo") Periodo periodo, @Param("data") Calendar data);
 	
 	@Query("SELECT a FROM Aula a WHERE a.codTurma = :codTurma")
 	public List<Aula> buscaCodTurma(@Param("codTurma") String codTurma);
@@ -43,4 +44,7 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	
 	@Query("SELECT a FROM Aula a WHERE a.professor = :prof AND a.data = :data AND periodo = :periodo")
 	public List<Aula> buscaProf (@Param("prof") Professor prof, @Param("data") Calendar data, @Param("periodo") Periodo perido);
+	
+	@Query("SELECT a FROM Aula a WHERE a.data = :data AND a.periodo = :periodo AND a.ambiente = :ambiente")
+	public Optional<Aula> ocupadoPorDataPeriodo(@Param("data") Calendar dataInicio, @Param("periodo") Periodo periodo, @Param("ambiente") Ambiente ambiente);
 }

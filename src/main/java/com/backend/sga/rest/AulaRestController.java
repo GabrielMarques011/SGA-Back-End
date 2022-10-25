@@ -1,7 +1,10 @@
 package com.backend.sga.rest;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,10 +18,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.sga.model.Aula;
 import com.backend.sga.model.Erro;
+import com.backend.sga.model.Periodo;
 import com.backend.sga.model.RecebeAula;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.repository.AmbienteRepository;
@@ -187,6 +192,25 @@ public class AulaRestController {
 		Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ERRO ARROMBADO, VERIFICA ESSA PORRA", null);
 		return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 
+	}
+	
+	@RequestMapping(value = "/periodo", method = RequestMethod.GET)
+	public Optional<Aula> retornaPeriodo(@RequestParam("periodo") Periodo periodo, @RequestParam("data") String dataStr){
+		
+		System.out.println(periodo);
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // formatador de data
+
+		Calendar data = Calendar.getInstance(); // variável para guardar a data_inicio
+		try {
+			data.setTime(sdf.parse(dataStr)); // tranformando a String em calendar
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		Optional<Aula> aula = aulaRepository.retornaPeriodo(periodo, data);
+		
+		return aula;
 	}
 
 }
