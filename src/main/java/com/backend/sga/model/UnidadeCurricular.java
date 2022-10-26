@@ -24,11 +24,6 @@ public class UnidadeCurricular {
 	@NotNull
 	private String nome;
 	
-	//esse annotation evita de dar loop
-	@JsonProperty(access = Access.WRITE_ONLY)
-	@OneToOne
-	private Curso curso;
-	
 	@NotNull
 	private double horas;
 	
