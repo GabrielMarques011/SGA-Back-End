@@ -1,6 +1,5 @@
 package com.backend.sga.rest;
 
-import java.util.Iterator;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;

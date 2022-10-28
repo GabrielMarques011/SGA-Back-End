@@ -212,5 +212,11 @@ public class AulaRestController {
 		
 		return aula;
 	}
+	
+	
+	@RequestMapping(value = "/filtro/{value}", method = RequestMethod.GET)
+	public List<Aula> buscaFiltroAula (@PathVariable("value") String value){
+		return aulaRepository.filtroAula(value);
+	}
 
 }
