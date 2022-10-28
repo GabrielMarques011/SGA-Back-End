@@ -130,5 +130,12 @@ public class CursoRestController {
 		// relacionado aquilo
 		return cursoRepository.palavraChave(nome);
 	}
+	
+	
+	//metodo para Retornar o uma lista de Curso conforme uma Unidade Curricular (Pedido Kalebe e Matheus)
+	@RequestMapping(value = "/buscaUn/{nome}", method = RequestMethod.GET)
+	public Iterable<Curso> buscaUnidade (@PathVariable("nome") String nome){
+		return cursoRepository.buscaUnidade(nome);
+	}
 
 }

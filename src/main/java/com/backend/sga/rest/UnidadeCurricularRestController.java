@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.sga.model.Curso;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.model.TipoAmbiente;
@@ -83,5 +84,10 @@ public class UnidadeCurricularRestController {
 	public TipoAmbiente[] buscaAmbiente() {
 		return TipoAmbiente.values();
 	}
+	
+	/*@RequestMapping(value = "/buscaCurso/{nome}", method = RequestMethod.GET)
+	public Iterable<Curso> buscaCursoDeUnidade(@PathVariable("nome") String nome){
+		return curricularRepository.buscaCurso(nome);
+	}*/
 
 }
