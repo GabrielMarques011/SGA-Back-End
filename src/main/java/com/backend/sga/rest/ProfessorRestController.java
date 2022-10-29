@@ -4,6 +4,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,6 +26,7 @@ import com.backend.sga.model.DevolveDisp;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Professor;
+import com.backend.sga.model.RecebeBuscaAmbiente;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.repository.AulaRepository;
 import com.backend.sga.repository.CompetenciaRepository;
@@ -147,6 +149,68 @@ public class ProfessorRestController {
 			listaDisp.add(devolveDisp);
 		}
 		return listaDisp;
+	}
+	
+	@RequestMapping(value = "/disponibilidade/periodo", method = RequestMethod.GET)
+	public ArrayList<Aula> disponivelDataPeriodo(@RequestBody RecebeBuscaAmbiente busca){
+		Calendar data = busca.getDataInicio();
+		boolean dia[] = busca.getDiasSemana();
+		int diaSemana = data.get(Calendar.DAY_OF_WEEK);
+		
+		ArrayList<Aula> aulas = new ArrayList<Aula>();
+		
+		
+		while(data.before(busca.getDataFinal()) || data.equals(busca.getDataFinal())) {
+			if(dia[diaSemana - 1] == true) {
+				Optional<Aula> ocupado = aulaRepository.ocupadoProfessor(data, busca.getPeriodo(), busca.getProfessor());
+				
+				if(!ocupado.isEmpty()) {
+					aulas.add(ocupado.get());
+				}
+			}
+			data.add(Calendar.DAY_OF_MONTH, 1);
+		}
+		
+		
+		
+		return aulas;
+	}
+	
+	@RequestMapping(value = "/disponibilidade", method = RequestMethod.GET)
+	public List<Professor> disponibilidadeProf(@RequestBody RecebeBuscaAmbiente busca){
+		
+		ArrayList<Professor> ocupados = new ArrayList<Professor>();
+		List<Professor> profsDb = (List<Professor>) professorRepository.findAll();
+		
+		Calendar data = busca.getDataInicio();
+		int diaSemana = data.get(Calendar.DAY_OF_WEEK);
+		boolean dia[] = busca.getDiasSemana();
+		Calendar dataFinal = busca.getDataFinal();
+		
+		while(data.before(dataFinal) || data.equals(dataFinal)) {
+			
+			if(dia[diaSemana - 1] == true) {
+				Optional<Professor> ocupado = aulaRepository.disponibilidade(busca.getUnidadeCurricular(), busca.getPeriodo(), data);
+				
+				if(!ocupado.isEmpty()) {
+					ocupados.add(ocupado.get());
+				}
+			}
+			
+			data.add(Calendar.DAY_OF_MONTH, 1);
+		}
+		
+		//System.out.println(ocupados);
+		
+		for(int i = 0; i < profsDb.size(); i++) {
+			for(int j = 0; j < ocupados.size(); j++) {
+				if(profsDb.get(i) == ocupados.get(j)) {
+					profsDb.remove(i);
+				}
+			}
+		}
+
+		return profsDb;
 	}
 
 }

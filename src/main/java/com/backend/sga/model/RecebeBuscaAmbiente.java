@@ -17,4 +17,8 @@ public class RecebeBuscaAmbiente {
 
 	private boolean diasSemana[];
 	
+	private Professor professor;
+	
+	private UnidadeCurricular unidadeCurricular;
+	
 }
