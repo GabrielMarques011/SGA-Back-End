@@ -240,5 +240,39 @@ public class AmbienteRestController {
 		
 		return aulas;
 	}
+	
+	@RequestMapping(value = "/livre/{data}", method = RequestMethod.GET)
+	public List<Ambiente> livresPorData(@PathVariable("data") String dataStr){
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // formatador de data
+
+		Calendar data = Calendar.getInstance();
+		try {
+			data.setTime(sdf.parse(dataStr));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//System.out.println(aulaRepository.buscaData(data));
+		
+		System.out.println(data);
+		List<Aula> ocupados = aulaRepository.buscaData(data);
+		
+		List<Ambiente> ambientes = (List<Ambiente>) ambienteRepository.findAll();
+		
+		
+		System.out.println(ocupados.get(0).getAmbiente());
+		
+		for(int i = 0; i < ambientes.size(); i++) {
+			for(int j = 0; j < ocupados.size(); j++) {
+				if(ambientes.get(i) == ocupados.get(j).getAmbiente()) {
+					ambientes.remove(i);
+				}
+			}
+		}
+		
+		return ambientes;
+	}
 
 }
