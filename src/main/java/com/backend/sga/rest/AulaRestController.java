@@ -218,5 +218,20 @@ public class AulaRestController {
 	public List<Aula> buscaFiltroAula (@PathVariable("value") String value){
 		return aulaRepository.filtroAula(value);
 	}
+	
+	@RequestMapping(value = "/data", method = RequestMethod.GET)
+	public List<Aula> buscaPorData(@RequestParam("data") String dataStr){
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // formatador de data
+
+		Calendar data = Calendar.getInstance(); // variável para guardar a data_inicio
+		try {
+			data.setTime(sdf.parse(dataStr)); // tranformando a String em calendar
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		return aulaRepository.buscaData(data);
+	}
 
 }

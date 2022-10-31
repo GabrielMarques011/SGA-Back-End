@@ -166,7 +166,7 @@ public class AmbienteRestController {
 		return ambienteRepository.retornaTipoCapacidade(tipoAmbiente, capacidadeMin, capacidadeMax);
 	}
 
-	@RequestMapping(value = "/disponivel")
+	@RequestMapping(value = "/disponivel", method = RequestMethod.GET)
 	public List<Ambiente> retornaDisponivel(@RequestParam("dataInicio") Calendar dataInicio, @RequestParam("dias") 
 	boolean dia[], @RequestParam("dataFinal") Calendar dataFinal, @RequestParam("periodo") Periodo periodo) {
 		// List<Ambiente> listaOcupados = ambienteRepository.retornaOcupados(busca.getDataInicio(),busca.getDataFinal(), busca.getPeriodo());
