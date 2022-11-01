@@ -217,5 +217,11 @@ public class ProfessorRestController {
 	public List<Professor> orderProfessor(){
 		return professorRepository.orderProf();
 	}
+	
+	@RequestMapping(value = "unidade/{value}", method = RequestMethod.GET)
+	public List<Professor> buscaPorUnidadeCurricular(@PathVariable("value") String value){
+		System.out.println(professorRepository.buscaUnidade(value));
+		return professorRepository.buscaUnidade(value);
+	}
 
 }
