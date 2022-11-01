@@ -284,10 +284,14 @@ public class AulaRestController {
 			Analise result = new Analise();
 			result.setPeriodo(periodos.get(i));
 			result.setQuantidade(atual.get(i));
-			if(atual.get(i) > passado.get(i)) {
+			if(!passado.isEmpty()) {
+				if(atual.get(i) > passado.get(i)) {
+					result.setMaior(true);
+				}else{
+					result.setMaior(false);
+				}
+			}else {
 				result.setMaior(true);
-			}else if(atual.get(i) < passado.get(i)){
-				result.setMaior(false);
 			}
 			
 			valores.add(result);

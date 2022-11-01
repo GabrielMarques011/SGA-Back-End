@@ -29,5 +29,12 @@ public interface ProfessorRepository extends PagingAndSortingRepository<Professo
 			+ "INNER JOIN Curso c ON uc.curso.id = c.id "
 			+ "WHERE c.nome = :nome AND uc.nome = :nome")
 	public List<Professor> listaProf(@Param("nome") String nome);*/
+	
+//	SELECT p.* FROM sga.professor as p inner join sga.competencia as c on p.id = c.professor_id 
+//	inner join sga.unidade_curricular as un on c.unidade_curricular_id = un.id
+//	inner join sga.curso as cur on un.curso_id = cur.id
+//	where cur.nome like "%excel%" or un.nome like "%excel%"
+	@Query("SELECT p FROM Professor p INNER JOIN Competencia c ON p.id = c.professor.id INNER JOIN UnidadeCurricular un ON c.unidadeCurricular.id = un.id WHERE un.nome LIKE '%:value%'")
+	public List<Professor> buscaUnidade(@Param("value") String value);
 
 }
