@@ -17,11 +17,17 @@ public interface ProfessorRepository extends PagingAndSortingRepository<Professo
 	//Retorna uma lista onde aparece o relacionamento entre as 'letras' escritas com o banco
 	public List<Professor> palavraChave(@Param("nome") String nome);
 	
-	// SELECT p.* FROM sga.professor as p inner join sga.competencia as c on p.id = c.professor_id inner join sga.aula as a on a.professor_id = p.id where c.unidade_curricular_id = 1 and a.periodo = 1 and a.data = "2022-10-05"
-	
 	//SELECT * FROM sga.professor order by sga.professor.nome asc;
 	@Query("SELECT p FROM Professor p ORDER BY p.nome ASC")
 	public List<Professor> orderProf();
 	
-	
+	//SELECT p.* FROM sga.professor AS p INNER JOIN sga.aula AS a ON a.professor_id = p.id INNER JOIN sga.unidade_curricular AS uc ON a.unidade_curricular_id = uc.id INNER JOIN sga.curso AS c ON c.id = uc.curso_id WHERE c.nome = 'java' AND uc.nome = 'pacote word';
+	/*@Query("SELECT p FROM Professor p INNER JOIN Aula a "
+			+ "ON a.professor.id = p.id "
+			+ "INNER JOIN UnidadeCurricular uc "
+			+ "ON a.unidadeCurricular.id = uc.id "
+			+ "INNER JOIN Curso c ON uc.curso.id = c.id "
+			+ "WHERE c.nome = :nome AND uc.nome = :nome")
+	public List<Professor> listaProf(@Param("nome") String nome);*/
+
 }

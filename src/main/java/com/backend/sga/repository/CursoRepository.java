@@ -9,8 +9,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.backend.sga.model.Curso;
+import com.backend.sga.model.Professor;
 import com.backend.sga.model.TipoCurso;
-import com.backend.sga.model.UnidadeCurricular;
 
 @Repository
 public interface CursoRepository extends PagingAndSortingRepository<Curso, Long>{
@@ -27,6 +27,5 @@ public interface CursoRepository extends PagingAndSortingRepository<Curso, Long>
 	@Query("SELECT c FROM Curso c INNER JOIN UnidadeCurricular uc ON c.id = uc.id WHERE uc.nome = :nome")
 	public List<Curso> buscaUnidade (@Param("nome") String nome);
 	
-	 
-
+	
 }

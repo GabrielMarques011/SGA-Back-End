@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -61,4 +62,8 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	
 	@Query("SELECT p FROM Professor p INNER JOIN Competencia c ON c.professor.id = p.id INNER JOIN Aula a ON a.professor.id = p.id where c.unidadeCurricular = :unidade AND a.periodo = :periodo AND a.data = :data")
 	public Optional<Professor> disponibilidade(@Param("unidade") UnidadeCurricular unidade, @Param("periodo") Periodo periodo, @Param("data") Calendar data);
+
+	@Query("SELECT a FROM Aula a WHERE a.periodo = :periodo")
+	public List<Aula> listaPorPeriodo(@Param("periodo") Periodo periodo);
+	
 }

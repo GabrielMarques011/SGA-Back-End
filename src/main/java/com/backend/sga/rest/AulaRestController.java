@@ -9,6 +9,7 @@ import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -234,4 +235,9 @@ public class AulaRestController {
 		return aulaRepository.buscaData(data);
 	}
 
+	@RequestMapping(value = "/trasPeriodo/{periodo}")
+	public List<Aula> trasPorPeriodo(@PathVariable("periodo") Periodo periodo){
+		return aulaRepository.listaPorPeriodo(periodo);
+	}
+	
 }
