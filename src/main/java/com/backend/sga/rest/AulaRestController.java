@@ -31,11 +31,13 @@ import com.backend.sga.model.Erro;
 import com.backend.sga.model.Periodo;
 import com.backend.sga.model.RecebeAula;
 import com.backend.sga.model.Sucesso;
+import com.backend.sga.model.UnidadeCurricular;
 import com.backend.sga.repository.AmbienteRepository;
 import com.backend.sga.repository.AulaRepository;
 import com.backend.sga.repository.DiaNaoLetivoRepository;
 import com.backend.sga.repository.FeriadosNacionaisRepository;
 import com.backend.sga.repository.ProfessorRepository;
+import com.backend.sga.repository.UnidadeCurricularRepository;
 
 @CrossOrigin
 @RestController
@@ -56,13 +58,17 @@ public class AulaRestController {
 
 	@Autowired
 	private AmbienteRepository ambRepository;
+	
+	@Autowired
+	private UnidadeCurricularRepository repository;
 
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarAula(@RequestBody RecebeAula recebeAula, HttpServletRequest request) {
 
 		boolean dia[] = recebeAula.getDiaSemana();
 		Calendar dataInicio = recebeAula.getDataInicio();
-		double cargaHoraria = recebeAula.getUnidadeCurricular().getHoras();
+		UnidadeCurricular uc = repository.findById(recebeAula.getUnidadeCurricular().getId()).get();
+		double cargaHoraria = uc.getHoras();
 
 		// retornando uma listagem de aula
 		List<Aula> listaAula = aulaRepository.diaSemanal(recebeAula.getDataInicio());
@@ -113,6 +119,7 @@ public class AulaRestController {
 									Aula aula = new Aula();
 
 									// setando os valores que precisam no cadastro de aula
+									aula.setCurso(recebeAula.getCurso());
 									aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
 									aula.setCodTurma(recebeAula.getCodTurma());
 									aula.setPeriodo(recebeAula.getPeriodo());

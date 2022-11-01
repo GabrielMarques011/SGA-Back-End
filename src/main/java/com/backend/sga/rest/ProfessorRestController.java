@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.sga.model.Ambiente;
@@ -218,10 +219,10 @@ public class ProfessorRestController {
 		return professorRepository.orderProf();
 	}
 	
-	@RequestMapping(value = "unidade/{value}", method = RequestMethod.GET)
-	public List<Professor> buscaPorUnidadeCurricular(@PathVariable("value") String value){
-		System.out.println(professorRepository.buscaUnidade(value));
-		return professorRepository.buscaUnidade(value);
+	
+	@RequestMapping(value = "/buscProf", method = RequestMethod.GET)
+	public List<Professor> ordernarProCrEUc(@RequestParam("nomeCr") String nomeCr, @RequestParam("nomeUc") String nomeUc){
+		return professorRepository.listProfcuc(nomeCr, nomeUc);
 	}
 
 }

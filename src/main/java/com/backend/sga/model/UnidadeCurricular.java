@@ -5,7 +5,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -26,5 +25,9 @@ public class UnidadeCurricular {
 	
 	@NotNull
 	private double horas;
+	
+	@JsonProperty(access = Access.WRITE_ONLY)
+	@ManyToOne
+	private Curso curso;
 	
 }

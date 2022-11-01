@@ -1,5 +1,7 @@
 package com.backend.sga.rest;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,11 +51,18 @@ public class CursoRestController {
 			}
 			
 			cursoRepository.save(curso);
+			
+			for (int i = 0; i < curso.getUnidadeCurricular().size(); i++) {
+				UnidadeCurricular uc = curso.getUnidadeCurricular().get(i);
+				uc.setCurso(curso);
+				curricularRepository.save(uc);
+			}
+			
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 
 			Object[] filtro = new Object[2];
 			filtro[0] = sucesso;
-			filtro[1] = curso.getId();
+			filtro[1] = curso.getId(); 
 
 			ResponseEntity<Object> okpost = new ResponseEntity<Object>(filtro, HttpStatus.OK);
 			return okpost;
@@ -114,8 +123,7 @@ public class CursoRestController {
 		return TipoCurso.values();
 	}
 
-	// Feito o metodo para retornar quais tipos de Cursos forem aplicados (Kalebe
-	// pediu)
+	// Feito o metodo para retornar quais tipos de Cursos forem aplicados (Kalebe pediu)
 	@RequestMapping(value = "/buscacurso/{tipo_curso}", method = RequestMethod.GET)
 	public Iterable<Curso> buscaTipoCurso(@PathVariable("tipo_curso") TipoCurso tCurso) {
 		// Fazendo uma Query para que o Front selcione um tipo de curso e traga so

@@ -40,6 +40,10 @@ public class Aula {
 	@OneToOne
 	private UnidadeCurricular unidadeCurricular;
 	
+	//aplicado
+	@OneToOne
+	private Curso curso;
+	
 	@NotNull
 	private String codTurma;
 	

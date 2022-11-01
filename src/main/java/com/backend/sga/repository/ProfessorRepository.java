@@ -20,21 +20,9 @@ public interface ProfessorRepository extends PagingAndSortingRepository<Professo
 	//SELECT * FROM sga.professor order by sga.professor.nome asc;
 	@Query("SELECT p FROM Professor p ORDER BY p.nome ASC")
 	public List<Professor> orderProf();
-	
-	//SELECT p.* FROM sga.professor AS p INNER JOIN sga.aula AS a ON a.professor_id = p.id INNER JOIN sga.unidade_curricular AS uc ON a.unidade_curricular_id = uc.id INNER JOIN sga.curso AS c ON c.id = uc.curso_id WHERE c.nome = 'java' AND uc.nome = 'pacote word';
-	/*@Query("SELECT p FROM Professor p INNER JOIN Aula a "
-			+ "ON a.professor.id = p.id "
-			+ "INNER JOIN UnidadeCurricular uc "
-			+ "ON a.unidadeCurricular.id = uc.id "
-			+ "INNER JOIN Curso c ON uc.curso.id = c.id "
-			+ "WHERE c.nome = :nome AND uc.nome = :nome")
-	public List<Professor> listaProf(@Param("nome") String nome);*/
-	
-//	SELECT p.* FROM sga.professor as p inner join sga.competencia as c on p.id = c.professor_id 
-//	inner join sga.unidade_curricular as un on c.unidade_curricular_id = un.id
-//	inner join sga.curso as cur on un.curso_id = cur.id
-//	where cur.nome like "%excel%" or un.nome like "%excel%"
-	@Query("SELECT p FROM Professor p INNER JOIN Competencia c ON p.id = c.professor.id INNER JOIN UnidadeCurricular un ON c.unidadeCurricular.id = un.id WHERE un.nome LIKE '%:value%'")
-	public List<Professor> buscaUnidade(@Param("value") String value);
 
+	//SELECT p.* FROM sga.professor AS p INNER JOIN sga.competencia AS c ON c.professor_id = p.id INNER JOIN sga.unidade_curricular AS uc ON c.unidade_curricular_id = uc.id INNER JOIN sga.curso AS cu ON uc.curso_id = cu.id WHERE cu.nome = 'PowerBI Avançado' AND uc.nome = 'PowerBI' ORDER BY p.id;
+	@Query("SELECT p FROM Professor p INNER JOIN Competencia c ON c.professor.id = p.id INNER JOIN UnidadeCurricular uc ON c.unidadeCurricular.id = uc.id INNER JOIN Curso cu ON uc.curso.id = cu.id WHERE cu.nome = :nomeCr AND uc.nome = :nomeUc ORDER BY p.id")
+	public List<Professor> listProfcuc(@Param("nomeCr") String nomeCr, @Param("nomeUc") String nomeUc);
+	
 }

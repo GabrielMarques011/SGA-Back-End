@@ -27,8 +27,8 @@ public class Curso {
 	
 	private boolean ativo;
 	
-	//(mappedBy = "curso")
-	@OneToMany
+	
+	@OneToMany(mappedBy = "curso")
 	private List<UnidadeCurricular> unidadeCurricular;
 		
 }
