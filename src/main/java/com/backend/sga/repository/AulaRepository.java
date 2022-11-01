@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.backend.sga.model.Ambiente;
+import com.backend.sga.model.Analise;
 import com.backend.sga.model.Aula;
 import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Professor;
@@ -61,4 +62,11 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	
 	@Query("SELECT p FROM Professor p INNER JOIN Competencia c ON c.professor.id = p.id INNER JOIN Aula a ON a.professor.id = p.id where c.unidadeCurricular = :unidade AND a.periodo = :periodo AND a.data = :data")
 	public Optional<Professor> disponibilidade(@Param("unidade") UnidadeCurricular unidade, @Param("periodo") Periodo periodo, @Param("data") Calendar data);
+	
+	// SELECT a.periodo, count(*) as conta FROM sga.aula as a where a.data >= "2022-10-01" and a.data <= "2022-10-31" group by a.periodo;
+	@Query("SELECT a.periodo FROM Aula a WHERE a.data >= :comeco AND a.data <= :fim GROUP BY a.periodo ORDER BY a.periodo ASC")
+	public List<Periodo> comparacaoMes(@Param("comeco") Calendar comeco, @Param("fim") Calendar fim);
+	
+	@Query("SELECT COUNT(*) FROM Aula a WHERE a.data >= :comeco AND a.data <= :fim GROUP BY a.periodo ORDER BY a.periodo ASC")
+	public List<Integer> valorMes(@Param("comeco") Calendar comeco, @Param("fim") Calendar fim);
 }

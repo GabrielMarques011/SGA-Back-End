@@ -2,6 +2,9 @@ package com.backend.sga.rest;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.sga.model.Analise;
 import com.backend.sga.model.Aula;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Periodo;
@@ -232,6 +236,63 @@ public class AulaRestController {
 		}
 		
 		return aulaRepository.buscaData(data);
+	}
+	
+	@RequestMapping(value = "/analise/{mes}", method = RequestMethod.GET)
+	public ArrayList<Object> comparacaoMes(@PathVariable("mes") int mes) {
+		int ano = LocalDate.now().getYear();
+		
+		String data = ano + "-" + mes + "-01";
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar comecoMes = Calendar.getInstance();
+		try {
+			comecoMes.setTime(sdf.parse(data));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String dataStr;
+		
+		if(mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12) {
+			dataStr = ano + "-" + mes + "-31";
+		}else if(mes == 2) {
+			dataStr = ano + "-" + mes + "-28";
+		}else {
+			dataStr = ano + "-" + mes + "-30";
+		}
+		Calendar finalMes = Calendar.getInstance();
+		try {
+			finalMes.setTime(sdf.parse(dataStr));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ArrayList<Object> valores = new ArrayList<Object>(); 
+		
+		List<Periodo> periodos = aulaRepository.comparacaoMes(comecoMes, finalMes);
+		List<Integer> atual = aulaRepository.valorMes(comecoMes, finalMes);
+		comecoMes.add(Calendar.MONTH, -1);
+		finalMes.add(Calendar.MONTH, -1);
+		List<Integer> passado = aulaRepository.valorMes(comecoMes, finalMes);
+		
+		
+		for(int i = 0; i < periodos.size(); i++) {
+			Analise result = new Analise();
+			result.setPeriodo(periodos.get(i));
+			result.setQuantidade(atual.get(i));
+			if(atual.get(i) > passado.get(i)) {
+				result.setMaior(true);
+			}else if(atual.get(i) < passado.get(i)){
+				result.setMaior(false);
+			}
+			
+			valores.add(result);
+		}
+		
+		return valores;
 	}
 
 }
