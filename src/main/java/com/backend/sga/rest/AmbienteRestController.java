@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -273,6 +271,11 @@ public class AmbienteRestController {
 		}
 		
 		return ambientes;
+	}
+	
+	@RequestMapping(value = "/orderAmb")
+	public List<Ambiente> orderAmbiente(){
+		return ambienteRepository.orderAmbiente();
 	}
 
 }

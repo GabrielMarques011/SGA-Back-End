@@ -212,5 +212,10 @@ public class ProfessorRestController {
 
 		return profsDb;
 	}
+	
+	@RequestMapping(value = "/orderProf", method = RequestMethod.GET)
+	public List<Professor> orderProfessor(){
+		return professorRepository.orderProf();
+	}
 
 }
