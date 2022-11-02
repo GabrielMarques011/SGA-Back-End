@@ -15,6 +15,7 @@ import com.backend.sga.model.Analise;
 import com.backend.sga.model.Aula;
 import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Professor;
+import com.backend.sga.model.TipoCurso;
 import com.backend.sga.model.UnidadeCurricular;
 
 @Repository
@@ -72,9 +73,14 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	@Query("SELECT COUNT(*) FROM Aula a WHERE a.data >= :comeco AND a.data <= :fim GROUP BY a.periodo ORDER BY a.periodo ASC")
 	public List<Integer> valorMes(@Param("comeco") Calendar comeco, @Param("fim") Calendar fim);
 
-
 	@Query("SELECT a FROM Aula a WHERE a.periodo = :periodo")
 	public List<Aula> listaPorPeriodo(@Param("periodo") Periodo periodo);
+	
+	@Query("SELECT a FROM Aula a WHERE a.professor.id = :idProf")
+	public List<Aula> retornaAulasProf (@Param("idProf") Long idProf);
+	
+	@Query("SELECT a FROM Aula a INNER JOIN Curso c ON a.curso.id = c.id WHERE a.professor.id = :idProf AND c.tipoCurso = :tipo")
+	public List<Aula> retornaAulaProfTipo(@Param("idProf") Long id, @Param("tipo") TipoCurso tipo);
 	
 
 }

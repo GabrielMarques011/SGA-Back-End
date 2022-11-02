@@ -3,6 +3,7 @@ package com.backend.sga.model;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.List;
 
 import lombok.Data;
 
@@ -28,6 +29,8 @@ public class RecebeAula {
 	private Professor professor;
 	
 	private double cargaDiaria;
+	
+	private List<Professor> profList;
 	
 	public ArrayList<Integer> verificarDiasSemana(boolean dias[]) {
 		

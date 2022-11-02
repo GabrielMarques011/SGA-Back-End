@@ -3,7 +3,6 @@ package com.backend.sga.rest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -11,8 +10,6 @@ import java.util.Optional;
 import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,6 +28,7 @@ import com.backend.sga.model.Erro;
 import com.backend.sga.model.Periodo;
 import com.backend.sga.model.RecebeAula;
 import com.backend.sga.model.Sucesso;
+import com.backend.sga.model.TipoCurso;
 import com.backend.sga.model.UnidadeCurricular;
 import com.backend.sga.repository.AmbienteRepository;
 import com.backend.sga.repository.AulaRepository;
@@ -307,9 +305,19 @@ public class AulaRestController {
 		return valores;
 	}
 
-	@RequestMapping(value = "/trasPeriodo/{periodo}")
+	@RequestMapping(value = "/trasPeriodo/{periodo}", method = RequestMethod.GET)
 	public List<Aula> trasPorPeriodo(@PathVariable("periodo") Periodo periodo){
 		return aulaRepository.listaPorPeriodo(periodo);
+	}
+	
+	@RequestMapping(value = "/professor/{idProf}", method = RequestMethod.GET)
+	public List<Aula> retornaAulaProf(@PathVariable("idProf") Long id){
+		return aulaRepository.retornaAulasProf(id);
+	}
+	
+	@RequestMapping(value = "/aulaTipo", method = RequestMethod.GET)
+	public List<Aula> retornaAulaTipo(@RequestParam("prof") Long id, @RequestParam("tipo") TipoCurso tipo){
+		return aulaRepository.retornaAulaProfTipo(id, tipo);
 	}
 	
 }

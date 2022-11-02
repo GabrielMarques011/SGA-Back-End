@@ -21,6 +21,7 @@ import com.backend.sga.model.Ausencia;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Professor;
+import com.backend.sga.model.RecebeAula;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.repository.AulaRepository;
 import com.backend.sga.repository.AusenciaRepository;
@@ -115,6 +116,31 @@ public class AusenciaRestController {
 		result[2] = emAula;
 
 		return result;
+	}
+	
+	
+	@RequestMapping(value = "/ferias", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> ferias(@RequestBody RecebeAula recebe){
+		
+		try {
+			for (int i = 0; i < recebe.getProfList().size(); i++) {
+				
+				Ausencia ausencia = new Ausencia();
+				ausencia.setProfessor(recebe.getProfList().get(i));
+				ausencia.setDataInicio(recebe.getDataInicio());
+				ausencia.setDataFinal(recebe.getDataFinal());
+				ausencia.setTipo("FÉRIAS");
+				
+				ausenciaRepository.save(ausencia);
+			}
+			
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+			
+		} catch (Exception e) {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID invalido!", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 }

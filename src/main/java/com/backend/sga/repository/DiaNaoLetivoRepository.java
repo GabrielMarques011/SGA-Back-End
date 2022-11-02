@@ -13,8 +13,8 @@ import com.backend.sga.model.DiaNaoLetivo;
 @Repository
 public interface DiaNaoLetivoRepository extends PagingAndSortingRepository<DiaNaoLetivo, Long>{
 
-	@Query("SELECT dnl from DiaNaoLetivo dnl where dnl.dataInicio = :data_inicio ")
-	public List<DiaNaoLetivo> buscaDNL(@Param("data_inicio") Calendar dataInicio );
+	@Query("SELECT dnl from DiaNaoLetivo dnl where dnl.data = :data ")
+	public List<DiaNaoLetivo> buscaDNL(@Param("data") Calendar dataInicio );
 	
 }
 	

@@ -22,7 +22,7 @@ public class DiaNaoLetivo {
 	
 	@NotNull
 	@JsonFormat(pattern = "dd/MM/yyyy")
-	private Calendar dataInicio;
+	private Calendar data;
 	
 	@NotNull
 	private String nome;
