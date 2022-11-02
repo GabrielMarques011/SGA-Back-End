@@ -229,8 +229,9 @@ public class AulaRestController {
 		return aulaRepository.filtroAula(value);
 	}
 	
-	@RequestMapping(value = "/data", method = RequestMethod.GET)
-	public List<Aula> buscaPorData(@RequestParam("data") String dataStr){
+	//add
+	@RequestMapping(value = "/{data}", method = RequestMethod.GET)
+	public List<Aula> buscaPorData(@PathVariable("data") String dataStr){
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // formatador de data
 
