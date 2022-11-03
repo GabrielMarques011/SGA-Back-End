@@ -31,6 +31,7 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	@Query("SELECT a FROM Aula a WHERE a.data >= :data")
 	public List<Aula> diaSemanal(@Param("data") Calendar data);
 	
+	//VER COM OS MLK DO BACK
 	//SELECT * FROM sga.aula where sga.aula.data = "2022-10-26";
 	@Query("SELECT a FROM Aula a WHERE a.data = :data AND a.periodo = :periodo and ambiente = :ambiente")
 	public List<Aula> diaAula(@Param("data") Calendar data, @Param("periodo") Periodo periodo, @Param("ambiente") Ambiente ambiente);
@@ -79,7 +80,7 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	@Query("SELECT a FROM Aula a WHERE a.professor.id = :idProf")
 	public List<Aula> retornaAulasProf (@Param("idProf") Long idProf);
 	
-	@Query("SELECT a FROM Aula a INNER JOIN Curso c ON a.curso.id = c.id WHERE a.professor.id = :idProf AND c.tipoCurso = :tipo")
+	@Query("SELECT a FROM Aula a INNER JOIN Curso c ON a.curso.id = c.id WHERE a.professor.id = :idProf AND c.tipo = :tipo")
 	public List<Aula> retornaAulaProfTipo(@Param("idProf") Long id, @Param("tipo") TipoCurso tipo);
 	
 

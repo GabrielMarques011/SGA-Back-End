@@ -1,5 +1,7 @@
 package com.backend.sga.rest;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,5 +85,15 @@ public class UnidadeCurricularRestController {
 	public TipoAmbiente[] buscaAmbiente() {
 		return TipoAmbiente.values();
 	}
+	
+	@RequestMapping(value = "/autocomplete/{nome}")
+	public List<UnidadeCurricular> autoComplete(@PathVariable("nome") String nome){
+		return curricularRepository.autoComplete(nome);
+	}
 
+	@RequestMapping(value = "/buscaUc/{nome}", method =  RequestMethod.GET)
+	public List<UnidadeCurricular> buscaUnidade (@PathVariable("nome") String nome){
+		return curricularRepository.buscaUnidade(nome);
+	}
+	
 }

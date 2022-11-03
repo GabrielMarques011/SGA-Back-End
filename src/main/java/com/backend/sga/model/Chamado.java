@@ -25,6 +25,6 @@ public class Chamado {
 	@OneToOne
 	private Usuario usuario;
 	
-	private tipoChamado tipoChamado;
+	private tipoChamado tipo;
 
 }

@@ -144,9 +144,9 @@ public class AmbienteRestController {
 
 	// buscando determinados tipos de ambientes dependendo da ENUM que for
 	// selecionada (Pedido Kalebe)
-	@RequestMapping(value = "/buscaambiente/{tipo_ambiente}", method = RequestMethod.GET)
-	public Iterable<Ambiente> buscandoAmbiente(@PathVariable("tipo_ambiente") TipoAmbiente tipoAmbiente) {
-		return ambienteRepository.buscaAmbiente(tipoAmbiente);
+	@RequestMapping(value = "/buscaambiente/{tipo}", method = RequestMethod.GET)
+	public Iterable<Ambiente> buscandoAmbiente(@PathVariable("tipo") TipoAmbiente tipo) {
+		return ambienteRepository.buscaAmbiente(tipo);
 	}
 
 	// puxando as capacidades de tais valores selecionados (Pedido Matheus e Kalebe)
@@ -159,9 +159,9 @@ public class AmbienteRestController {
 	// trazendo valores comforme o tipo e a capacidade selecionada ou escrita
 	// (Pedido Matheus e Kalebe)
 	@RequestMapping(value = "/tipoecapacidade", method = RequestMethod.GET)
-	public Iterable<Ambiente> retornaTipoeCapacidade(@PathParam("tipo_ambiente") TipoAmbiente tipoAmbiente,
+	public Iterable<Ambiente> retornaTipoeCapacidade(@PathParam("tipo") TipoAmbiente tipo,
 			@PathParam("capacidadeMin") int capacidadeMin, @PathParam("capacidadeMax") int capacidadeMax) {
-		return ambienteRepository.retornaTipoCapacidade(tipoAmbiente, capacidadeMin, capacidadeMax);
+		return ambienteRepository.retornaTipoCapacidade(tipo, capacidadeMin, capacidadeMax);
 	}
 
 	@RequestMapping(value = "/disponivel", method = RequestMethod.GET)

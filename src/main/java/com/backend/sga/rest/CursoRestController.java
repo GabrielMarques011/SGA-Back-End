@@ -1,7 +1,5 @@
 package com.backend.sga.rest;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -124,11 +122,11 @@ public class CursoRestController {
 	}
 
 	// Feito o metodo para retornar quais tipos de Cursos forem aplicados (Kalebe pediu)
-	@RequestMapping(value = "/buscacurso/{tipo_curso}", method = RequestMethod.GET)
-	public Iterable<Curso> buscaTipoCurso(@PathVariable("tipo_curso") TipoCurso tCurso) {
+	@RequestMapping(value = "/buscacurso/{tipo}", method = RequestMethod.GET)
+	public Iterable<Curso> buscaTipoCurso(@PathVariable("tipo") TipoCurso tipo) {
 		// Fazendo uma Query para que o Front selcione um tipo de curso e traga so
 		// valores relacionas a ele
-		return cursoRepository.buscaTipoCurso(tCurso);
+		return cursoRepository.buscaTipoCurso(tipo);
 	}
 
 	// Feito no intuito para retornar valores escritos na busca (Kalebe pediu)
@@ -141,9 +139,9 @@ public class CursoRestController {
 	
 	
 	//metodo para Retornar o uma lista de Curso conforme uma Unidade Curricular (Pedido Kalebe e Matheus)
-	@RequestMapping(value = "/buscaUn/{nome}", method = RequestMethod.GET)
-	public Iterable<Curso> buscaUnidade (@PathVariable("nome") String nome){
-		return cursoRepository.buscaUnidade(nome);
+	@RequestMapping(value = "/buscaCr/{nome}", method = RequestMethod.GET)
+	public Iterable<Curso> buscaCurso (@PathVariable("nome") String nome){
+		return cursoRepository.buscaCurso(nome);
 	}
 
 }

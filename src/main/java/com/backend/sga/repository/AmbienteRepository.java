@@ -24,16 +24,16 @@ public interface AmbienteRepository extends PagingAndSortingRepository<Ambiente,
 	public List<Ambiente> palavraChave(@Param("nome") String nome);
 
 	// SELECT * FROM sga.ambiente WHERE sga.ambiente.tipo_ambiente = 1
-	@Query("SELECT a FROM Ambiente a WHERE a.tipoAmbiente = :tipo_ambiente")
-	public Iterable<Ambiente> buscaAmbiente(@Param("tipo_ambiente") TipoAmbiente tipoAmbiente);
+	@Query("SELECT a FROM Ambiente a WHERE a.tipo = :tipo")
+	public Iterable<Ambiente> buscaAmbiente(@Param("tipo") TipoAmbiente tipoAmbiente);
 
 	// SELECT * FROM sga.ambiente WHERE sga.ambiente.capacidade between 15 AND 30;
 	@Query("SELECT a FROM Ambiente a WHERE a.capacidade BETWEEN :capacidadeMin AND :capacidadeMax")
 	public Iterable<Ambiente> retornaCapacidade(@Param("capacidadeMin") int capacidadeMin,@Param("capacidadeMax") int capacidadeMax);
 
 	// SELECT * FROM sga.ambiente WHERE sga.ambiente.tipo_ambiente = 2 AND sga.ambiente.capacidade BETWEEN 20 AND 30
-	@Query("SELECT a FROM Ambiente a WHERE a.tipoAmbiente = :tipo_ambiente AND a.capacidade BETWEEN :capacidadeMin AND :capacidadeMax")
-	public Iterable<Ambiente> retornaTipoCapacidade(@Param("tipo_ambiente") TipoAmbiente tipoAmbiente,@Param("capacidadeMin") int capacidadeMin, @Param("capacidadeMax") int capacidadeMax);
+	@Query("SELECT a FROM Ambiente a WHERE a.tipo = :tipo AND a.capacidade BETWEEN :capacidadeMin AND :capacidadeMax")
+	public Iterable<Ambiente> retornaTipoCapacidade(@Param("tipo") TipoAmbiente tipoAmbiente,@Param("capacidadeMin") int capacidadeMin, @Param("capacidadeMax") int capacidadeMax);
 
 	// SELECT a.* FROM sga.ambiente as a inner join sga.aula as au on a.id = au.ambiente_id where au.data >= "2022-10-24" AND au.data <= "2022-11-08" and au.periodo = 0 group by ID ;
 

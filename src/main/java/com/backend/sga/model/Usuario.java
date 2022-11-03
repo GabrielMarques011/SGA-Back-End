@@ -33,7 +33,7 @@ public class Usuario {
 	@NotNull
 	private String nif;
 	
-	private TipoUsuario tipoUsuario;
+	private TipoUsuario tipo;
 	
 	private Boolean ativo;
 	

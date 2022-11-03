@@ -155,7 +155,7 @@ public class UsuarioRestController {
 				payload.put("email", usuario.getEmail());
 				payload.put("senha", usuario.getSenha());
 				payload.put("nif", usuario.getNif());
-				payload.put("tipoUsuario", usuario.getTipoUsuario());
+				payload.put("tipoUsuario", usuario.getTipo());
 				payload.put("ativo", usuario.getAtivo());
 
 				// cria variavel para data de expiração

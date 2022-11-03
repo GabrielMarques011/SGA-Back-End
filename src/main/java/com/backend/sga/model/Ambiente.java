@@ -22,7 +22,7 @@ public class Ambiente {
 	@NotNull
 	private int capacidade;
 	
-	private TipoAmbiente tipoAmbiente;
+	private TipoAmbiente tipo;
 	
 	//@NotNull
 	private String cep;

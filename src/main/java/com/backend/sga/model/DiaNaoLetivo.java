@@ -27,6 +27,6 @@ public class DiaNaoLetivo {
 	@NotNull
 	private String nome;
 	
-	private TipoDeDia tipoDeDia;
+	private TipoDeDia tipo;
 	
 }
