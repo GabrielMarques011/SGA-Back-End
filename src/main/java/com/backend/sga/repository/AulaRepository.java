@@ -51,6 +51,9 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	@Query("SELECT a FROM Aula a WHERE a.data = :data AND a.periodo = :periodo AND a.ambiente = :ambiente")
 	public Optional<Aula> ocupadoPorDataPeriodo(@Param("data") Calendar dataInicio, @Param("periodo") Periodo periodo, @Param("ambiente") Ambiente ambiente);
 	
+	@Query("SELECT a FROM Aula a WHERE a.data = :data AND a.periodo = :periodo AND a.professor = :professor")
+	public Optional<Aula> ocupadoPorDataPeriodoProf(@Param("data") Calendar dataInicio, @Param("periodo") Periodo periodo, @Param("professor") Professor professor);
+	
 	//SELECT * FROM sga.aula AS a INNER JOIN sga.professor AS p ON a.professor_id = p.id INNER JOIN sga.ambiente AS am ON a.ambiente_id = am.id INNER JOIN sga.unidade_curricular AS uc ON a.unidade_curricular_id = uc.id WHERE a.cod_turma LIKE '%2%'OR a.carga_diaria LIKE '%2%' OR p.nome LIKE "%2%" OR am.nome LIKE "%2%" OR uc.nome LIKE "%2%";
 	@Query("SELECT a FROM Aula a INNER JOIN Professor p ON a.professor.id = p.id INNER JOIN Ambiente am ON a.ambiente.id = am.id INNER JOIN UnidadeCurricular uc ON a.unidadeCurricular.id = uc.id WHERE a.codTurma LIKE %:value% OR a.cargaDiaria LIKE %:value% OR p.nome LIKE %:value% OR am.nome LIKE %:value% OR uc.nome LIKE %:value%")
 	public List<Aula> filtroAula (@Param("value") String value);

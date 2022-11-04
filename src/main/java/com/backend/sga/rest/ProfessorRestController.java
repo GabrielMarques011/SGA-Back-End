@@ -118,7 +118,7 @@ public class ProfessorRestController {
 	}
 
 	// retorna apenas o prof, ambiente e se esta em aula
-	@RequestMapping(value = "/professorDisp/", method = RequestMethod.POST)
+	@RequestMapping(value = "/professorDisp/", method = RequestMethod.GET)
 	public ArrayList<DevolveDisp> buscarDisponibilidadeProfessor() {
 		List<Professor> listaProf = (List<Professor>) professorRepository.findAll();
 		int hora = LocalTime.now().getHour();
@@ -215,6 +215,30 @@ public class ProfessorRestController {
 
 		return profsDb;
 	}
+	
+	@RequestMapping(value = "/disponibilidadeProf/periodo", method = RequestMethod.POST)
+	public ArrayList<Aula> disponivelPeriodoProf(@RequestBody RecebeBuscaAmbiente busca){
+		Calendar data = busca.getDataInicio();
+		boolean dia[] = busca.getDiasSemana();
+		int diaSemana = data.get(Calendar.DAY_OF_WEEK);
+		
+		ArrayList<Aula> aulas = new ArrayList<Aula>();
+		
+		while(data.before(busca.getDataFinal()) || data.equals(busca.getDataFinal())) {
+			if(dia[diaSemana - 1] == true) {
+				//Optional<Aula> ocupado = aulaRepository.ocupadoPorDataPeriodo(data, busca.getPeriodo(), busca.getAmbiente());
+				Optional<Aula> ocupado = aulaRepository.ocupadoPorDataPeriodoProf(data, busca.getPeriodo(), busca.getProfessor());
+				
+				if(!ocupado.isEmpty()) {
+					aulas.add(ocupado.get());
+				}
+			}
+			data.add(Calendar.DAY_OF_MONTH, 1);
+		}
+		
+		return aulas;
+	}
+	
 	
 	@RequestMapping(value = "/orderProf", method = RequestMethod.GET)
 	public List<Professor> orderProfessor(){

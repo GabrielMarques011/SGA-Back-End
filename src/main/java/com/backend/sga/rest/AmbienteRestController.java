@@ -214,7 +214,6 @@ public class AmbienteRestController {
 		
 		ArrayList<Aula> aulas = new ArrayList<Aula>();
 		
-		
 		while(data.before(busca.getDataFinal()) || data.equals(busca.getDataFinal())) {
 			if(dia[diaSemana - 1] == true) {
 				Optional<Aula> ocupado = aulaRepository.ocupadoPorDataPeriodo(data, busca.getPeriodo(), busca.getAmbiente());
