@@ -118,7 +118,7 @@ public class ProfessorRestController {
 	}
 
 	// retorna apenas o prof, ambiente e se esta em aula
-	@RequestMapping(value = "/professorDisp/", method = RequestMethod.GET)
+	@RequestMapping(value = "/professorDisp/", method = RequestMethod.POST)
 	public ArrayList<DevolveDisp> buscarDisponibilidadeProfessor() {
 		List<Professor> listaProf = (List<Professor>) professorRepository.findAll();
 		int hora = LocalTime.now().getHour();
