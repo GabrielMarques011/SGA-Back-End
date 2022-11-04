@@ -97,48 +97,53 @@ public class CursoRestController {
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		} else {
 			
+			Optional<Curso> cid = cursoRepository.findById(id);
+			
+			//vendo se o id do curso ou unidade é vazia
+			if (cid.isEmpty()) {
+				Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null);
+				return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+			}else {
+			
+			//fazendo o for para percorrer as unidades
 			for(int i = 0; i < curso.getUnidadeCurricular().size(); i++) {
+				
 				UnidadeCurricular unidade = new UnidadeCurricular();
+				
 				if (curso.getUnidadeCurricular().get(i).getId() != null) {
 					unidade.setId(curso.getUnidadeCurricular().get(i).getId());
 				}
+				
 				unidade.setNome(curso.getUnidadeCurricular().get(i).getNome());
 				unidade.setHoras(curso.getUnidadeCurricular().get(i).getHoras());
+				//setando o id do curso no unidade
+				unidade.setCurso(cid.get());
 				curricularRepository.save(unidade);
 				curso.getUnidadeCurricular().get(i).setId(unidade.getId());
 			}
-			
 			cursoRepository.save(curso);
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+			}
 		}
 	}
 
-	// Feito o metodo para retornar a ENUM para o Front (Kalebe pediu)
+	
 	@RequestMapping(value = "/tipocurso", method = RequestMethod.GET)
 	public TipoCurso[] busca() {
-		// setando todos os valores relacionados a enum
 		return TipoCurso.values();
 	}
 
-	// Feito o metodo para retornar quais tipos de Cursos forem aplicados (Kalebe pediu)
 	@RequestMapping(value = "/buscacurso/{tipo}", method = RequestMethod.GET)
 	public Iterable<Curso> buscaTipoCurso(@PathVariable("tipo") TipoCurso tipo) {
-		// Fazendo uma Query para que o Front selcione um tipo de curso e traga so
-		// valores relacionas a ele
 		return cursoRepository.buscaTipoCurso(tipo);
 	}
 
-	// Feito no intuito para retornar valores escritos na busca (Kalebe pediu)
 	@RequestMapping(value = "/buscapalavra/{nome}", method = RequestMethod.GET)
 	public Iterable<Curso> buscaPalavrasChaves(@PathVariable("nome") String nome) {
-		// Fiz um like para que com qualquer palavra que ele digitar aparece algo
-		// relacionado aquilo
 		return cursoRepository.palavraChave(nome);
 	}
 	
-	
-	//metodo para Retornar o uma lista de Curso conforme uma Unidade Curricular (Pedido Kalebe e Matheus)
 	@RequestMapping(value = "/buscaCr/{nome}", method = RequestMethod.GET)
 	public Iterable<Curso> buscaCurso (@PathVariable("nome") String nome){
 		return cursoRepository.buscaCurso(nome);

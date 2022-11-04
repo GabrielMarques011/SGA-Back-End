@@ -1,8 +1,11 @@
 package com.backend.sga.rest;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Aula;
+import com.backend.sga.model.Ausencia;
 import com.backend.sga.model.Competencia;
 import com.backend.sga.model.DevolveDisp;
 import com.backend.sga.model.Erro;
@@ -201,8 +205,6 @@ public class ProfessorRestController {
 			data.add(Calendar.DAY_OF_MONTH, 1);
 		}
 		
-		//System.out.println(ocupados);
-		
 		for(int i = 0; i < profsDb.size(); i++) {
 			for(int j = 0; j < ocupados.size(); j++) {
 				if(profsDb.get(i) == ocupados.get(j)) {
@@ -224,5 +226,86 @@ public class ProfessorRestController {
 	public List<Professor> ordernarProCrEUc(@RequestParam("nomeCr") String nomeCr, @RequestParam("nomeUc") String nomeUc){
 		return professorRepository.listProfcuc(nomeCr, nomeUc);
 	}
+	
+	
+	//METODO DASHBOARD (COLUNA)
+    @RequestMapping(value = "/diaria", method = RequestMethod.GET)
+    public double[] busca (@RequestParam("id") Long id, @RequestParam("data_inicio") String data_inicio, @RequestParam("data_final") String data_final, Professor prof){
+        
+        //formatando o formato da Data
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        
+        //transcrevendo para Calendar
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(sdf.parse(data_inicio));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        
+        Calendar calendar2 = Calendar.getInstance();
+        try {
+            calendar2.setTime(sdf.parse(data_final));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        
+        List<Aula> lista = aulaRepository.buscaTempo(id, calendar, calendar2);
+        
+        double diaria = 0;
+
+       //percorrer o for para que recebemos o valor
+        for (int l = 0; l < lista.size(); l++) {
+            diaria += lista.get(l).getCargaDiaria();
+            System.out.println(diaria);
+        }
+        
+        Optional<Professor> profe = professorRepository.findById(id);
+        
+        double[] horas = new double[2];
+        horas[0] = diaria;
+        horas[1] = profe.get().getCargaSemanal();
+        
+        return horas;
+        
+    }
+    
+    @RequestMapping(value = "/emAula", method = RequestMethod.GET)
+	public ArrayList<Object> retornaEmAula() {
+		
+    	List<Professor> prof = (List<Professor>) professorRepository.findAll();
+		int hora = LocalTime.now().getHour();
+		Calendar data = Calendar.getInstance();
+		Periodo periodo = null;
+		boolean emAula;
+
+		if (hora < 12) {
+			periodo = Periodo.MANHA;
+		} else if (hora > 12 && hora < 18) {
+			periodo = Periodo.TARDE;
+		} else if (hora >= 18) {
+			periodo = Periodo.NOITE;
+		}
+
+		ArrayList<Object> valor = new ArrayList<Object>();
+		
+		for (int i = 0; i < prof.size(); i++) {
+			if (aulaRepository.buscaProf(prof.get(i), data, periodo).isEmpty()) {
+				emAula = false;
+			} else {
+				emAula = true;
+			}			
+			
+			Object result[] = new Object[2];
+			result[0] = prof.get(i);
+			result[1] = emAula;
+			
+			valor.add(result);
+		}
+
+		return valor;
+	}
+	
+	
 
 }

@@ -100,7 +100,7 @@ public class AmbienteRestController {
 
 	// método que busca os ambientes disponíveis
 	@RequestMapping(value = "/disponiveis", method = RequestMethod.GET)
-	public ArrayList<Long> buscarAmbientesDisponiveis(@RequestParam("unidade_id") Long id,
+	public ArrayList<Long> buscarAmbientesDisponiveis(@RequestParam("unidade") Long id,
 			@RequestParam("data") String data, @RequestParam("periodo") Periodo periodo) {
 		List<Aula> aulas = aulaRepository.findByAmbientesId(id); // buscando as listas de aulas de acordo com a unidade
 																	// curricular
@@ -128,46 +128,39 @@ public class AmbienteRestController {
 		return ambiDisponiveis; // retornando a lista de ambientes disponíveis
 	}
 
-	// retornando uma lista das ENUM que contem (Pedido Kalebe)
 	@RequestMapping(value = "/tipoambiente", method = RequestMethod.GET)
 	public TipoAmbiente[] buscaTipoAmbiente() {
-		// passando os valores que tem dentro da ENUM
 		return TipoAmbiente.values();
 	}
 
-	// busca por palavra chaves por ambientes (Pedido Kalebe)
 	@RequestMapping(value = "/buscapalavra/{nome}", method = RequestMethod.GET)
 	public List<Ambiente> buscaChaveAmbiente(@PathVariable("nome") String nome) {
-		// passando um retorno de LIKE na query
 		return ambienteRepository.palavraChave(nome);
 	}
 
-	// buscando determinados tipos de ambientes dependendo da ENUM que for
-	// selecionada (Pedido Kalebe)
 	@RequestMapping(value = "/buscaambiente/{tipo}", method = RequestMethod.GET)
 	public Iterable<Ambiente> buscandoAmbiente(@PathVariable("tipo") TipoAmbiente tipo) {
 		return ambienteRepository.buscaAmbiente(tipo);
 	}
 
-	// puxando as capacidades de tais valores selecionados (Pedido Matheus e Kalebe)
 	@RequestMapping(value = "/capacidade", method = RequestMethod.GET)
 	public Iterable<Ambiente> retornaCapacidade(@PathParam("capacidadeMin") int capacidadeMin,
 			@PathParam("capacidadeMax") int capacidadeMax) {
 		return ambienteRepository.retornaCapacidade(capacidadeMin, capacidadeMax);
 	}
 
-	// trazendo valores comforme o tipo e a capacidade selecionada ou escrita
-	// (Pedido Matheus e Kalebe)
 	@RequestMapping(value = "/tipoecapacidade", method = RequestMethod.GET)
 	public Iterable<Ambiente> retornaTipoeCapacidade(@PathParam("tipo") TipoAmbiente tipo,
 			@PathParam("capacidadeMin") int capacidadeMin, @PathParam("capacidadeMax") int capacidadeMax) {
 		return ambienteRepository.retornaTipoCapacidade(tipo, capacidadeMin, capacidadeMax);
 	}
 
+	
+	
+	//METODO PARA O MOBILE
 	@RequestMapping(value = "/disponivel", method = RequestMethod.GET)
 	public List<Ambiente> retornaDisponivel(@RequestParam("dataInicio") Calendar dataInicio, @RequestParam("dias") 
 	boolean dia[], @RequestParam("dataFinal") Calendar dataFinal, @RequestParam("periodo") Periodo periodo) {
-		// List<Ambiente> listaOcupados = ambienteRepository.retornaOcupados(busca.getDataInicio(),busca.getDataFinal(), busca.getPeriodo());
 
 		ArrayList<Ambiente> ocupados = new ArrayList<Ambiente>();
 
@@ -198,7 +191,6 @@ public class AmbienteRestController {
 		return ambientes;
 	}
 	
-	// Método que retorna os ambientes ocupados de um determinado dia 
 	@RequestMapping(value = "/ocupados/{data}", method = RequestMethod.GET)
 	public List<Ambiente> ambientesOcupadosData(@PathVariable("data") String dataStr){
 		
@@ -214,7 +206,7 @@ public class AmbienteRestController {
 		return ambienteRepository.ocupadosPorData(data);
 	}
 	
-	@RequestMapping(value = "/disponibilidade/periodo", method = RequestMethod.GET)
+	@RequestMapping(value = "/disponibilidade/periodo", method = RequestMethod.POST)
 	public ArrayList<Aula> disponivelDataPeriodo(@RequestBody RecebeBuscaAmbiente busca){
 		Calendar data = busca.getDataInicio();
 		boolean dia[] = busca.getDiasSemana();

@@ -245,6 +245,7 @@ public class AulaRestController {
 		return aulaRepository.buscaData(data);
 	}
 	
+	//METODO COMPARAÇAÕ DO MES ANTERIOS (VALOR PERIODO DASHBOARD)
 	@RequestMapping(value = "/analise/{mes}", method = RequestMethod.GET)
 	public ArrayList<Object> comparacaoMes(@PathVariable("mes") int mes) {
 		int ano = LocalDate.now().getYear();
