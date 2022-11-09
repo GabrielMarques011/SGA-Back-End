@@ -66,7 +66,7 @@ public class AulaRestController {
 	ArrayList<Professor> professoresOcp = new ArrayList<Professor>();
 	ArrayList<Ambiente> ambientesOcp = new ArrayList<Ambiente>();
 	
-	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/criar", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Object criarAula(@RequestBody RecebeAula recebeAula, HttpServletRequest request) {
 
 		boolean dia[] = recebeAula.getDiaSemana();
@@ -132,7 +132,7 @@ public class AulaRestController {
 								}
 							}
 							
-							List<Ambiente> ambOcopados = ambRepository.retornaOcupadosDia(data, recebeAula.getPeriodo());
+							List<Ambiente> ambOcopados = ambRepository.retornaOcupadosDiaCalendar(data, recebeAula.getPeriodo());
 							if(!ambOcopados.isEmpty()) {
 								for(int i = 0; i < ambOcopados.size(); i++) {
 									ambientesOcp.add(ambOcopados.get(i));
@@ -162,31 +162,55 @@ public class AulaRestController {
 		List<Professor> professores = (List<Professor>) professorRepository.findAll();
 		List<Ambiente> ambientes = (List<Ambiente>) ambRepository.findAll();
 		
-		System.out.println(ambientesOcp);
-		System.out.println(professoresOcp.get(0).getNome());
 		
-		for(int i = 0; i < professoresOcp.size(); i++) {
-			for(int j = 0; j < professores.size(); j++) {
-				if(professores.get(j) == professoresOcp.get(i)) {
-					professores.remove(j);
+		for(int i = 0; i < professores.size(); i++) {
+			for(int j = 0; j < professoresOcp.size(); j++) {
+				if(professores.get(i).getId() == professoresOcp.get(j).getId()) {
+					professores.remove(i);
 				}
 			}
 		}
 		
-		for(int i = 0; i < ambientesOcp.size(); i++) {
-			for(int j = 0; j < ambientes.size(); j++) {
-				if(ambientes.get(j) == ambientesOcp.get(i)) {
-					System.out.println("passou prof");
-					ambientes.remove(j);
+		for(int i = 0; i < ambientes.size(); i++) {
+			for(int j = 0; j < ambientesOcp.size(); j++) {
+				if(ambientes.get(i).getId() == ambientesOcp.get(j).getId()) {
+					ambientes.remove(i);
 				}
 			}
 		}
 		
+		System.out.println(ambientes.get(1));
+		System.out.println(professores.get(0).getNome());
 		Object result[] = new Object[2];
 		result[0] = professores;
 		result[1] = ambientes;
 		
 		return result;
+		
+	}
+	
+	@RequestMapping(value = "", method = RequestMethod.POST)
+	public ResponseEntity<Object> salvarAulas(@RequestBody RecebeAula recebeAula){
+		System.out.println(aulas.size());
+		try {
+			for(int i = 0; i < aulas.size(); i++) {
+				aulas.get(i).setAmbiente(recebeAula.getAmbiente());
+				aulas.get(i).setProfessor(recebeAula.getProfessor());
+				
+				aulaRepository.save(aulas.get(i));
+			}
+			
+			aulas.clear();
+			professoresOcp.clear();
+			ambientesOcp.clear();
+			
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+		} catch (Exception e) {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível cadastrar a aula", null); // de //																									// erro
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -197,8 +221,7 @@ public class AulaRestController {
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		} else {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível deletar a aula", null); // de //
-																												// erro
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível deletar a aula", null); // de //																									// erro
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
