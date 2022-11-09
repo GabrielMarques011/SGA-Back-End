@@ -65,15 +65,87 @@ public class AulaRestController {
 	ArrayList<Aula> aulas = new ArrayList<Aula>();
 	ArrayList<Professor> professoresOcp = new ArrayList<Professor>();
 	ArrayList<Ambiente> ambientesOcp = new ArrayList<Ambiente>();
+<<<<<<< HEAD
 	
 	@RequestMapping(value = "/criar", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Object criarAula(@RequestBody RecebeAula recebeAula, HttpServletRequest request) {
+=======
+>>>>>>> ad9db24e06829b458fd00529bf6cc3e438d69458
 
-		boolean dia[] = recebeAula.getDiaSemana();
-		Calendar dataInicio = recebeAula.getDataInicio();
-		UnidadeCurricular uc = repository.findById(recebeAula.getUnidadeCurricular().getId()).get();
-		double cargaHoraria = uc.getHoras();
+	/*
+	 * @RequestMapping(value = "", method = RequestMethod.POST, consumes =
+	 * MediaType.APPLICATION_JSON_VALUE) public Object criarAula(@RequestBody
+	 * RecebeAula recebeAula, HttpServletRequest request) {
+	 * 
+	 * boolean dia[] = recebeAula.getDiaSemana(); Calendar dataInicio =
+	 * recebeAula.getDataInicio(); UnidadeCurricular uc =
+	 * repository.findById(recebeAula.getUnidadeCurricular().getId()).get(); double
+	 * cargaHoraria = uc.getHoras();
+	 * 
+	 * // retornando uma listagem de aula List<Aula> listaAula =
+	 * aulaRepository.diaSemanal(recebeAula.getDataInicio());
+	 * 
+	 * if (!aulaRepository.diaAula(dataInicio, recebeAula.getPeriodo(),
+	 * recebeAula.getAmbiente()).isEmpty()) { Erro erro = new
+	 * Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Este dia não está disponível", null);
+	 * return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR); }
+	 * else {
+	 * 
+	 * // fazendo a repetição das horas até chegar a 0 while (cargaHoraria > 0) {
+	 * 
+	 * // criando variavel para que sete os valores da dataInicio // !necessario
+	 * (TimeZone.getTimeZone("GMT-00:00")) Calendar data =
+	 * Calendar.getInstance(TimeZone.getTimeZone("GMT-00:00"));
+	 * data.setTime(dataInicio.getTime()); int diaSemana =
+	 * data.get(Calendar.DAY_OF_WEEK);
+	 * 
+	 * if (dia[diaSemana - 1] == true) {
+	 * 
+	 * String dataStr; int mes; mes = data.get(Calendar.MONTH) + 1;
+	 * 
+	 * // formatado a variável Calendar para String if (data.get(Calendar.MONTH + 1)
+	 * < 10 && data.get(Calendar.DAY_OF_MONTH) < 10) { dataStr =
+	 * data.get(Calendar.YEAR) + "-0" + mes + "-0" +
+	 * data.get(Calendar.DAY_OF_MONTH); } else if (data.get(Calendar.DAY_OF_MONTH) <
+	 * 10) { dataStr = data.get(Calendar.YEAR) + "-" + mes + "-0" +
+	 * data.get(Calendar.DAY_OF_MONTH); } else if (data.get(Calendar.MONTH + 1) <
+	 * 10) { dataStr = data.get(Calendar.YEAR) + "-0" + mes + "-" +
+	 * data.get(Calendar.DAY_OF_MONTH); } else { dataStr = data.get(Calendar.YEAR) +
+	 * "-" + mes + "-" + data.get(Calendar.DAY_OF_MONTH); }
+	 * 
+	 * if (feriadosRepository.buscaData(dataStr).isEmpty()) {
+	 * 
+	 * if (diaNaorepository.buscaDNL(data).isEmpty()) {
+	 * 
+	 * // criando a aula(trazendo ela) Aula aula = new Aula();
+	 * 
+	 * // setando os valores que precisam no cadastro de aula
+	 * aula.setCurso(recebeAula.getCurso());
+	 * aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
+	 * aula.setCodTurma(recebeAula.getCodTurma());
+	 * aula.setPeriodo(recebeAula.getPeriodo());
+	 * aula.setCargaDiaria(recebeAula.getCargaDiaria()); aula.setData(data);
+	 * 
+	 * aulas.add(aula);
+	 * 
+	 * List<Professor> profOcupado = professorRepository.buscaOcupado(data,
+	 * recebeAula.getPeriodo()); if(!profOcupado.isEmpty()) { for(int i = 0; i <
+	 * profOcupado.size(); i++) { professoresOcp.add(profOcupado.get(i)); } }
+	 * 
+	 * List<Ambiente> ambOcopados = ambRepository.retornaOcupadosDia(data,
+	 * recebeAula.getPeriodo()); if(!ambOcopados.isEmpty()) { for(int i = 0; i <
+	 * ambOcopados.size(); i++) { ambientesOcp.add(ambOcopados.get(i)); } }
+	 * 
+	 * // Subtraindo a carga horaria depois que o cadastro acontece cargaHoraria =
+	 * cargaHoraria - aula.getCargaDiaria();
+	 * 
+	 * } } } // Pulando de 1 dia em 1 dia... dataInicio.add(Calendar.DAY_OF_MONTH,
+	 * 1); } } Calendar result[] = new Calendar[2]; result[0] =
+	 * aulas.get(0).getData(); result[1] = aulas.get(aulas.size() - 1).getData();
+	 * return result; }
+	 */
 
+<<<<<<< HEAD
 		// retornando uma listagem de aula
 		List<Aula> listaAula = aulaRepository.diaSemanal(recebeAula.getDataInicio());
 
@@ -156,11 +228,14 @@ public class AulaRestController {
 	}
 	
 	
+=======
+>>>>>>> ad9db24e06829b458fd00529bf6cc3e438d69458
 	@RequestMapping(value = "/valoresLivres", method = RequestMethod.GET)
 	public Object[] retornaProfsEAmbsLivres() {
-		
+
 		List<Professor> professores = (List<Professor>) professorRepository.findAll();
 		List<Ambiente> ambientes = (List<Ambiente>) ambRepository.findAll();
+<<<<<<< HEAD
 		
 		
 		for(int i = 0; i < professores.size(); i++) {
@@ -181,10 +256,33 @@ public class AulaRestController {
 		
 		System.out.println(ambientes.get(1));
 		System.out.println(professores.get(0).getNome());
+=======
+
+		System.out.println(ambientesOcp);
+		System.out.println(professoresOcp.get(0).getNome());
+
+		for (int i = 0; i < professoresOcp.size(); i++) {
+			for (int j = 0; j < professores.size(); j++) {
+				if (professores.get(j) == professoresOcp.get(i)) {
+					professores.remove(j);
+				}
+			}
+		}
+
+		for (int i = 0; i < ambientesOcp.size(); i++) {
+			for (int j = 0; j < ambientes.size(); j++) {
+				if (ambientes.get(j) == ambientesOcp.get(i)) {
+					System.out.println("passou prof");
+					ambientes.remove(j);
+				}
+			}
+		}
+
+>>>>>>> ad9db24e06829b458fd00529bf6cc3e438d69458
 		Object result[] = new Object[2];
 		result[0] = professores;
 		result[1] = ambientes;
-		
+
 		return result;
 		
 	}

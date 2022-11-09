@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Aula;
-import com.backend.sga.model.Ausencia;
 import com.backend.sga.model.Competencia;
 import com.backend.sga.model.DevolveDisp;
 import com.backend.sga.model.Erro;
@@ -273,9 +271,11 @@ public class ProfessorRestController {
 	}
 	
 	
+	// URL = localhost:8080/api/professor/buscProf?nomeCurso=Word Avançado&nomeUnidade=Word
+	//METODO PARA TRAZER TODOS OS PROFESSORES DE UMA UNIDADE E UM CURSO ESPECIFICO (MOBILE)
 	@RequestMapping(value = "/buscProf", method = RequestMethod.GET)
-	public List<Professor> ordernarProCrEUc(@RequestParam("nomeCr") String nomeCr, @RequestParam("nomeUc") String nomeUc){
-		return professorRepository.listProfcuc(nomeCr, nomeUc);
+	public List<Professor> ordernarProCrEUc(@RequestParam("nomeCurso") String nomeCurso, @RequestParam("nomeUnidade") String nomeUnidade){
+		return professorRepository.listProfcuc(nomeCurso, nomeUnidade);
 	}
 	
 	
