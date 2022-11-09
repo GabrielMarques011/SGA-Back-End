@@ -1,5 +1,6 @@
 package com.backend.sga.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,6 +21,7 @@ public class Chamado {
 	@NotNull
 	private String descricao;
 	
+	@Column(columnDefinition = "LONGTEXT")
 	private String foto;
 	
 	@OneToOne

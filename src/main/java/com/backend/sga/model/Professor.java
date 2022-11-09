@@ -45,4 +45,7 @@ public class Professor {
 	@OneToMany(mappedBy = "professor")
 	private List<Competencia> competencia;
 	
+	@Column(columnDefinition = "LONGTEXT")
+	private String foto;
+	
 }

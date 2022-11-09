@@ -37,4 +37,6 @@ public class Usuario {
 	
 	private Boolean ativo;
 	
+	@Column(columnDefinition = "LONGTEXT")
+	private String foto;
 }
