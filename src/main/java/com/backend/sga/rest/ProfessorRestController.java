@@ -278,7 +278,6 @@ public class ProfessorRestController {
 		return professorRepository.listProfcuc(nomeCurso, nomeUnidade);
 	}
 	
-	
 	//METODO DASHBOARD (COLUNA)
     @RequestMapping(value = "/diaria", method = RequestMethod.GET)
     public double[] busca (@RequestParam("id") Long id, @RequestParam("data_inicio") String data_inicio, @RequestParam("data_final") String data_final, Professor prof){
