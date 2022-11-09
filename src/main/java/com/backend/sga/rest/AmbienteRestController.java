@@ -44,6 +44,8 @@ public class AmbienteRestController {
 	@Autowired
 	private AulaRepository aulaRepository;
 
+	// URL =
+	// METODO PARA CRIAR AMBIENTE
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarAmbiente(@RequestBody Ambiente ambiente, HttpServletRequest request) {
 		if (ambiente != null) {
@@ -55,7 +57,7 @@ public class AmbienteRestController {
 			filtro[0] = sucesso;
 			filtro[1] = ambiente.getId();
 
-			// setando o o filtro junto com o 'Status OK'
+			// SETANDO A CLASS SUCESSO JUNTO COM O ID DO AMBIENTE
 			ResponseEntity<Object> okpost = new ResponseEntity<Object>(filtro, HttpStatus.OK);
 
 			return okpost;
@@ -65,6 +67,23 @@ public class AmbienteRestController {
 		}
 	}
 
+	// URL =
+	// METODO PARA ALTERAR O AMBIENTE
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> atualizarAmbiente(@PathVariable("id") Long id, @RequestBody Ambiente ambiente,
+			HttpServletRequest request) {
+		if (ambiente.getId() != id) {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		} else {
+			ambienteRepository.save(ambiente);
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+		}
+	}
+
+	// URL =
+	// METODO PARA INATIVAR UM AMBIENTE
 	@RequestMapping(value = "/inativar/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Object> desativarAmbiente(@PathVariable("id") Long id, HttpServletRequest request) {
 		Optional<Ambiente> inativar = ambienteRepository.findById(id); // setando o Ativo como false, para estar
@@ -80,52 +99,40 @@ public class AmbienteRestController {
 		}
 	}
 
+	// URL =
+	// METODO PARA LISTAR TODOS OS AMBIENTES
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<Ambiente> listaAmbiente(Ambiente ambiente) {
 		return ambienteRepository.findAll();
-	}
-
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> atualizarAmbiente(@PathVariable("id") Long id, @RequestBody Ambiente ambiente,
-			HttpServletRequest request) {
-		if (ambiente.getId() != id) {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null);
-			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-		} else {
-			ambienteRepository.save(ambiente);
-			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
-			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
-		}
 	}
 
 	// método que busca os ambientes disponíveis
 	@RequestMapping(value = "/disponiveis", method = RequestMethod.GET)
 	public ArrayList<Long> buscarAmbientesDisponiveis(@RequestParam("unidade") Long id,
 			@RequestParam("data") String data, @RequestParam("periodo") Periodo periodo) {
-		List<Aula> aulas = aulaRepository.findByAmbientesId(id); // buscando as listas de aulas de acordo com a unidade
-																	// curricular
+		List<Aula> aulas = aulaRepository.findByAmbientesId(id); // BUSCANDO LISTA DE AULAS DE ACORCO COM UNIDADE
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // formatador de data
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // FORMATANDO A DATA
 
-		Calendar data1 = Calendar.getInstance(); // variável para guardar a data_inicio
+		Calendar data1 = Calendar.getInstance(); // GUARDANDO A DATA_INICIO
 		try {
-			data1.setTime(sdf.parse(data)); // tranformando a String em calendar
+			data1.setTime(sdf.parse(data)); // TRANSFORMANDO EM CALENDAR
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 
-		ArrayList<Long> ambiDisponiveis = new ArrayList<Long>(); // lista que vai armazenar os ids dos ambientes que
-																	// estão disponíveis
+		ArrayList<Long> ambiDisponiveis = new ArrayList<Long>(); // LISTA QUE VAI ARMAZENAR OS IDs DOS AMBIENTES QUE
+																	// ESTÃO DISPONIVEIS
 
-		for (int i = 0; i < aulas.size(); i++) { // for para passar pela lista que veio do bnco de dados
+		for (int i = 0; i < aulas.size(); i++) { // FOR PARA PERCORRER OS DADOS DO BANCO
 
 			if (aulas.get(i).getData().compareTo(data1) != 0) {
 				if (aulas.get(i).getPeriodo() != periodo) {
-					ambiDisponiveis.add(aulas.get(i).getId()); // adicionando o id do ambiente no arrayList
+					ambiDisponiveis.add(aulas.get(i).getId()); // ADD OS IDs do AMBIENTE NO ARRAY[]
 				}
 			}
 		}
-		return ambiDisponiveis; // retornando a lista de ambientes disponíveis
+		return ambiDisponiveis; // RETORNANDO AMBIENTES DISPONIVEIS
 	}
 
 	@RequestMapping(value = "/tipoambiente", method = RequestMethod.GET)
@@ -155,47 +162,63 @@ public class AmbienteRestController {
 		return ambienteRepository.retornaTipoCapacidade(tipo, capacidadeMin, capacidadeMax);
 	}
 
-	
-	
-	//METODO PARA O MOBILE
+	// URL = 
+	// METODO PARA O MOBILE / METODO PARA TRAZER OS AMBIENTES DISPONIVEIS
 	@RequestMapping(value = "/disponivel", method = RequestMethod.GET)
-	public List<Ambiente> retornaDisponivel(@RequestParam("dataInicio") Calendar dataInicio, @RequestParam("dias") 
-	boolean dia[], @RequestParam("dataFinal") Calendar dataFinal, @RequestParam("periodo") Periodo periodo) {
+	public List<Ambiente> retornaDisponivel(@RequestParam("dataInicio") String dataInicio,
+			@RequestParam("dias") boolean dia[], @RequestParam("dataFinal") String dataFinal,
+			@RequestParam("periodo") Periodo periodo) {
 
 		ArrayList<Ambiente> ocupados = new ArrayList<Ambiente>();
 
 		List<Ambiente> ambientes = (List<Ambiente>) ambienteRepository.findAll();
-		
-		int diaSemana = dataInicio.get(Calendar.DAY_OF_WEEK);
 
-		while (dataInicio.before(dataFinal) || dataInicio.equals(dataFinal)) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // FORMATANDO DATA
+
+		Calendar calendar = Calendar.getInstance(); // GUARDANDO AS VARIAVEL
+		try {
+			calendar.setTime(sdf.parse(dataInicio)); // TRANSFORMANDO DE STRING PARA CALENDAR
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		Calendar calendar2 = Calendar.getInstance();
+		try {
+			calendar2.setTime(sdf.parse(dataFinal));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		int diaSemana = calendar.get(Calendar.DAY_OF_WEEK); // SETANDO A SEMANA NA VARIAVEL
+
+		while (calendar.before(calendar2) || calendar.equals(calendar2)) {
 			if (dia[diaSemana - 1] == true) {
-				
-				List<Ambiente> ocupado = ambienteRepository.retornaOcupadosDia(dataInicio, periodo);
-				
-				if(!ocupado.isEmpty()) {
-					for(int i = 0; i < ocupado.size(); i++) {
+
+				List<Ambiente> ocupado = ambienteRepository.retornaOcupadosDia(dataInicio, periodo); // BUSCANDO O RETORNO NO BANCO DE DADOS
+
+				if (!ocupado.isEmpty()) {
+					for (int i = 0; i < ocupado.size(); i++) {
 						ocupados.add(ocupado.get(i));
 					}
 				}
 			}
-			dataInicio.add(Calendar.DAY_OF_MONTH, 1);
+			calendar.add(Calendar.DAY_OF_MONTH, 1); // SETANDO A SOMA DE +1 NA VARIAVEL
 		}
 
-		for(int i = 0; i < ambientes.size(); i++) {
-			for(int j = 0; j < ocupados.size(); j++) {
-				if(ambientes.get(i) == ocupados.get(j)) {
+		for (int i = 0; i < ambientes.size(); i++) {
+			for (int j = 0; j < ocupados.size(); j++) {
+				if (ambientes.get(i) == ocupados.get(j)) {
 					ambientes.remove(i);
 				}
 			}
 		}
 
-		return ambientes;
+		return ambientes; // RETORNA AMBIENTES LIVRES
 	}
-	
+
 	@RequestMapping(value = "/ocupados/{data}", method = RequestMethod.GET)
-	public List<Ambiente> ambientesOcupadosData(@PathVariable("data") String dataStr){
-		
+	public List<Ambiente> ambientesOcupadosData(@PathVariable("data") String dataStr) {
+
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Calendar data = Calendar.getInstance();
 		try {
@@ -204,37 +227,36 @@ public class AmbienteRestController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return ambienteRepository.ocupadosPorData(data);
 	}
-	
+
 	@RequestMapping(value = "/disponibilidade/periodo", method = RequestMethod.POST)
-	public ArrayList<Aula> disponivelDataPeriodo(@RequestBody RecebeBuscaAmbiente busca){
+	public ArrayList<Aula> disponivelDataPeriodo(@RequestBody RecebeBuscaAmbiente busca) {
 		Calendar data = busca.getDataInicio();
 		boolean dia[] = busca.getDiasSemana();
 		int diaSemana = data.get(Calendar.DAY_OF_WEEK);
-		
+
 		ArrayList<Aula> aulas = new ArrayList<Aula>();
-		
-		while(data.before(busca.getDataFinal()) || data.equals(busca.getDataFinal())) {
-			if(dia[diaSemana - 1] == true) {
-				Optional<Aula> ocupado = aulaRepository.ocupadoPorDataPeriodo(data, busca.getPeriodo(), busca.getAmbiente());
-				
-				if(!ocupado.isEmpty()) {
+
+		while (data.before(busca.getDataFinal()) || data.equals(busca.getDataFinal())) {
+			if (dia[diaSemana - 1] == true) {
+				Optional<Aula> ocupado = aulaRepository.ocupadoPorDataPeriodo(data, busca.getPeriodo(),
+						busca.getAmbiente());
+
+				if (!ocupado.isEmpty()) {
 					aulas.add(ocupado.get());
 				}
 			}
 			data.add(Calendar.DAY_OF_MONTH, 1);
 		}
-		
-		
-		
+
 		return aulas;
 	}
-	
+
 	@RequestMapping(value = "/livre/{data}", method = RequestMethod.GET)
-	public List<Ambiente> livresPorData(@PathVariable("data") String dataStr){
-		
+	public List<Ambiente> livresPorData(@PathVariable("data") String dataStr) {
+
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // formatador de data
 
 		Calendar data = Calendar.getInstance();
@@ -244,30 +266,29 @@ public class AmbienteRestController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//System.out.println(aulaRepository.buscaData(data));
-		
+
+		// System.out.println(aulaRepository.buscaData(data));
+
 		System.out.println(data);
 		List<Aula> ocupados = aulaRepository.buscaData(data);
-		
+
 		List<Ambiente> ambientes = (List<Ambiente>) ambienteRepository.findAll();
-		
-		
+
 		System.out.println(ocupados.get(0).getAmbiente());
-		
-		for(int i = 0; i < ambientes.size(); i++) {
-			for(int j = 0; j < ocupados.size(); j++) {
-				if(ambientes.get(i) == ocupados.get(j).getAmbiente()) {
+
+		for (int i = 0; i < ambientes.size(); i++) {
+			for (int j = 0; j < ocupados.size(); j++) {
+				if (ambientes.get(i) == ocupados.get(j).getAmbiente()) {
 					ambientes.remove(i);
 				}
 			}
 		}
-		
+
 		return ambientes;
 	}
-	
+
 	@RequestMapping(value = "/orderAmb")
-	public List<Ambiente> orderAmbiente(){
+	public List<Ambiente> orderAmbiente() {
 		return ambienteRepository.orderAmbiente();
 	}
 
