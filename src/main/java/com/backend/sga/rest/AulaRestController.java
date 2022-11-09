@@ -22,10 +22,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Analise;
 import com.backend.sga.model.Aula;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Periodo;
+import com.backend.sga.model.Professor;
 import com.backend.sga.model.RecebeAula;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.model.TipoCurso;
@@ -56,12 +58,16 @@ public class AulaRestController {
 
 	@Autowired
 	private AmbienteRepository ambRepository;
-	
+
 	@Autowired
 	private UnidadeCurricularRepository repository;
 
+	ArrayList<Aula> aulas = new ArrayList<Aula>();
+	ArrayList<Professor> professoresOcp = new ArrayList<Professor>();
+	ArrayList<Ambiente> ambientesOcp = new ArrayList<Ambiente>();
+	
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> criarAula(@RequestBody RecebeAula recebeAula, HttpServletRequest request) {
+	public Object criarAula(@RequestBody RecebeAula recebeAula, HttpServletRequest request) {
 
 		boolean dia[] = recebeAula.getDiaSemana();
 		Calendar dataInicio = recebeAula.getDataInicio();
@@ -87,7 +93,6 @@ public class AulaRestController {
 
 				if (dia[diaSemana - 1] == true) {
 
-					System.out.println(diaNaorepository.buscaDNL(data));
 					String dataStr;
 					int mes;
 					mes = data.get(Calendar.MONTH) + 1;
@@ -107,37 +112,36 @@ public class AulaRestController {
 
 						if (diaNaorepository.buscaDNL(data).isEmpty()) {
 
-							if (aulaRepository.buscaProf(recebeAula.getProfessor(), data, recebeAula.getPeriodo())
-									.isEmpty()) {
-								List<Aula> auladata = aulaRepository.diaAula(data, recebeAula.getPeriodo(),
-										recebeAula.getAmbiente());
-								System.out.println("passou aqui");
-								if (auladata.isEmpty()) {
-									// criando a aula(trazendo ela)
-									Aula aula = new Aula();
+							// criando a aula(trazendo ela)
+							Aula aula = new Aula();
 
-									// setando os valores que precisam no cadastro de aula
-									aula.setCurso(recebeAula.getCurso());
-									aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
-									aula.setCodTurma(recebeAula.getCodTurma());
-									aula.setPeriodo(recebeAula.getPeriodo());
-									aula.setAmbiente(recebeAula.getAmbiente());
-									aula.setProfessor(recebeAula.getProfessor());
-									aula.setCargaDiaria(recebeAula.getCargaDiaria());
-									aula.setData(data);
+							// setando os valores que precisam no cadastro de aula
+							aula.setCurso(recebeAula.getCurso());
+							aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
+							aula.setCodTurma(recebeAula.getCodTurma());
+							aula.setPeriodo(recebeAula.getPeriodo());
+							aula.setCargaDiaria(recebeAula.getCargaDiaria());
+							aula.setData(data);
 
-									try {
-										aulaRepository.save(aula);
-									} catch (Exception e) {
-										e.printStackTrace();
-										System.out.println(e);
-									}
-
-									// Subtraindo a carga horaria depois que o cadastro acontece
-									cargaHoraria = cargaHoraria - aula.getCargaDiaria();
-
+							aulas.add(aula);
+							
+							List<Professor> profOcupado = professorRepository.buscaOcupado(data, recebeAula.getPeriodo());
+							if(!profOcupado.isEmpty()) {
+								for(int i = 0; i < profOcupado.size(); i++) {
+									professoresOcp.add(profOcupado.get(i));
 								}
 							}
+							
+							List<Ambiente> ambOcopados = ambRepository.retornaOcupadosDia(data, recebeAula.getPeriodo());
+							if(!ambOcopados.isEmpty()) {
+								for(int i = 0; i < ambOcopados.size(); i++) {
+									ambientesOcp.add(ambOcopados.get(i));
+								}
+							}
+
+							// Subtraindo a carga horaria depois que o cadastro acontece
+							cargaHoraria = cargaHoraria - aula.getCargaDiaria();
+
 						}
 					}
 				}
@@ -145,8 +149,44 @@ public class AulaRestController {
 				dataInicio.add(Calendar.DAY_OF_MONTH, 1);
 			}
 		}
-		Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
-		return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+		Calendar result[] = new Calendar[2];
+		result[0] = aulas.get(0).getData();
+		result[1] = aulas.get(aulas.size() - 1).getData();
+		return result;
+	}
+	
+	
+	@RequestMapping(value = "/valoresLivres", method = RequestMethod.GET)
+	public Object[] retornaProfsEAmbsLivres() {
+		
+		List<Professor> professores = (List<Professor>) professorRepository.findAll();
+		List<Ambiente> ambientes = (List<Ambiente>) ambRepository.findAll();
+		
+		System.out.println(ambientesOcp);
+		System.out.println(professoresOcp.get(0).getNome());
+		
+		for(int i = 0; i < professoresOcp.size(); i++) {
+			for(int j = 0; j < professores.size(); j++) {
+				if(professores.get(j) == professoresOcp.get(i)) {
+					professores.remove(j);
+				}
+			}
+		}
+		
+		for(int i = 0; i < ambientesOcp.size(); i++) {
+			for(int j = 0; j < ambientes.size(); j++) {
+				if(ambientes.get(j) == ambientesOcp.get(i)) {
+					System.out.println("passou prof");
+					ambientes.remove(j);
+				}
+			}
+		}
+		
+		Object result[] = new Object[2];
+		result[0] = professores;
+		result[1] = ambientes;
+		
+		return result;
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -203,12 +243,13 @@ public class AulaRestController {
 		return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 
 	}
-	
+
 	@RequestMapping(value = "/periodo", method = RequestMethod.GET)
-	public Optional<Aula> retornaPeriodo(@RequestParam("periodo") Periodo periodo, @RequestParam("data") String dataStr){
-		
+	public Optional<Aula> retornaPeriodo(@RequestParam("periodo") Periodo periodo,
+			@RequestParam("data") String dataStr) {
+
 		System.out.println(periodo);
-		
+
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // formatador de data
 
 		Calendar data = Calendar.getInstance(); // variável para guardar a data_inicio
@@ -217,22 +258,21 @@ public class AulaRestController {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		
+
 		Optional<Aula> aula = aulaRepository.retornaPeriodo(periodo, data);
-		
+
 		return aula;
 	}
-	
-	
+
 	@RequestMapping(value = "/filtro/{value}", method = RequestMethod.GET)
-	public List<Aula> buscaFiltroAula (@PathVariable("value") String value){
+	public List<Aula> buscaFiltroAula(@PathVariable("value") String value) {
 		return aulaRepository.filtroAula(value);
 	}
-	
-	//add
+
+	// add
 	@RequestMapping(value = "/{data}", method = RequestMethod.GET)
-	public List<Aula> buscaPorData(@PathVariable("data") String dataStr){
-		
+	public List<Aula> buscaPorData(@PathVariable("data") String dataStr) {
+
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // formatador de data
 
 		Calendar data = Calendar.getInstance(); // variável para guardar a data_inicio
@@ -241,17 +281,17 @@ public class AulaRestController {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		
+
 		return aulaRepository.buscaData(data);
 	}
-	
-	//METODO COMPARAÇAÕ DO MES ANTERIOS (VALOR PERIODO DASHBOARD)
+
+	// METODO COMPARAÇAÕ DO MES ANTERIOS (VALOR PERIODO DASHBOARD)
 	@RequestMapping(value = "/analise/{mes}", method = RequestMethod.GET)
 	public ArrayList<Object> comparacaoMes(@PathVariable("mes") int mes) {
 		int ano = LocalDate.now().getYear();
-		
+
 		String data = ano + "-" + mes + "-01";
-		
+
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Calendar comecoMes = Calendar.getInstance();
 		try {
@@ -260,14 +300,14 @@ public class AulaRestController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		String dataStr;
-		
-		if(mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12) {
+
+		if (mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12) {
 			dataStr = ano + "-" + mes + "-31";
-		}else if(mes == 2) {
+		} else if (mes == 2) {
 			dataStr = ano + "-" + mes + "-28";
-		}else {
+		} else {
 			dataStr = ano + "-" + mes + "-30";
 		}
 		Calendar finalMes = Calendar.getInstance();
@@ -277,49 +317,72 @@ public class AulaRestController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		ArrayList<Object> valores = new ArrayList<Object>(); 
-		
+
+		ArrayList<Object> valores = new ArrayList<Object>();
+
 		List<Periodo> periodos = aulaRepository.comparacaoMes(comecoMes, finalMes);
 		List<Integer> atual = aulaRepository.valorMes(comecoMes, finalMes);
 		comecoMes.add(Calendar.MONTH, -1);
 		finalMes.add(Calendar.MONTH, -1);
 		List<Integer> passado = aulaRepository.valorMes(comecoMes, finalMes);
-		
-		
-		for(int i = 0; i < periodos.size(); i++) {
+
+		for (int i = 0; i < periodos.size(); i++) {
 			Analise result = new Analise();
 			result.setPeriodo(periodos.get(i));
 			result.setQuantidade(atual.get(i));
-			if(!passado.isEmpty()) {
-				if(atual.get(i) > passado.get(i)) {
+			if (!passado.isEmpty()) {
+				if (atual.get(i) > passado.get(i)) {
 					result.setMaior(true);
-				}else{
+				} else {
 					result.setMaior(false);
 				}
-			}else {
+			} else {
 				result.setMaior(true);
 			}
-			
+
 			valores.add(result);
 		}
-		
+
 		return valores;
 	}
 
 	@RequestMapping(value = "/trasPeriodo/{periodo}", method = RequestMethod.GET)
-	public List<Aula> trasPorPeriodo(@PathVariable("periodo") Periodo periodo){
+	public List<Aula> trasPorPeriodo(@PathVariable("periodo") Periodo periodo) {
 		return aulaRepository.listaPorPeriodo(periodo);
 	}
-	
+
 	@RequestMapping(value = "/professor/{idProf}", method = RequestMethod.GET)
-	public List<Aula> retornaAulaProf(@PathVariable("idProf") Long id){
+	public List<Aula> retornaAulaProf(@PathVariable("idProf") Long id) {
 		return aulaRepository.retornaAulasProf(id);
 	}
-	
+
 	@RequestMapping(value = "/aulaTipo", method = RequestMethod.GET)
-	public List<Aula> retornaAulaTipo(@RequestParam("prof") Long id, @RequestParam("tipo") TipoCurso tipo){
-		return aulaRepository.retornaAulaProfTipo(id, tipo);
+	public List<Calendar> retornaAulaTipo(@RequestParam("prof") Long id, @RequestParam("tipo") TipoCurso tipo) {
+		return aulaRepository.retornaAulaProfTipoData(id, tipo);
 	}
-	
+
+	@RequestMapping(value = "/lista", method = RequestMethod.GET)
+	public List<Aula> retornaEntredatas(@RequestParam("dataInicio") String dataInicioStr,
+			@RequestParam("dataFinal") String dataFinalStr) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar dataInicio = Calendar.getInstance();
+		try {
+			dataInicio.setTime(sdf.parse(dataInicioStr));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		Calendar dataFinal = Calendar.getInstance();
+		try {
+			dataFinal.setTime(sdf.parse(dataFinalStr));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return aulaRepository.buscaEntreDatas(dataInicio, dataFinal);
+
+	}
+
 }

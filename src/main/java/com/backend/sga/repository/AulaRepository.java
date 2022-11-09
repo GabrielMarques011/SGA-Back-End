@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Repository;
 
 import com.backend.sga.model.Ambiente;
@@ -84,8 +85,17 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	@Query("SELECT a FROM Aula a INNER JOIN Curso c ON a.curso.id = c.id WHERE a.professor.id = :idProf AND c.tipo = :tipo")
 	public List<Aula> retornaAulaProfTipo(@Param("idProf") Long id, @Param("tipo") TipoCurso tipo);
 	
+	@Query("SELECT a.data FROM Aula a INNER JOIN Curso c ON a.curso.id = c.id WHERE a.professor.id = :idProf AND c.tipo = :tipo")
+	public List<Calendar> retornaAulaProfTipoData(@Param("idProf") Long id, @Param("tipo") TipoCurso tipo);
+	
 	// SELECT * FROM sga.aula AS a WHERE a.professor_id = 1 and a.data >= "2022-11-23" and a.data <= "2022-12-08" ;
 	@Query("SELECT a FROM Aula a WHERE a.professor.id = :id AND a.data >= :dataInicio AND a.data <= :dataFinal")
 	public List<Aula> buscaTempo(@Param("id") Long id, @Param("dataInicio")Calendar datainicio, @Param("dataFinal") Calendar datafinal);
+	
+	
+	@Query("SELECT a FROM Aula a WHERE a.data >= :comeco AND a.data <= :final")
+	public List<Aula> buscaEntreDatas(@Param("comeco") Calendar inicio, @Param("final") Calendar fim);
+	
+	
 
 }

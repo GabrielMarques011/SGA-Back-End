@@ -1,12 +1,15 @@
 package com.backend.sga.repository;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Professor;
 
 @Repository
@@ -24,5 +27,9 @@ public interface ProfessorRepository extends PagingAndSortingRepository<Professo
 	//SELECT p.* FROM sga.professor AS p INNER JOIN sga.competencia AS c ON c.professor_id = p.id INNER JOIN sga.unidade_curricular AS uc ON c.unidade_curricular_id = uc.id INNER JOIN sga.curso AS cu ON uc.curso_id = cu.id WHERE cu.nome = 'PowerBI Avançado' AND uc.nome = 'PowerBI' ORDER BY p.id;
 	@Query("SELECT p FROM Professor p INNER JOIN Competencia c ON c.professor.id = p.id INNER JOIN UnidadeCurricular uc ON c.unidadeCurricular.id = uc.id INNER JOIN Curso cu ON uc.curso.id = cu.id WHERE cu.nome = :nomeCr AND uc.nome = :nomeUc ORDER BY p.id")
 	public List<Professor> listProfcuc(@Param("nomeCr") String nomeCr, @Param("nomeUc") String nomeUc);
+	
+	// SELECT a.professor_id FROM sga.aula as a where a.data = "2022-10-17" and a.periodo = 0;
+	@Query("SELECT a.professor FROM Aula a WHERE a.data = :data AND a.periodo = :periodo")
+	public List<Professor> buscaOcupado(@Param("data") Calendar data, @Param("periodo") Periodo periodo);
 	
 }
