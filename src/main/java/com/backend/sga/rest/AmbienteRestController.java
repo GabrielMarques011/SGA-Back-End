@@ -171,10 +171,12 @@ public class AmbienteRestController {
 		while (dataInicio.before(dataFinal) || dataInicio.equals(dataFinal)) {
 			if (dia[diaSemana - 1] == true) {
 				
-				Optional<Ambiente> ocupado = ambienteRepository.retornaOcupadosDia(dataInicio, periodo);
+				List<Ambiente> ocupado = ambienteRepository.retornaOcupadosDia(dataInicio, periodo);
 				
 				if(!ocupado.isEmpty()) {
-					ocupados.add(ocupado.get());
+					for(int i = 0; i < ocupado.size(); i++) {
+						ocupados.add(ocupado.get(i));
+					}
 				}
 			}
 			dataInicio.add(Calendar.DAY_OF_MONTH, 1);

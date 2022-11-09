@@ -157,21 +157,48 @@ public class ProfessorRestController {
 	}
 	
 	@RequestMapping(value = "/disponibilidade/periodo", method = RequestMethod.GET)
-	public ArrayList<Aula> disponivelDataPeriodo(@RequestBody RecebeBuscaAmbiente busca){
-		Calendar data = busca.getDataInicio();
-		boolean dia[] = busca.getDiasSemana();
+	public Object disponivelDataPeriodo(@RequestParam("dataInicio") String dataStr, @RequestParam("dia") boolean dia[],
+			@RequestParam("dataFinal") String dataFinalStr, @RequestParam("periodo") Periodo periodo, @RequestParam("prof") Long idProf){
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar data = Calendar.getInstance();
+		try {
+			data.setTime(sdf.parse(dataStr));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Calendar dataFinal = Calendar.getInstance();
+		try {
+			dataFinal.setTime(sdf.parse(dataFinalStr));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		int diaSemana = data.get(Calendar.DAY_OF_WEEK);
 		
 		ArrayList<Aula> aulas = new ArrayList<Aula>();
 		
+		System.out.println(data);
+		System.out.println(dataFinal);
 		
-		while(data.before(busca.getDataFinal()) || data.equals(busca.getDataFinal())) {
+		while(data.before(dataFinal) || data.equals(dataFinal)) {
 			if(dia[diaSemana - 1] == true) {
-				Optional<Aula> ocupado = aulaRepository.ocupadoProfessor(data, busca.getPeriodo(), busca.getProfessor());
 				
-				if(!ocupado.isEmpty()) {
-					aulas.add(ocupado.get());
+				Optional<Professor> professor = professorRepository.findById(idProf);
+				
+				if(professor.isEmpty()) {
+					Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID do professor inválido", null);
+					return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+				} else {
+					Optional<Aula> ocupado = aulaRepository.ocupadoProfessor(data, periodo, professor.get());
+					if(!ocupado.isEmpty()) {
+						aulas.add(ocupado.get());
+					}
 				}
+				
 			}
 			data.add(Calendar.DAY_OF_MONTH, 1);
 		}
@@ -181,7 +208,7 @@ public class ProfessorRestController {
 		return aulas;
 	}
 	
-	@RequestMapping(value = "/disponibilidade", method = RequestMethod.GET)
+	@RequestMapping(value = "/disponibilidade", method = RequestMethod.POST)
 	public List<Professor> disponibilidadeProf(@RequestBody RecebeBuscaAmbiente busca){
 		
 		ArrayList<Professor> ocupados = new ArrayList<Professor>();
