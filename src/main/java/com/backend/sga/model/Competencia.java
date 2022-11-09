@@ -21,7 +21,6 @@ public class Competencia {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	//esse annotation evita de dar loop
 	@JsonProperty(access = Access.WRITE_ONLY)
 	@ManyToOne
 	private Professor professor;

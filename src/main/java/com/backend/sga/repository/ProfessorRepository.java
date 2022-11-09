@@ -24,9 +24,9 @@ public interface ProfessorRepository extends PagingAndSortingRepository<Professo
 	@Query("SELECT p FROM Professor p ORDER BY p.nome ASC")
 	public List<Professor> orderProf();
 
-	//SELECT p.* FROM sga.professor AS p INNER JOIN sga.competencia AS c ON c.professor_id = p.id INNER JOIN sga.unidade_curricular AS uc ON c.unidade_curricular_id = uc.id INNER JOIN sga.curso AS cu ON uc.curso_id = cu.id WHERE cu.nome = 'PowerBI Avançado' AND uc.nome = 'PowerBI' ORDER BY p.id;
-	@Query("SELECT p FROM Professor p INNER JOIN Competencia c ON c.professor.id = p.id INNER JOIN UnidadeCurricular uc ON c.unidadeCurricular.id = uc.id INNER JOIN Curso cu ON uc.curso.id = cu.id WHERE cu.nome = :nomeCr AND uc.nome = :nomeUc ORDER BY p.id")
-	public List<Professor> listProfcuc(@Param("nomeCr") String nomeCr, @Param("nomeUc") String nomeUc);
+	//SELECT p FROM Professor p INNER JOIN Competencia com ON com.professor.id = p.id INNER JOIN UnidadeCurricular uc ON com.unidade_curricular.id = uc.id INNER JOIN Curso c ON uc.curso.id = c.id WHERE c.nome = :nomeCr AND uc.nome = :nomeUc 
+	@Query("SELECT p FROM Professor p INNER JOIN Competencia c ON c.professor.id = p.id INNER JOIN UnidadeCurricular uc ON c.unidadeCurricular.id = uc.id INNER JOIN Curso cu ON uc.curso.id = cu.id WHERE cu.nome = :nomeCurso AND uc.nome = :nomeUnidade")
+	public List<Professor> listProfcuc(@Param("nomeCurso") String nomeCurso, @Param("nomeUnidade") String nomeUnidade);
 	
 	// SELECT a.professor_id FROM sga.aula as a where a.data = "2022-10-17" and a.periodo = 0;
 	@Query("SELECT a.professor FROM Aula a WHERE a.data = :data AND a.periodo = :periodo")
