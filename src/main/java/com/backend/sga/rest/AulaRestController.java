@@ -396,7 +396,7 @@ public class AulaRestController {
 		List<Calendar> datas = aulaRepository.retornaAulaProfTipoData(id, tipo);
 		
 		ArrayList<String> datasFormat = new ArrayList<String>();
-		
+		// formatando a data 
 		for(int i = 0; i < datas.size(); i++) {
 			String dataStr;
 			int mes = datas.get(i).get(Calendar.MONTH) + 1;
