@@ -374,9 +374,21 @@ public class AulaRestController {
 		return aulaRepository.listaPorPeriodo(periodo);
 	}
 
-	@RequestMapping(value = "/professor/{idProf}", method = RequestMethod.GET)
-	public List<Aula> retornaAulaProf(@PathVariable("idProf") Long id) {
-		return aulaRepository.retornaAulasProf(id);
+	// URL = localhost:8080/api/aula/prof?idProf=1&data=11/11/2022
+	//METODO PARA RETORNAR UMA LISTA DE AULA CONFORME ID PASSADO E DATA
+	@RequestMapping(value = "/prof", method = RequestMethod.GET)
+	public List<Aula> retornaAulaProf(@RequestParam("idProf") Long id, @RequestParam("data") String data) {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		
+		Calendar dataFormat = Calendar.getInstance();
+		try {
+			dataFormat.setTime(sdf.parse(data));
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return aulaRepository.retornaAulasProf(id, dataFormat);
 	}
 
 	@RequestMapping(value = "/aulaTipo", method = RequestMethod.GET)

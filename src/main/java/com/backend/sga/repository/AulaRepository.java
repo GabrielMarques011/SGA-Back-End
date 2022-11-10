@@ -79,8 +79,10 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	@Query("SELECT a FROM Aula a WHERE a.periodo = :periodo")
 	public List<Aula> listaPorPeriodo(@Param("periodo") Periodo periodo);
 	
-	@Query("SELECT a FROM Aula a WHERE a.professor.id = :idProf")
-	public List<Aula> retornaAulasProf (@Param("idProf") Long idProf);
+	//SELECT a.* FROM sga.aula AS a WHERE a.professor_id = 7 AND a.data >= "2022-11-11";
+	//SELECT a FROM Professor p INNER JOIN Aula a ON a.professor.id = p.id WHERE a.professor.id = :idProf AND a.data >= :data
+	@Query("SELECT a FROM Aula a WHERE a.professor.id = :idProf AND a.data >= :data")
+	public List<Aula> retornaAulasProf (@Param("idProf") Long idProf, @Param("data") Calendar data);
 	
 	@Query("SELECT a FROM Aula a INNER JOIN Curso c ON a.curso.id = c.id WHERE a.professor.id = :idProf AND c.tipo = :tipo")
 	public List<Aula> retornaAulaProfTipo(@Param("idProf") Long id, @Param("tipo") TipoCurso tipo);

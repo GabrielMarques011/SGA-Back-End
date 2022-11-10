@@ -171,7 +171,6 @@ public class ProfessorRestController {
 		try {
 			dataFinal.setTime(sdf.parse(dataFinalStr));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -200,9 +199,6 @@ public class ProfessorRestController {
 			}
 			data.add(Calendar.DAY_OF_MONTH, 1);
 		}
-		
-		
-		
 		return aulas;
 	}
 	
