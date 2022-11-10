@@ -392,8 +392,29 @@ public class AulaRestController {
 	}
 
 	@RequestMapping(value = "/aulaTipo", method = RequestMethod.GET)
-	public List<Calendar> retornaAulaTipo(@RequestParam("prof") Long id, @RequestParam("tipo") TipoCurso tipo) {
-		return aulaRepository.retornaAulaProfTipoData(id, tipo);
+	public ArrayList<String> retornaAulaTipo(@RequestParam("prof") Long id, @RequestParam("tipo") TipoCurso tipo) {
+		List<Calendar> datas = aulaRepository.retornaAulaProfTipoData(id, tipo);
+		
+		ArrayList<String> datasFormat = new ArrayList<String>();
+		
+		for(int i = 0; i < datas.size(); i++) {
+			String dataStr;
+			int mes = datas.get(i).get(Calendar.MONTH) + 1;
+			
+			if (datas.get(i).get(Calendar.MONTH + 1) < 10 && datas.get(i).get(Calendar.DAY_OF_MONTH) < 10) {
+				dataStr = datas.get(i).get(Calendar.YEAR) + "-0" + mes + "-0" + datas.get(i).get(Calendar.DAY_OF_MONTH);
+			} else if (datas.get(i).get(Calendar.DAY_OF_MONTH) < 10) {
+				dataStr = datas.get(i).get(Calendar.YEAR) + "-" + mes + "-0" + datas.get(i).get(Calendar.DAY_OF_MONTH);
+			} else if (datas.get(i).get(Calendar.MONTH + 1) < 10) {
+				dataStr = datas.get(i).get(Calendar.YEAR) + "-0" + mes + "-" + datas.get(i).get(Calendar.DAY_OF_MONTH);
+			} else {
+				dataStr = datas.get(i).get(Calendar.YEAR) + "-" + mes + "-" + datas.get(i).get(Calendar.DAY_OF_MONTH);
+			}
+			
+			datasFormat.add(dataStr);
+		}
+		
+		return datasFormat;
 	}
 
 	@RequestMapping(value = "/lista", method = RequestMethod.GET)
