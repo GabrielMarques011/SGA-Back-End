@@ -44,7 +44,7 @@ public class AmbienteRestController {
 	@Autowired
 	private AulaRepository aulaRepository;
 
-	// URL =
+	// URL = localhost:8080/api/ambiente
 	// METODO PARA CRIAR AMBIENTE
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarAmbiente(@RequestBody Ambiente ambiente, HttpServletRequest request) {
@@ -66,8 +66,9 @@ public class AmbienteRestController {
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
 
-	// URL =
+	// URL = localhost:8080/api/ambiente/4
 	// METODO PARA ALTERAR O AMBIENTE
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> atualizarAmbiente(@PathVariable("id") Long id, @RequestBody Ambiente ambiente,
@@ -81,8 +82,9 @@ public class AmbienteRestController {
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
 	}
+	
 
-	// URL =
+	// URL = localhost:8080/api/ambiente/inativar/4
 	// METODO PARA INATIVAR UM AMBIENTE
 	@RequestMapping(value = "/inativar/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Object> desativarAmbiente(@PathVariable("id") Long id, HttpServletRequest request) {
@@ -98,15 +100,18 @@ public class AmbienteRestController {
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
 
-	// URL =
+	// URL = localhost:8080/api/ambiente
 	// METODO PARA LISTAR TODOS OS AMBIENTES
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<Ambiente> listaAmbiente(Ambiente ambiente) {
 		return ambienteRepository.findAll();
 	}
+	
 
-	// método que busca os ambientes disponíveis
+	// URL = localhost:8080/api/ambiente/disponiveis?unidade=2&data=08/11/2022&periodo=MANHA
+	// METODO PARA BUSCAR AMBIENTES DISPONIVEIS
 	@RequestMapping(value = "/disponiveis", method = RequestMethod.GET)
 	public ArrayList<Long> buscarAmbientesDisponiveis(@RequestParam("unidade") Long id,
 			@RequestParam("data") String data, @RequestParam("periodo") Periodo periodo) {
@@ -134,35 +139,50 @@ public class AmbienteRestController {
 		}
 		return ambiDisponiveis; // RETORNANDO AMBIENTES DISPONIVEIS
 	}
+	
 
+	// URL = localhost:8080/api/ambiente/tipoambiente
+	//METODO PARA RETORNAR TODOS OS TIPOS DE AMBIENTES
 	@RequestMapping(value = "/tipoambiente", method = RequestMethod.GET)
 	public TipoAmbiente[] buscaTipoAmbiente() {
 		return TipoAmbiente.values();
 	}
+	
 
+	// URL = localhost:8080/api/ambiente/buscapalavra/Medicina
+	// METODO PARA BUSCAR UM AMBIENTE PELO NOME
 	@RequestMapping(value = "/buscapalavra/{nome}", method = RequestMethod.GET)
 	public List<Ambiente> buscaChaveAmbiente(@PathVariable("nome") String nome) {
 		return ambienteRepository.palavraChave(nome);
 	}
+	
 
+	// URL = localhost:8080/api/ambiente/buscaambiente/PRESENCIAL
+	// METODO QUE BUSCA AMBIENTES DAQUELE TIPO
 	@RequestMapping(value = "/buscaambiente/{tipo}", method = RequestMethod.GET)
 	public Iterable<Ambiente> buscandoAmbiente(@PathVariable("tipo") TipoAmbiente tipo) {
 		return ambienteRepository.buscaAmbiente(tipo);
 	}
+	
 
+	// URL = localhost:8080/api/ambiente/capacidade?capacidadeMin=10&capacidadeMax=20
+	// METODO PARA BUSCAR AMBIENTES COM CAPACIDADE MINIMA E MAXIMA
 	@RequestMapping(value = "/capacidade", method = RequestMethod.GET)
 	public Iterable<Ambiente> retornaCapacidade(@PathParam("capacidadeMin") int capacidadeMin,
 			@PathParam("capacidadeMax") int capacidadeMax) {
 		return ambienteRepository.retornaCapacidade(capacidadeMin, capacidadeMax);
 	}
-
+	
+	
+	// URL = localhost:8080/api/ambiente/tipoecapacidade?tipo=PRESENCIAL&capacidadeMin=10&capacidadeMax=20
+	// METODO PARA RETORNAR AMBIENTES QUE TEM UM TIPO E CAPACIDADE MIN E MAX
 	@RequestMapping(value = "/tipoecapacidade", method = RequestMethod.GET)
 	public Iterable<Ambiente> retornaTipoeCapacidade(@PathParam("tipo") TipoAmbiente tipo,
 			@PathParam("capacidadeMin") int capacidadeMin, @PathParam("capacidadeMax") int capacidadeMax) {
 		return ambienteRepository.retornaTipoCapacidade(tipo, capacidadeMin, capacidadeMax);
 	}
 
-	// URL = 
+	// URL = localhost:8080/api/ambiente/disponivel?dataInicio=09/01/2023&dias=false,true,true,true,false,false,false&dataFinal=09/01/2023&periodo=NOITE
 	// METODO PARA O MOBILE / METODO PARA TRAZER OS AMBIENTES DISPONIVEIS
 	@RequestMapping(value = "/disponivel", method = RequestMethod.GET)
 	public List<Ambiente> retornaDisponivel(@RequestParam("dataInicio") String dataInicio,
@@ -194,7 +214,7 @@ public class AmbienteRestController {
 		while (calendar.before(calendar2) || calendar.equals(calendar2)) {
 			if (dia[diaSemana - 1] == true) {
 
-				List<Ambiente> ocupado = ambienteRepository.retornaOcupadosDia(dataInicio, periodo); // BUSCANDO O RETORNO NO BANCO DE DADOS
+				List<Ambiente> ocupado = ambienteRepository.retornaOcupadosDia(calendar, periodo); // BUSCANDO O RETORNO NO BANCO DE DADOS
 
 				if (!ocupado.isEmpty()) {
 					for (int i = 0; i < ocupado.size(); i++) {
@@ -216,6 +236,9 @@ public class AmbienteRestController {
 		return ambientes; // RETORNA AMBIENTES LIVRES
 	}
 
+	
+	// URL = localhost:8080/api/ambiente/ocupados/2022-01-11
+	// METODO QUE TRAS AMBIENTE OCUPADO DE UMA DATA SELECIONADA
 	@RequestMapping(value = "/ocupados/{data}", method = RequestMethod.GET)
 	public List<Ambiente> ambientesOcupadosData(@PathVariable("data") String dataStr) {
 
@@ -230,7 +253,10 @@ public class AmbienteRestController {
 
 		return ambienteRepository.ocupadosPorData(data);
 	}
-
+	
+	
+	// URL = localhost:8080/api/ambiente/disponibilidade/periodo
+	// METODO PARA VER A DISPONIBILIDADE DO AMBIENTE POR PERIODO
 	@RequestMapping(value = "/disponibilidade/periodo", method = RequestMethod.POST)
 	public ArrayList<Aula> disponivelDataPeriodo(@RequestBody RecebeBuscaAmbiente busca) {
 		Calendar data = busca.getDataInicio();
@@ -254,6 +280,9 @@ public class AmbienteRestController {
 		return aulas;
 	}
 
+	
+	// URL = localhost:8080/api/ambiente/livre/2023-01-09
+	// METODO QUE DEMONSTRA AMBIENTES DISPONIVEIS NESSE DIA
 	@RequestMapping(value = "/livre/{data}", method = RequestMethod.GET)
 	public List<Ambiente> livresPorData(@PathVariable("data") String dataStr) {
 
@@ -266,8 +295,6 @@ public class AmbienteRestController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		// System.out.println(aulaRepository.buscaData(data));
 
 		System.out.println(data);
 		List<Aula> ocupados = aulaRepository.buscaData(data);
@@ -287,6 +314,9 @@ public class AmbienteRestController {
 		return ambientes;
 	}
 
+	
+	// URL = localhost:8080/api/ambiente/orderAmb
+	// METODO PARA ORDENAR OS AMBIENTES
 	@RequestMapping(value = "/orderAmb")
 	public List<Ambiente> orderAmbiente() {
 		return ambienteRepository.orderAmbiente();

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.sga.model.Chamado;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Sucesso;
-import com.backend.sga.model.tipoChamado;
+import com.backend.sga.model.TipoChamado;
 import com.backend.sga.repository.ChamadoRepository;
 
 @RestController
@@ -79,7 +79,7 @@ public class ChamadoRestController {
 	}
 
 	@RequestMapping(value = "/tipochamado")
-	public tipoChamado[] entregaChamado() {
-		return tipoChamado.values();
+	public TipoChamado[] entregaChamado() {
+		return TipoChamado.values();
 	}
 }

@@ -19,18 +19,17 @@ public class Ambiente {
 	@NotNull
 	private String nome;
 	
-	@NotNull
 	private int capacidade;
 	
+	@NotNull
 	private TipoAmbiente tipo;
 	
-	//@NotNull
+	@NotNull
+	private boolean ativo;
+	
 	private String cep;
 	
-	//@NotNull
 	private String complemento;
-	
-	private boolean ativo;
 	
 	private String endereco;
 	

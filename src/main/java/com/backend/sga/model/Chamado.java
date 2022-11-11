@@ -27,6 +27,10 @@ public class Chamado {
 	@OneToOne
 	private Usuario usuario;
 	
-	private tipoChamado tipo;
+	@NotNull
+	private TipoStatus status;
+	
+	@NotNull
+	private TipoChamado tipo;
 
 }

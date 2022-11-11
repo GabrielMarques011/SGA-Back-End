@@ -65,7 +65,7 @@ public class AulaRestController {
 	ArrayList<Aula> aulas = new ArrayList<Aula>();
 	ArrayList<Professor> professoresOcp = new ArrayList<Professor>();
 	ArrayList<Ambiente> ambientesOcp = new ArrayList<Ambiente>();
-	
+
 	@RequestMapping(value = "/criar", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Object criarAula(@RequestBody RecebeAula recebeAula, HttpServletRequest request) {
 
@@ -73,12 +73,16 @@ public class AulaRestController {
 		Calendar dataInicio = recebeAula.getDataInicio();
 		UnidadeCurricular uc = repository.findById(recebeAula.getUnidadeCurricular().getId()).get();
 		double cargaHoraria = uc.getHoras();
+		double cargaDiaria = recebeAula.getCargaDiaria();
 
 		// retornando uma listagem de aula
 		List<Aula> listaAula = aulaRepository.diaSemanal(recebeAula.getDataInicio());
 
 		if (!aulaRepository.diaAula(dataInicio, recebeAula.getPeriodo(), recebeAula.getAmbiente()).isEmpty()) {
 			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Este dia não está disponível", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		} else if (cargaDiaria <= 0) {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Impossivel cadastrar com essa carga diaria, altere!!", null);
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		} else {
 
@@ -124,17 +128,19 @@ public class AulaRestController {
 							aula.setData(data);
 
 							aulas.add(aula);
-							
-							List<Professor> profOcupado = professorRepository.buscaOcupado(data, recebeAula.getPeriodo());
-							if(!profOcupado.isEmpty()) {
-								for(int i = 0; i < profOcupado.size(); i++) {
+
+							List<Professor> profOcupado = professorRepository.buscaOcupado(data,
+									recebeAula.getPeriodo());
+							if (!profOcupado.isEmpty()) {
+								for (int i = 0; i < profOcupado.size(); i++) {
 									professoresOcp.add(profOcupado.get(i));
 								}
 							}
-							
-							List<Ambiente> ambOcopados = ambRepository.retornaOcupadosDiaCalendar(data, recebeAula.getPeriodo());
-							if(!ambOcopados.isEmpty()) {
-								for(int i = 0; i < ambOcopados.size(); i++) {
+
+							List<Ambiente> ambOcopados = ambRepository.retornaOcupadosDiaCalendar(data,
+									recebeAula.getPeriodo());
+							if (!ambOcopados.isEmpty()) {
+								for (int i = 0; i < ambOcopados.size(); i++) {
 									ambientesOcp.add(ambOcopados.get(i));
 								}
 							}
@@ -154,63 +160,63 @@ public class AulaRestController {
 		result[1] = aulas.get(aulas.size() - 1).getData();
 		return result;
 	}
-	
-	
+
 	@RequestMapping(value = "/valoresLivres", method = RequestMethod.GET)
 	public Object[] retornaProfsEAmbsLivres() {
-		
+
 		List<Professor> professores = (List<Professor>) professorRepository.findAll();
 		List<Ambiente> ambientes = (List<Ambiente>) ambRepository.findAll();
-		
-		
-		for(int i = 0; i < professores.size(); i++) {
-			for(int j = 0; j < professoresOcp.size(); j++) {
-				if(professores.get(i).getId() == professoresOcp.get(j).getId()) {
+
+		for (int i = 0; i < professores.size(); i++) {
+			for (int j = 0; j < professoresOcp.size(); j++) {
+				if (professores.get(i).getId() == professoresOcp.get(j).getId()) {
 					professores.remove(i);
 				}
 			}
 		}
-		
-		for(int i = 0; i < ambientes.size(); i++) {
-			for(int j = 0; j < ambientesOcp.size(); j++) {
-				if(ambientes.get(i).getId() == ambientesOcp.get(j).getId()) {
+
+		for (int i = 0; i < ambientes.size(); i++) {
+			for (int j = 0; j < ambientesOcp.size(); j++) {
+				if (ambientes.get(i).getId() == ambientesOcp.get(j).getId()) {
 					ambientes.remove(i);
 				}
 			}
 		}
-		
+
 		System.out.println(ambientes.get(1));
 		System.out.println(professores.get(0).getNome());
 		Object result[] = new Object[2];
 		result[0] = professores;
 		result[1] = ambientes;
-		
+
 		return result;
-		
+
 	}
-	
+
 	@RequestMapping(value = "", method = RequestMethod.POST)
-	public ResponseEntity<Object> salvarAulas(@RequestBody RecebeAula recebeAula){
+	public ResponseEntity<Object> salvarAulas(@RequestBody RecebeAula recebeAula) {
 		System.out.println(aulas.size());
 		try {
-			for(int i = 0; i < aulas.size(); i++) {
+			for (int i = 0; i < aulas.size(); i++) {
 				aulas.get(i).setAmbiente(recebeAula.getAmbiente());
 				aulas.get(i).setProfessor(recebeAula.getProfessor());
-				
+
 				aulaRepository.save(aulas.get(i));
 			}
-			
+
 			aulas.clear();
 			professoresOcp.clear();
 			ambientesOcp.clear();
-			
+
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		} catch (Exception e) {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível cadastrar a aula", null); // de //																									// erro
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível cadastrar a aula", null); // de //
+																												// //
+																												// erro
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -221,7 +227,8 @@ public class AulaRestController {
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		} else {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível deletar a aula", null); // de //																									// erro
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível deletar a aula", null); // de // //
+																												// erro
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -375,19 +382,19 @@ public class AulaRestController {
 	}
 
 	// URL = localhost:8080/api/aula/prof?idProf=1&data=11/11/2022
-	//METODO PARA RETORNAR UMA LISTA DE AULA CONFORME ID PASSADO E DATA
+	// METODO PARA RETORNAR UMA LISTA DE AULA CONFORME ID PASSADO E DATA
 	@RequestMapping(value = "/prof", method = RequestMethod.GET)
 	public List<Aula> retornaAulaProf(@RequestParam("idProf") Long id, @RequestParam("data") String data) {
-		
+
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		
+
 		Calendar dataFormat = Calendar.getInstance();
 		try {
 			dataFormat.setTime(sdf.parse(data));
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		
+
 		return aulaRepository.retornaAulasProf(id, dataFormat);
 	}
 

@@ -2,7 +2,6 @@ package com.backend.sga.repository;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -15,9 +14,6 @@ import com.backend.sga.model.TipoAmbiente;
 
 @Repository
 public interface AmbienteRepository extends PagingAndSortingRepository<Ambiente, Long> {
-
-	// select * from sga.ambiente;
-	// public List<Ambiente> findAllAmbientes();
 
 	// SELECT * FROM sga.ambiente WHERE sga.ambiente.nome LIKE '%15%'
 	@Query("SELECT a FROM Ambiente a WHERE a.nome LIKE %:nome%")
@@ -33,15 +29,13 @@ public interface AmbienteRepository extends PagingAndSortingRepository<Ambiente,
 
 	// SELECT * FROM sga.ambiente WHERE sga.ambiente.tipo_ambiente = 2 AND sga.ambiente.capacidade BETWEEN 20 AND 30
 	@Query("SELECT a FROM Ambiente a WHERE a.tipo = :tipo AND a.capacidade BETWEEN :capacidadeMin AND :capacidadeMax")
-	public Iterable<Ambiente> retornaTipoCapacidade(@Param("tipo") TipoAmbiente tipoAmbiente,@Param("capacidadeMin") int capacidadeMin, @Param("capacidadeMax") int capacidadeMax);
-
-	// SELECT a.* FROM sga.ambiente as a inner join sga.aula as au on a.id = au.ambiente_id where au.data >= "2022-10-24" AND au.data <= "2022-11-08" and au.periodo = 0 group by ID ;
+	public Iterable<Ambiente> retornaTipoCapacidade(@Param("tipo") TipoAmbiente tipo,@Param("capacidadeMin") int capacidadeMin, @Param("capacidadeMax") int capacidadeMax);
 
 	@Query("SELECT a FROM Ambiente a INNER JOIN Aula au ON a.id = au.ambiente.id WHERE au.data >= :datainicio AND au.data <= :dataFinal AND au.periodo = :periodo")
 	public List<Ambiente> retornaOcupados(@Param("datainicio") Calendar dataInicio, @Param("dataFinal") Calendar dataFinal, @Param("periodo") Periodo periodo);
 
 	@Query("SELECT a FROM Ambiente a INNER JOIN Aula au ON a.id = au.ambiente.id WHERE au.data = :datainicio AND au.periodo = :periodo")
-	public List<Ambiente> retornaOcupadosDia(@Param("datainicio") String dataInicio, @Param("periodo") Periodo periodo);
+	public List<Ambiente> retornaOcupadosDia(@Param("datainicio") Calendar dataInicio, @Param("periodo") Periodo periodo);
 	
 	@Query("SELECT a FROM Ambiente a INNER JOIN Aula au ON a.id = au.ambiente.id WHERE au.data = :data GROUP BY a.id")
 	public List<Ambiente> ocupadosPorData(@Param("data") Calendar dataInicio);
