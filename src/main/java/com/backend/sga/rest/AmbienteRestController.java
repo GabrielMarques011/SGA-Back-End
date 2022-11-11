@@ -128,7 +128,6 @@ public class AmbienteRestController {
 
 		ArrayList<Long> ambiDisponiveis = new ArrayList<Long>(); // LISTA QUE VAI ARMAZENAR OS IDs DOS AMBIENTES QUE
 																	// ESTÃO DISPONIVEIS
-
 		for (int i = 0; i < aulas.size(); i++) { // FOR PARA PERCORRER OS DADOS DO BANCO
 
 			if (aulas.get(i).getData().compareTo(data1) != 0) {
