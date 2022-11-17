@@ -1,6 +1,6 @@
 package com.backend.sga.model;
 
-public enum tipoChamado {
+public enum TipoChamado {
 
 	IDEIA, OUTRO, PROBLEMA;
 	

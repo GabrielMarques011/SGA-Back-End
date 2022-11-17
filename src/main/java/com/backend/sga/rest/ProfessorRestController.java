@@ -274,6 +274,7 @@ public class ProfessorRestController {
 		return professorRepository.listProfcuc(nomeCurso, nomeUnidade);
 	}
 	
+	// URL = localhost:8080/api/professor/diaria?id=1&data_inicio=09/11/2022&data_final=11/11/2022
 	//METODO DASHBOARD (COLUNA)
     @RequestMapping(value = "/diaria", method = RequestMethod.GET)
     public double[] busca (@RequestParam("id") Long id, @RequestParam("data_inicio") String data_inicio, @RequestParam("data_final") String data_final, Professor prof){
@@ -306,7 +307,7 @@ public class ProfessorRestController {
             System.out.println(diaria);
         }
         
-        Optional<Professor> profe = professorRepository.findById(id);
+        Optional<Professor> profe = professorRepository.buscaProfAtivoId(true, id);
         
         double[] horas = new double[2];
         horas[0] = diaria;
@@ -316,10 +317,12 @@ public class ProfessorRestController {
         
     }
     
+    // URL = localhost:8080/api/professor/emAula
+    //METODO PARA VER SE O PROFESSOR ESTÁ EM AULA OU NÃO
     @RequestMapping(value = "/emAula", method = RequestMethod.GET)
 	public ArrayList<Object> retornaEmAula() {
 		
-    	List<Professor> prof = (List<Professor>) professorRepository.findAll();
+    	List<Professor> prof = (List<Professor>) professorRepository.buscaProfAtivo(true);
 		int hora = LocalTime.now().getHour();
 		Calendar data = Calendar.getInstance();
 		Periodo periodo = null;

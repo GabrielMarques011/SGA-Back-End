@@ -7,7 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -37,6 +36,6 @@ public class Ausencia {
 	private Professor professor;
 	
 	@NotNull
-	private String tipo;
+	private TipoAusencia tipo;
 	
 }

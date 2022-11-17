@@ -32,4 +32,12 @@ public interface ProfessorRepository extends PagingAndSortingRepository<Professo
 	@Query("SELECT a.professor FROM Aula a WHERE a.data = :data AND a.periodo = :periodo")
 	public List<Professor> buscaOcupado(@Param("data") Calendar data, @Param("periodo") Periodo periodo);
 	
+	//SELECT * FROM sga.professor AS p WHERE p.ativo = 1;
+	@Query("SELECT p FROM Professor p WHERE p.ativo = :ativo")
+	public List<Professor> buscaProfAtivo(@Param("ativo") boolean ativo);
+	
+	//SELECT * FROM sga.professor AS p WHERE p.id = 1 AND p.ativo = 1;
+	@Query("SELECT p FROM Professor p WHERE p.id = :id AND p.ativo = :ativo")
+	public Optional<Professor> buscaProfAtivoId(@Param("ativo") boolean ativo, @Param("id") Long id);
+	
 }

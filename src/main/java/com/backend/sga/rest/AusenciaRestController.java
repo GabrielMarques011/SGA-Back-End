@@ -23,6 +23,7 @@ import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Professor;
 import com.backend.sga.model.RecebeAula;
 import com.backend.sga.model.Sucesso;
+import com.backend.sga.model.TipoAusencia;
 import com.backend.sga.repository.AulaRepository;
 import com.backend.sga.repository.AusenciaRepository;
 
@@ -129,7 +130,7 @@ public class AusenciaRestController {
 				ausencia.setProfessor(recebe.getProfList().get(i));
 				ausencia.setDataInicio(recebe.getDataInicio());
 				ausencia.setDataFinal(recebe.getDataFinal());
-				ausencia.setTipo("FÉRIAS");
+				ausencia.setTipo(TipoAusencia.FERIAS);
 				
 				ausenciaRepository.save(ausencia);
 			}
