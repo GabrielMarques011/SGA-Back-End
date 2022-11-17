@@ -16,5 +16,8 @@ public interface DiaNaoLetivoRepository extends PagingAndSortingRepository<DiaNa
 	@Query("SELECT dnl from DiaNaoLetivo dnl where dnl.data = :data ")
 	public List<DiaNaoLetivo> buscaDNL(@Param("data") Calendar dataInicio );
 	
+	@Query("SELECT dnl FROM DiaNaoLetivo dnl WHERE dnl.data >= :dataInicio AND dnl.data <= :dataFinal")
+	public List<DiaNaoLetivo> buscaAno(@Param("dataInicio") Calendar datainicio, @Param("dataFinal") Calendar datafinal);
+	
 }
 	
