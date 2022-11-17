@@ -65,9 +65,9 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	@Query("SELECT a FROM Aula a WHERE a.data = :data AND a.periodo = :periodo AND a.professor = :professor")
 	public Optional<Aula> ocupadoProfessor(@Param("data") Calendar dataInicio, @Param("periodo") Periodo periodo, @Param("professor") Professor professor);
 	
-	@Query("SELECT p FROM Professor p INNER JOIN Competencia c ON c.professor.id = p.id INNER JOIN Aula a ON a.professor.id = p.id where c.unidadeCurricular = :unidade AND a.periodo = :periodo AND a.data = :data")
-	public Optional<Professor> disponibilidade(@Param("unidade") UnidadeCurricular unidade, @Param("periodo") Periodo periodo, @Param("data") Calendar data);
-
+	//SELECT * FROM sga.professor AS p INNER JOIN sga.aula AS a ON p.id = a.professor_id WHERE a.unidade_curricular_id = 1 AND a.periodo = 0 AND a.data = "2022-12-06";
+	@Query("SELECT p FROM Professor p INNER JOIN Aula a ON p.id = a.professor.id WHERE a.unidadeCurricular.id = :id AND a.periodo = :periodo AND a.data = :data")
+	public Optional<Professor> disponibilidade(@Param("id") Long id, @Param("periodo") Periodo periodo, @Param("data") Calendar data);
 	
 	// SELECT a.periodo, count(*) as conta FROM sga.aula as a where a.data >= "2022-10-01" and a.data <= "2022-10-31" group by a.periodo;
 	@Query("SELECT a.periodo FROM Aula a WHERE a.data >= :comeco AND a.data <= :fim GROUP BY a.periodo ORDER BY a.periodo ASC")
@@ -79,7 +79,6 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	@Query("SELECT a FROM Aula a WHERE a.periodo = :periodo")
 	public List<Aula> listaPorPeriodo(@Param("periodo") Periodo periodo);
 	
-	//SELECT a.* FROM sga.aula AS a WHERE a.professor_id = 7 AND a.data >= "2022-11-11";
 	//SELECT a FROM Professor p INNER JOIN Aula a ON a.professor.id = p.id WHERE a.professor.id = :idProf AND a.data >= :data
 	@Query("SELECT a FROM Aula a WHERE a.professor.id = :idProf AND a.data >= :data")
 	public List<Aula> retornaAulasProf (@Param("idProf") Long idProf, @Param("data") Calendar data);

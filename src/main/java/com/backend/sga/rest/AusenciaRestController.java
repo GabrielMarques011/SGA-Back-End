@@ -1,7 +1,9 @@
 package com.backend.sga.rest;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.sga.model.Ausencia;
@@ -143,5 +146,53 @@ public class AusenciaRestController {
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	@RequestMapping(value = "/listProf/{id}", method = RequestMethod.GET)
+    public ArrayList<String> filtroFeriasProf(@PathVariable("id") Long id){
+		
+		ArrayList<String> datas = new ArrayList<String>();
+		
+		List<Ausencia> listAus = ausenciaRepository.listaAusenciaDeProf(id);
+		
+		for (int i = 0; i < listAus.size(); i++) {
+			
+			String dataFormInicio;
+			String dataFormFinal;
+			
+			int mesIni;
+			mesIni = listAus.get(i).getDataInicio().get(Calendar.MONTH) + 1;
+			
+			int mesFin;
+			mesFin = listAus.get(i).getDataFinal().get(Calendar.MONTH) + 1;
+			
+			// formatado a variável Calendar para String (dataInicio)
+			if ((listAus.get(i).getDataInicio().get(Calendar.MONTH) + 1) < 10 && listAus.get(i).getDataInicio().get(Calendar.DAY_OF_MONTH) < 10) {
+				dataFormInicio = listAus.get(i).getDataInicio().get(Calendar.YEAR) + "-0" + mesIni + "-0" + listAus.get(i).getDataInicio().get(Calendar.DAY_OF_MONTH);
+			} else if (listAus.get(i).getDataInicio().get(Calendar.DAY_OF_MONTH) < 10) {
+				dataFormInicio = listAus.get(i).getDataInicio().get(Calendar.YEAR) + "-" + mesIni + "-0" + listAus.get(i).getDataInicio().get(Calendar.DAY_OF_MONTH);
+			} else if ((listAus.get(i).getDataInicio().get(Calendar.MONTH) + 1) < 10) {
+				dataFormInicio = listAus.get(i).getDataInicio().get(Calendar.YEAR) + "-0" + mesIni + "-" + listAus.get(i).getDataInicio().get(Calendar.DAY_OF_MONTH);
+			} else {
+				dataFormInicio = listAus.get(i).getDataInicio().get(Calendar.YEAR) + "-" + mesIni + "-" + listAus.get(i).getDataInicio().get(Calendar.DAY_OF_MONTH);
+			}
+			
+			// formatado a variável Calendar para String (dataFinal)
+			if ((listAus.get(i).getDataFinal().get(Calendar.MONTH) + 1) < 10 && listAus.get(i).getDataFinal().get(Calendar.DAY_OF_MONTH) < 10) {
+				dataFormFinal = listAus.get(i).getDataFinal().get(Calendar.YEAR) + "-0" + mesFin + "-0" + listAus.get(i).getDataFinal().get(Calendar.DAY_OF_MONTH);
+			} else if (listAus.get(i).getDataFinal().get(Calendar.DAY_OF_MONTH) < 10) {
+				dataFormFinal = listAus.get(i).getDataFinal().get(Calendar.YEAR) + "-" + mesFin + "-0" + listAus.get(i).getDataFinal().get(Calendar.DAY_OF_MONTH);
+			} else if ((listAus.get(i).getDataFinal().get(Calendar.MONTH) + 1) < 10) {
+				dataFormFinal = listAus.get(i).getDataFinal().get(Calendar.YEAR) + "-0" + mesFin + "-" + listAus.get(i).getDataFinal().get(Calendar.DAY_OF_MONTH);
+			} else {
+				dataFormFinal = listAus.get(i).getDataFinal().get(Calendar.YEAR) + "-" + mesFin + "-" + listAus.get(i).getDataFinal().get(Calendar.DAY_OF_MONTH);
+			}
+			
+			datas.add(dataFormInicio);
+			datas.add(dataFormFinal);
+			
+		}
+		
+    	return datas;
+    }
 
 }

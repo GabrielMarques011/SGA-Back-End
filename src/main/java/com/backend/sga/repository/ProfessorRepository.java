@@ -9,6 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.backend.sga.model.Ausencia;
 import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Professor;
 
@@ -39,5 +40,9 @@ public interface ProfessorRepository extends PagingAndSortingRepository<Professo
 	//SELECT * FROM sga.professor AS p WHERE p.id = 1 AND p.ativo = 1;
 	@Query("SELECT p FROM Professor p WHERE p.id = :id AND p.ativo = :ativo")
 	public Optional<Professor> buscaProfAtivoId(@Param("ativo") boolean ativo, @Param("id") Long id);
+	
+	//SELECT * FROM sga.professor AS p WHERE p.ativo = 1;
+	@Query("SELECT p FROM Professor p WHERE p.ativo = 1")
+	public List<Professor> listaAtivo ();
 	
 }

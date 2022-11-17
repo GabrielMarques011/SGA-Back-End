@@ -206,7 +206,7 @@ public class ProfessorRestController {
 	public List<Professor> disponibilidadeProf(@RequestBody RecebeBuscaAmbiente busca){
 		
 		ArrayList<Professor> ocupados = new ArrayList<Professor>();
-		List<Professor> profsDb = (List<Professor>) professorRepository.findAll();
+		List<Professor> profsDb = (List<Professor>) professorRepository.listaAtivo();
 		
 		Calendar data = busca.getDataInicio();
 		int diaSemana = data.get(Calendar.DAY_OF_WEEK);
@@ -216,7 +216,7 @@ public class ProfessorRestController {
 		while(data.before(dataFinal) || data.equals(dataFinal)) {
 			
 			if(dia[diaSemana - 1] == true) {
-				Optional<Professor> ocupado = aulaRepository.disponibilidade(busca.getUnidadeCurricular(), busca.getPeriodo(), data);
+				Optional<Professor> ocupado = aulaRepository.disponibilidade(busca.getUnidadeCurricular().getId(), busca.getPeriodo(), data);
 				
 				if(!ocupado.isEmpty()) {
 					ocupados.add(ocupado.get());
@@ -353,8 +353,6 @@ public class ProfessorRestController {
 		}
 
 		return valor;
-	}
-	
-	
+    }
 
 }
