@@ -1,5 +1,6 @@
 package com.backend.sga.repository;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.cloud.openfeign.FeignClient;
@@ -20,6 +21,9 @@ public interface FeriadosNacionaisRepository extends PagingAndSortingRepository<
 	//SELECT * FROM sga.feriados_nacionais where date = "2022-01-01";
 	@Query("SELECT f FROM FeriadosNacionais f WHERE f.date = :date")
 	public List<FeriadosNacionais> buscaData (@Param("date") String date);
+	
+	@Query("SELECT f FROM FeriadosNacionais f WHERE f.date >= :inicio AND f.date <= :final")
+	public List<FeriadosNacionais> buscaAno(@Param("inicio") String inicio, @Param("final") String fim);
 	
 	
 }

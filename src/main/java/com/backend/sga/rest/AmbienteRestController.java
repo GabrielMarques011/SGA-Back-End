@@ -185,7 +185,7 @@ public class AmbienteRestController {
 	// METODO PARA O MOBILE / METODO PARA TRAZER OS AMBIENTES DISPONIVEIS
 	@RequestMapping(value = "/disponivel", method = RequestMethod.GET)
 	public List<Ambiente> retornaDisponivel(@RequestParam("dataInicio") String dataInicio,
-			@RequestParam("dias") boolean dia[], @RequestParam("dataFinal") String dataFinal,
+			@RequestParam(name = "dias", required = false) boolean dia[], @RequestParam("dataFinal") String dataFinal,
 			@RequestParam("periodo") Periodo periodo) {
 
 		ArrayList<Ambiente> ocupados = new ArrayList<Ambiente>();
@@ -211,8 +211,18 @@ public class AmbienteRestController {
 		int diaSemana = calendar.get(Calendar.DAY_OF_WEEK); // SETANDO A SEMANA NA VARIAVEL
 
 		while (calendar.before(calendar2) || calendar.equals(calendar2)) {
-			if (dia[diaSemana - 1] == true) {
+			if(dia != null) {
+				if (dia[diaSemana - 1] == true) {
 
+					List<Ambiente> ocupado = ambienteRepository.retornaOcupadosDia(calendar, periodo); // BUSCANDO O RETORNO NO BANCO DE DADOS
+
+					if (!ocupado.isEmpty()) {
+						for (int i = 0; i < ocupado.size(); i++) {
+							ocupados.add(ocupado.get(i));
+						}
+					}
+				}
+			} else {
 				List<Ambiente> ocupado = ambienteRepository.retornaOcupadosDia(calendar, periodo); // BUSCANDO O RETORNO NO BANCO DE DADOS
 
 				if (!ocupado.isEmpty()) {
