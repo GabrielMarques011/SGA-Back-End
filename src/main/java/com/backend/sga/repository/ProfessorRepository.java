@@ -45,4 +45,11 @@ public interface ProfessorRepository extends PagingAndSortingRepository<Professo
 	@Query("SELECT p FROM Professor p WHERE p.ativo = 1")
 	public List<Professor> listaAtivo ();
 	
+	// SELECT p.* FROM sga.professor as p inner join sga.competencia as c on p.id = c.professor_id where c.unidade_curricular_id = 1 group by p.id;
+	@Query("SELECT p FROM Professor p INNER JOIN Competencia c ON p.id = c.professor.id INNER JOIN Aula a ON a.professor.id = p.id WHERE c.unidadeCurricular.id = :id AND a.periodo = :periodo AND a.data = :data GROUP BY p.id ")
+	public List<Professor> disponibilidade(@Param("id") Long id, @Param("periodo") Periodo periodo, @Param("data") Calendar data);
+	
+	@Query("SELECT p FROM Professor p INNER JOIN Competencia c ON p.id = c.professor.id WHERE c.unidadeCurricular.id = :id")
+	public List<Professor> buscaPorUnidade(@Param("id") Long id);
+	
 }
