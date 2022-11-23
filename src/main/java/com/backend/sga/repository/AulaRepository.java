@@ -4,11 +4,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Repository;
 
 import com.backend.sga.model.Ambiente;
@@ -16,13 +14,15 @@ import com.backend.sga.model.Aula;
 import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Professor;
 import com.backend.sga.model.TipoCurso;
-import com.backend.sga.model.UnidadeCurricular;
 
 @Repository
 public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 
 	//@Query("SELECT a FROM Aula a WHERE a.professor.id = :id AND a.dataInicio >= :data_inicio AND a.dataFinal <= :data_final")
 	//public List<Aula> buscaTempo (@Param("id") Long id, @Param("data_inicio") Calendar data_inicio, @Param("data_final") Calendar data_final);
+	
+	@Query("SELECT a FROM Aula a WHERE a.id = :id")
+	public List<Aula> listaID(@Param("id") Long id);
 	
 	@Query("SELECT a FROM Aula a WHERE a.unidadeCurricular.id = :id")
 	public List<Aula> findByAmbientesId(@Param("id") Long id);
@@ -103,7 +103,5 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	
 	@Query("SELECT a FROM Aula a WHERE a.partitionKey = :partitionKey")
 	public List<Aula> findByPartitionKey(@Param("partitionKey") int partitionKey);
-	
-	
 
 }

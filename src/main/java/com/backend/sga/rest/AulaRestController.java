@@ -38,7 +38,7 @@ import com.backend.sga.repository.AulaRepository;
 import com.backend.sga.repository.DiaNaoLetivoRepository;
 import com.backend.sga.repository.FeriadosNacionaisRepository;
 import com.backend.sga.repository.ProfessorRepository;
-import com.backend.sga.repository.UnidadeCurricularRepository;
+import com.backend.sga.repository.UnidadeCurricularRepository;import lombok.experimental.PackagePrivate;
 
 @CrossOrigin
 @RestController
@@ -224,26 +224,28 @@ public class AulaRestController {
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		} catch (Exception e) {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível cadastrar a aula", null); // de //
-																												// //
-																												// erro
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível cadastrar a aula", null);
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Object> deletarAula(@RequestBody Aula aula, @PathVariable("id") Long id,
-			HttpServletRequest request) {
-		if (aula.getId() == id) {
-			aulaRepository.deleteById(id);
+	@RequestMapping(value = "/key/{partitionKey}", method = RequestMethod.DELETE)
+	public ResponseEntity<Object> DeletarAulas(@PathVariable("partitionKey") int partitionKey) {
+
+		List<Aula> keyData = aulaRepository.findByPartitionKey(partitionKey);
+
+		if (!keyData.isEmpty()) {
+
+			for (int i = 0; i < keyData.size(); i++) {
+				aulaRepository.deleteAll(keyData);
+			}
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
-		} else {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível deletar a aula", null); // de // //
-																												// erro
-			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não excluir as aulas", null);
+		return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
@@ -263,8 +265,17 @@ public class AulaRestController {
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
 	}
+	
+	// METODO PEDIDO MOBILE
+	// URL = localhost:8080/api/aula/busca/81
+	@RequestMapping(value = "/busca/{id}", method = RequestMethod.GET)
+	public Iterable<Aula> listaPorId(@PathVariable("id") Long id){
+		return aulaRepository.listaID(id);
+	}
 
-	@RequestMapping(value = "/{partitionKey}", method = RequestMethod.PUT)
+	// METODO PARA EDITAR AULAS PELO KEY
+	// URL = localhost:8080/api/aula/key/9176
+	@RequestMapping(value = "/key/{partitionKey}", method = RequestMethod.PUT)
 	public ResponseEntity<Object> attAulas(@PathVariable("partitionKey") int partitionKey,
 			@RequestBody RecebeAula recebeAula) {
 
@@ -458,6 +469,7 @@ public class AulaRestController {
 	}
 
 	// DISPONIBILIDADE PROF E AMBIENTE
+	// URL = localhost:8080/api/aula/aulaProfessorAmbienteDisponivel?periodo=MANHA&dataInicio=23/11/2022
 	@RequestMapping(value = "/aulaProfessorAmbienteDisponivel", method = RequestMethod.GET)
 	public Object aulaProfessorAmbienteDisponivel(@RequestParam("dataInicio") String dataInicio,
 			@RequestParam("periodo") Periodo periodo) {
@@ -476,8 +488,8 @@ public class AulaRestController {
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		} else {
 
-			List<Professor> professores = (List<Professor>) professorRepository.findAll();
-			List<Ambiente> ambientes = (List<Ambiente>) ambRepository.findAll();
+			List<Professor> professores = (List<Professor>) professorRepository.findAllAtivo();
+			List<Ambiente> ambientes = (List<Ambiente>) ambRepository.findAllAtivo();
 
 			for (int i = 0; i < professores.size(); i++) {
 				for (int j = 0; j < professoresOcp.size(); j++) {
@@ -505,8 +517,8 @@ public class AulaRestController {
 
 	}
 
-	
 	// DISPONIBILIDADE PROF E AMBIENTE POR DATA INICIO E FINAL
+	// URL = localhost:8080/api/aula/aulasProfessorAmbienteDisponivel?periodo=NOITE&dataInicio=16/01/2023&dataFinal=17/01/2023
 	@RequestMapping(value = "/aulasProfessorAmbienteDisponivel", method = RequestMethod.GET)
 	public Object aulasProfessorAmbienteDisponivel(@RequestParam("dataInicio") String dataInicio,@RequestParam("dataFinal") String dataFinal,
 			@RequestParam("periodo") Periodo periodo) {
@@ -532,8 +544,8 @@ public class AulaRestController {
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		} else {
 
-			List<Professor> professores = (List<Professor>) professorRepository.findAll();
-			List<Ambiente> ambientes = (List<Ambiente>) ambRepository.findAll();
+			List<Professor> professores = (List<Professor>) professorRepository.findAllAtivo();
+			List<Ambiente> ambientes = (List<Ambiente>) ambRepository.findAllAtivo();
 
 			for (int i = 0; i < professores.size(); i++) {
 				for (int j = 0; j < professoresOcp.size(); j++) {

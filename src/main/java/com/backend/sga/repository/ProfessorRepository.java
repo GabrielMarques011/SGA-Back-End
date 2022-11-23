@@ -16,6 +16,9 @@ import com.backend.sga.model.Professor;
 @Repository
 public interface ProfessorRepository extends PagingAndSortingRepository<Professor, Long>{
 
+	@Query("SELECT p FROM Professor p WHERE p.ativo = 1")
+	public List<Professor> findAllAtivo();
+	
 	//SELECT * FROM sga.professor WHERE sga.professor.nome LIKE '%r%'
 	@Query("SELECT p FROM Professor p WHERE p.nome LIKE %:nome%")
 	//Retorna uma lista onde aparece o relacionamento entre as 'letras' escritas com o banco
