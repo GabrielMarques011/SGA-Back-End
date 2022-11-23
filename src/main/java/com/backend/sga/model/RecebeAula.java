@@ -31,6 +31,8 @@ public class RecebeAula {
 	
 	private List<Professor> profList;
 	
+	private int partitionKey;
+	
 	public ArrayList<Integer> verificarDiasSemana(boolean dias[]) {
 		
 		ArrayList<Integer> diasSemana = new ArrayList<Integer>();

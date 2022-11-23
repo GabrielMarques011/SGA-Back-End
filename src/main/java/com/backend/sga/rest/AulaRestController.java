@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
@@ -82,9 +83,20 @@ public class AulaRestController {
 			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Este dia não está disponível", null);
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		} else if (cargaDiaria <= 0) {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Impossivel cadastrar com essa carga diaria, altere!!", null);
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR,
+					"Impossivel cadastrar com essa carga diaria, altere!!", null);
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		} else {
+
+			int valorRandom;
+
+			do {
+
+				Random random = new Random();
+
+				valorRandom = random.nextInt(10000);
+
+			} while (!aulaRepository.findByPartitionKey(valorRandom).isEmpty());
 
 			// fazendo a repetição das horas até chegar a 0
 			while (cargaHoraria > 0) {
@@ -125,6 +137,7 @@ public class AulaRestController {
 							aula.setCodTurma(recebeAula.getCodTurma());
 							aula.setPeriodo(recebeAula.getPeriodo());
 							aula.setCargaDiaria(recebeAula.getCargaDiaria());
+							aula.setPartitionKey(valorRandom);
 							aula.setData(data);
 
 							aulas.add(aula);
@@ -251,25 +264,25 @@ public class AulaRestController {
 		}
 	}
 
-	@RequestMapping(value = "/turma/{codTurma}", method = RequestMethod.PUT)
-	public ResponseEntity<Object> attAulas(@PathVariable("codTurma") String codTurma,
+	@RequestMapping(value = "/{partitionKey}", method = RequestMethod.PUT)
+	public ResponseEntity<Object> attAulas(@PathVariable("partitionKey") int partitionKey,
 			@RequestBody RecebeAula recebeAula) {
 
-		List<Aula> codData = aulaRepository.buscaDatasECod(codTurma, recebeAula.getDataInicio(),
+		List<Aula> keyData = aulaRepository.buscaDatasEKey(partitionKey, recebeAula.getDataInicio(),
 				recebeAula.getDataFinal());
 
-		if (!codData.isEmpty()) {
+		if (!keyData.isEmpty()) {
 
-			for (int i = 0; i < codData.size(); i++) {
+			for (int i = 0; i < keyData.size(); i++) {
 				// setando novos valores
-				codData.get(i).setProfessor(recebeAula.getProfessor());
-				codData.get(i).setAmbiente(recebeAula.getAmbiente());
-				aulaRepository.save(codData.get(i));
+				keyData.get(i).setProfessor(recebeAula.getProfessor());
+				keyData.get(i).setAmbiente(recebeAula.getAmbiente());
+				aulaRepository.save(keyData.get(i));
 			}
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
-		Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ERRO ARROMBADO, VERIFICA ESSA PORRA", null);
+		Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi editar aulas no periodo desejado pois já existe aulas dentro desse intervalo de datas", null);
 		return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 
 	}
@@ -289,7 +302,7 @@ public class AulaRestController {
 			e.printStackTrace();
 		}
 
-		Optional<Aula> aula = aulaRepository.retornaPeriodo(periodo, data);
+		Optional<Aula> aula = aulaRepository.findByPeriodoEData(periodo, data);
 
 		return aula;
 	}
@@ -327,7 +340,6 @@ public class AulaRestController {
 		try {
 			comecoMes.setTime(sdf.parse(data));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -344,7 +356,6 @@ public class AulaRestController {
 		try {
 			finalMes.setTime(sdf.parse(dataStr));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -401,13 +412,13 @@ public class AulaRestController {
 	@RequestMapping(value = "/aulaTipo", method = RequestMethod.GET)
 	public ArrayList<String> retornaAulaTipo(@RequestParam("prof") Long id, @RequestParam("tipo") TipoCurso tipo) {
 		List<Calendar> datas = aulaRepository.retornaAulaProfTipoData(id, tipo);
-		
+
 		ArrayList<String> datasFormat = new ArrayList<String>();
-		// formatando a data 
-		for(int i = 0; i < datas.size(); i++) {
+		// formatando a data
+		for (int i = 0; i < datas.size(); i++) {
 			String dataStr;
 			int mes = datas.get(i).get(Calendar.MONTH) + 1;
-			
+
 			if (datas.get(i).get(Calendar.MONTH + 1) < 10 && datas.get(i).get(Calendar.DAY_OF_MONTH) < 10) {
 				dataStr = datas.get(i).get(Calendar.YEAR) + "-0" + mes + "-0" + datas.get(i).get(Calendar.DAY_OF_MONTH);
 			} else if (datas.get(i).get(Calendar.DAY_OF_MONTH) < 10) {
@@ -417,10 +428,10 @@ public class AulaRestController {
 			} else {
 				dataStr = datas.get(i).get(Calendar.YEAR) + "-" + mes + "-" + datas.get(i).get(Calendar.DAY_OF_MONTH);
 			}
-			
+
 			datasFormat.add(dataStr);
 		}
-		
+
 		return datasFormat;
 	}
 
@@ -432,7 +443,6 @@ public class AulaRestController {
 		try {
 			dataInicio.setTime(sdf.parse(dataInicioStr));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -440,11 +450,114 @@ public class AulaRestController {
 		try {
 			dataFinal.setTime(sdf.parse(dataFinalStr));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		return aulaRepository.buscaEntreDatas(dataInicio, dataFinal);
+
+	}
+
+	// DISPONIBILIDADE PROF E AMBIENTE
+	@RequestMapping(value = "/aulaProfessorAmbienteDisponivel", method = RequestMethod.GET)
+	public Object aulaProfessorAmbienteDisponivel(@RequestParam("dataInicio") String dataInicio,
+			@RequestParam("periodo") Periodo periodo) {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // FORMATANDO DATA
+
+		Calendar calendar = Calendar.getInstance(); // GUARDANDO AS VARIAVEL
+		try {
+			calendar.setTime(sdf.parse(dataInicio)); // TRANSFORMANDO DE STRING PARA CALENDAR
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		if (!aulaRepository.findByPeriodoEData(periodo, calendar).isEmpty()) {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Aula existente nesse dia e periodo", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		} else {
+
+			List<Professor> professores = (List<Professor>) professorRepository.findAll();
+			List<Ambiente> ambientes = (List<Ambiente>) ambRepository.findAll();
+
+			for (int i = 0; i < professores.size(); i++) {
+				for (int j = 0; j < professoresOcp.size(); j++) {
+					if (professores.get(i).getId() == professoresOcp.get(j).getId()) {
+						professores.remove(i);
+					}
+				}
+			}
+
+			for (int i = 0; i < ambientes.size(); i++) {
+				for (int j = 0; j < ambientesOcp.size(); j++) {
+					if (ambientes.get(i).getId() == ambientesOcp.get(j).getId()) {
+						ambientes.remove(i);
+					}
+				}
+			}
+
+			Object result[] = new Object[2];
+			result[0] = professores;
+			result[1] = ambientes;
+
+			return result;
+
+		}
+
+	}
+
+	
+	// DISPONIBILIDADE PROF E AMBIENTE POR DATA INICIO E FINAL
+	@RequestMapping(value = "/aulasProfessorAmbienteDisponivel", method = RequestMethod.GET)
+	public Object aulasProfessorAmbienteDisponivel(@RequestParam("dataInicio") String dataInicio,@RequestParam("dataFinal") String dataFinal,
+			@RequestParam("periodo") Periodo periodo) {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // FORMATANDO DATA
+
+		Calendar calendar = Calendar.getInstance(); // GUARDANDO AS VARIAVEL
+		try {
+			calendar.setTime(sdf.parse(dataInicio)); // TRANSFORMANDO DE STRING PARA CALENDAR
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		Calendar calendarDois = Calendar.getInstance(); // GUARDANDO AS VARIAVEL
+		try {
+			calendarDois.setTime(sdf.parse(dataFinal)); // TRANSFORMANDO DE STRING PARA CALENDAR
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		if (!aulaRepository.findByPeriodoEDataIF(periodo, calendar, calendarDois).isEmpty()) {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Aula existente nesse dia e periodo", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		} else {
+
+			List<Professor> professores = (List<Professor>) professorRepository.findAll();
+			List<Ambiente> ambientes = (List<Ambiente>) ambRepository.findAll();
+
+			for (int i = 0; i < professores.size(); i++) {
+				for (int j = 0; j < professoresOcp.size(); j++) {
+					if (professores.get(i).getId() == professoresOcp.get(j).getId()) {
+						professores.remove(i);
+					}
+				}
+			}
+
+			for (int i = 0; i < ambientes.size(); i++) {
+				for (int j = 0; j < ambientesOcp.size(); j++) {
+					if (ambientes.get(i).getId() == ambientesOcp.get(j).getId()) {
+						ambientes.remove(i);
+					}
+				}
+			}
+
+			Object result[] = new Object[2];
+			result[0] = professores;
+			result[1] = ambientes;
+
+			return result;
+
+		}
 
 	}
 

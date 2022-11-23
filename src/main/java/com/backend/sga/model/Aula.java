@@ -49,4 +49,6 @@ public class Aula {
 	
 	private Periodo periodo;
 	
+	private int partitionKey;
+	
 }
