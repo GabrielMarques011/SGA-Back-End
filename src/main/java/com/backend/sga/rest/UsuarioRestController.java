@@ -123,63 +123,61 @@ public class UsuarioRestController {
 
 	// metodo feito para validar quando criamos o login
 	// metodo feito para comparar se a senha bate com a do banco de dados
-	public Boolean validarSenha(Usuario user) {
+	public Boolean validarSenha(Usuario user, String senha) {
 		// pegando a senha do banco de dados
-		String senha = usuarioRepository.findById(user.getId()).get().getSenha();
+		String senhaCrip = usuarioRepository.findById(user.getId()).get().getSenha();
 		// pegando a senha do banco e comparando com a atual
-		Boolean valid = encoder.matches(user.getSenha(), senha);
+		Boolean valid = encoder.matches(senha, senhaCrip);
 		return valid;
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> login(@RequestBody Usuario usuario, HttpServletRequest request) {
 
-		// ResponseEntity<Object> validar = senhaValida(usuario, request);
-		// Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso ao Logar");
-		// ResponseEntity<Object> ok = ResponseEntity<Object>(sucesso, HttpStatus.OK);
+		Optional<Usuario> user = usuarioRepository.findByNif(usuario.getNif());
+		
+		System.out.println(user.get());
+		
+		if(!user.isEmpty()) {
+			Boolean validar = validarSenha(user.get(), usuario.getSenha());
+			System.out.println(validar);
 
-		Boolean validar = validarSenha(usuario);
+			if (validar == true) {
+					System.out.println(usuario.getNome());
 
-		if (validar = true) {
-			// insere nif e senha dentro da variavel usuario
-			usuario = usuarioRepository.findByIdAndSenha(usuario.getId(), usuario.getSenha());
+					// cria uma variavel payload e insere os dados do usuario no payload
+					Map<String, Object> payload = new HashMap<String, Object>();
 
-			// verifica se há usuario
-			if (usuario != null) {
-				System.out.println(usuario.getNome());
+					payload.put("nome", usuario.getNome());
+					payload.put("email", usuario.getEmail());
+					payload.put("senha", usuario.getSenha());
+					payload.put("nif", usuario.getNif());
+					payload.put("tipoUsuario", usuario.getTipo());
+					payload.put("ativo", usuario.getAtivo());
 
-				// cria uma variavel payload e insere os dados do usuario no payload
-				Map<String, Object> payload = new HashMap<String, Object>();
+					// cria variavel para data de expiração
+					Calendar expiracao = Calendar.getInstance();
 
-				payload.put("nome", usuario.getNome());
-				payload.put("email", usuario.getEmail());
-				payload.put("senha", usuario.getSenha());
-				payload.put("nif", usuario.getNif());
-				payload.put("tipoUsuario", usuario.getTipo());
-				payload.put("ativo", usuario.getAtivo());
+					// adiciona expiração a variavel para expirar o token
+					expiracao.add(Calendar.DAY_OF_MONTH, Calendar.DAY_OF_MONTH + 7);
 
-				// cria variavel para data de expiração
-				Calendar expiracao = Calendar.getInstance();
+					// coloca assinatura do algoritmo no token
+					Algorithm algoritmo = Algorithm.HMAC512(SECRET);
 
-				// adiciona expiração a variavel para expirar o token
-				expiracao.add(Calendar.DAY_OF_MONTH, Calendar.DAY_OF_MONTH + 7);
+					// instancia a classe token
+					TokenJWT tokenJwt = new TokenJWT();
 
-				// coloca assinatura do algoritmo no token
-				Algorithm algoritmo = Algorithm.HMAC512(SECRET);
+					// adiciona os recursos no token
+					tokenJwt.setToken(JWT.create().withPayload(payload).withIssuer(EMISSOR)
+							.withExpiresAt(expiracao.getTime()).sign(algoritmo));
 
-				// instancia a classe token
-				TokenJWT tokenJwt = new TokenJWT();
+					System.out.println(tokenJwt);
 
-				// adiciona os recursos no token
-				tokenJwt.setToken(JWT.create().withPayload(payload).withIssuer(EMISSOR)
-						.withExpiresAt(expiracao.getTime()).sign(algoritmo));
-
-				System.out.println(tokenJwt);
-
-				// envia o token
-				return ResponseEntity.ok(tokenJwt);
+					// envia o token
+					return ResponseEntity.ok(tokenJwt);
+				}
 			}
-		}
+
 		return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 	}
 
