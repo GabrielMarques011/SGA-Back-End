@@ -9,7 +9,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.backend.sga.model.Ausencia;
 import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Professor;
 
