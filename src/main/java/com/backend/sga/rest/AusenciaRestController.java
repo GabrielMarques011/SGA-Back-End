@@ -2,10 +2,7 @@ package com.backend.sga.rest;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
-import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,12 +105,12 @@ public class AusenciaRestController {
 						ausencia.setDataInicio(recebe.getDataInicio());
 						ausencia.setDataFinal(recebe.getDataFinal());
 						ausencia.setTipo(TipoAusencia.FERIAS);
+						
+						List<Ausencia> auseResp = ausenciaRepository.listaAusenciaDeProf(recebe.getDataInicio(), recebe.getDataFinal(), recebe.getProfList().get(i).getId());
+						
 						for (int j = 0; j < ListAusencia.size(); j++) {
-
-						System.out.println(recebe.getDataInicio());
-						System.out.println(ListAusencia.get(i).getDataInicio());
 							
-						if (ListAusencia.get(j).getDataInicio().compareTo(recebe.getDataInicio()) == 0 && ListAusencia.get(j).getDataFinal().compareTo(recebe.getDataFinal()) == 0 && ListAusencia.get(i).getProfessor().getId() == recebe.getProfessor().getId()) {
+						if (ausencia != auseResp) {
 							Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR,"Erro em cadastrar Ausencia, Professor " + recebe.getProfList().get(i).getNome() + "já tem uma ausencia nessa data !", null);
 							return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 						} else {

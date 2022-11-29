@@ -22,4 +22,7 @@ public interface AusenciaRepository extends PagingAndSortingRepository<Ausencia,
 	// SELECT * FROM sga.ausencia as a where "2023-02-16" between a.data_inicio and a.data_final
 	@Query("SELECT a FROM Ausencia a WHERE :data BETWEEN a.dataInicio AND a.dataFinal")
 	public List<Ausencia> buscaAusenciaData(@Param("data") Calendar data);
+	
+	@Query("SELECT a FROM Ausencia a WHERE a.dataInicio >= :dataInicio AND a.dataFinal <= :dataFinal AND a.professor.id = :id")
+	public List<Ausencia> listaAusenciaDeProf(@Param("dataInicio") Calendar dataInicio, @Param("dataFinal") Calendar dataFinal, @Param("id") Long id );
 }
