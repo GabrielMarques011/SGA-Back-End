@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Analise;
 import com.backend.sga.model.Aula;
+import com.backend.sga.model.Ausencia;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Professor;
@@ -33,6 +34,7 @@ import com.backend.sga.model.TipoCurso;
 import com.backend.sga.model.UnidadeCurricular;
 import com.backend.sga.repository.AmbienteRepository;
 import com.backend.sga.repository.AulaRepository;
+import com.backend.sga.repository.AusenciaRepository;
 import com.backend.sga.repository.DiaNaoLetivoRepository;
 import com.backend.sga.repository.FeriadosNacionaisRepository;
 import com.backend.sga.repository.ProfessorRepository;
@@ -54,6 +56,8 @@ public class AulaRestController {
 	private AmbienteRepository ambRepository;
 	@Autowired
 	private UnidadeCurricularRepository repository;
+	@Autowired
+	private AusenciaRepository ausenciaRepository;
 
 	ArrayList<Aula> aulas = new ArrayList<Aula>();
 	ArrayList<Professor> professoresOcp = new ArrayList<Professor>();
@@ -181,6 +185,16 @@ public class AulaRestController {
 		List<Professor> professores = (List<Professor>) professorRepository.findAllAtivo();
 		List<Ambiente> ambientes = (List<Ambiente>) ambRepository.findAllAtivo();
 		for (int i = 0; i < professores.size(); i++) {
+			
+			for(int k = 0; k < aulas.size(); k++) {
+				List<Ausencia> ausencia = ausenciaRepository.buscaAusenciaData(aulas.get(k).getData()); 
+				if(!ausencia.isEmpty()) {
+					for(int m = 0; m < ausencia.size(); m++) {
+						professores.remove(ausencia.get(m).getProfessor());
+					}
+				}
+			}
+			
 			for (int j = 0; j < professoresOcp.size(); j++) {
 				if (professores.get(i).getId() == professoresOcp.get(j).getId()) {
 					professores.remove(i);

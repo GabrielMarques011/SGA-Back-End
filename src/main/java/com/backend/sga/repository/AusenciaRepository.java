@@ -1,5 +1,6 @@
 package com.backend.sga.repository;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +18,8 @@ public interface AusenciaRepository extends PagingAndSortingRepository<Ausencia,
 	//SELECT  a.data_inicio, a.data_final FROM sga.ausencia AS a WHERE a.professor_id = 1;
 	@Query("SELECT a FROM Ausencia a WHERE a.professor.id = :id AND a.tipo = 0")
 	public List<Ausencia> listaAusenciaDeProf(@Param("id") Long id);
+	
+	// SELECT * FROM sga.ausencia as a where "2023-02-16" between a.data_inicio and a.data_final
+	@Query("SELECT a FROM Ausencia a WHERE :data BETWEEN a.dataInicio AND a.dataFinal")
+	public List<Ausencia> buscaAusenciaData(@Param("data") Calendar data);
 }
