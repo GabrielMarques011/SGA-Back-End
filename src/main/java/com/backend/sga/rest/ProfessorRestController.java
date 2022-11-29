@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -300,17 +301,20 @@ public class ProfessorRestController {
 			periodo = Periodo.NOITE;
 		}
 		ArrayList<Object> valor = new ArrayList<Object>();
+		//Object result[] = new Object[2];
 		for (int i = 0; i < prof.size(); i++) {
 			if (aulaRepository.buscaProf(prof.get(i), data, periodo).isEmpty()) {
 				emAula = false;
 			} else {
 				emAula = true;
 			}
-			Object result[] = new Object[2];
-			result[0] = prof.get(i);
-			result[1] = emAula;
-			valor.add(result);
+			
+			//result[0] = prof.get(i);
+			//result[1] = emAula;
+			valor.add(prof.get(i));
+			valor.add(emAula);
 		}
+		
 		return valor;
 	}
 
@@ -341,4 +345,54 @@ public class ProfessorRestController {
 		result[2] = emAula;
 		return result;
 	}
+
+	// METODO PARA CRIAR UMA AUSENCIA PARA DIVERSOS PROFESSORES
+	// URL =
+	/*public ResponseEntity<Object> criaAusenciaParaProfessores(@RequestParam("dataInicio") String dataInicio,
+			@RequestParam("dataFinal") String dataFinal) {
+
+		List<Professor> profs = (List<Professor>) professorRepository.findAll();
+
+		Ausencia ausencia = new Ausencia();
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+		Calendar calendar = Calendar.getInstance();
+		try {
+			calendar.setTime(sdf.parse(dataInicio));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		Calendar calendar2 = Calendar.getInstance();
+		try {
+			calendar2.setTime(sdf.parse(dataFinal));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		for (int i = 0; i < profs.size(); i++) {
+			
+			
+			
+		}
+
+		return null;
+
+	}*/
+	
+	@RequestMapping(value = "/alterarStatus/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Object> alterarStatusProf(@PathVariable("id") Long id, Professor prof,
+            HttpServletRequest request) {       
+        prof = professorRepository.findById(id).get();
+        if (prof.getAtivo()) {
+            prof.setAtivo(false);
+        } else {
+            prof.setAtivo(true);
+        }
+        professorRepository.save(prof);
+        Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+        return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+    }
+
 }

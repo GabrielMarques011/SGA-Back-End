@@ -130,4 +130,22 @@ public class CursoRestController {
 	public Iterable<Curso> buscaCurso(@PathVariable("nome") String nome) {
 		return cursoRepository.buscaCurso(nome);
 	}
+	
+	@RequestMapping(value = "/alterarStatus/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Object> alterarStatusCurso(@PathVariable("id") Long id, HttpServletRequest request) {
+        Optional<Curso> status = cursoRepository.findById(id);
+        if (status.get().getId() == id) {
+            if (status.get().isAtivo()) {
+                status.get().setAtivo(false);
+            } else {
+                status.get().setAtivo(true);
+            }
+            cursoRepository.save(status.get());
+            Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+            return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+        } else {
+            Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel alterar o status do curso", null);
+            return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

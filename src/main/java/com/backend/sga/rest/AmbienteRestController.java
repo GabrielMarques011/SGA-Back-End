@@ -330,5 +330,26 @@ public class AmbienteRestController {
 	public List<Ambiente> orderAmbiente() {
 		return ambienteRepository.orderAmbiente();
 	}
+	
+	// URL = localhost:8080/api/ambiente/alterarStatus/4
+    // METODO PARA ALTERAR O STATUS DE UM AMBIENTE, SE VIR ATIVO TROCA PRA DESATIVADO E VICE VERSA
+    @RequestMapping(value = "/alterarStatus/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Object> alterarStatusAmbiente(@PathVariable("id") Long id, HttpServletRequest request) {
+        Optional<Ambiente> status = ambienteRepository.findById(id); // setando o Ativo como false, para estar
+                                                                        // desativado
+        if (status.get().getId() == id) {
+            if (status.get().isAtivo()) {
+                status.get().setAtivo(false);
+            } else {
+                status.get().setAtivo(true);
+            }
+            ambienteRepository.save(status.get());
+            Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+            return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+        } else {
+            Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel cadastrar um ambiente", null);
+            return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

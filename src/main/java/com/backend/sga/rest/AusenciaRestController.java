@@ -1,10 +1,12 @@
 package com.backend.sga.rest;
 
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+import java.util.TimeZone;
+
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,12 +17,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.backend.sga.model.Ausencia;
 import com.backend.sga.model.Erro;
-import com.backend.sga.model.Periodo;
-import com.backend.sga.model.Professor;
 import com.backend.sga.model.RecebeAula;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.model.TipoAusencia;
@@ -83,21 +82,52 @@ public class AusenciaRestController {
 		}
 	}
 
-	@RequestMapping(value = "/ferias", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> ferias(@RequestBody RecebeAula recebe) {
+	@RequestMapping(value = "/criaAusencia", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> criaAusenciaParaProfessores(@RequestBody RecebeAula recebe) {
 		try {
-			for (int i = 0; i < recebe.getProfList().size(); i++) {
-				Ausencia ausencia = new Ausencia();
-				ausencia.setProfessor(recebe.getProfList().get(i));
-				ausencia.setDataInicio(recebe.getDataInicio());
-				ausencia.setDataFinal(recebe.getDataFinal());
-				ausencia.setTipo(TipoAusencia.FERIAS);
-				ausenciaRepository.save(ausencia);
+			
+			//Calendar data = Calendar.getInstance(TimeZone.getTimeZone("GMT-00:00"));
+			List<Ausencia> ListAusencia = (List<Ausencia>) ausenciaRepository.findAll();
+
+			if (ListAusencia.isEmpty()) {
+				for (int i = 0; i < recebe.getProfList().size(); i++) {
+
+					Ausencia ausencia = new Ausencia();
+					ausencia.setProfessor(recebe.getProfList().get(i));
+					ausencia.setDataInicio(recebe.getDataInicio());
+					ausencia.setDataFinal(recebe.getDataFinal());
+					ausencia.setTipo(TipoAusencia.FERIAS);
+					ausenciaRepository.save(ausencia);
+				}
+				
+			} else {
+
+					for (int i = 0; i < recebe.getProfList().size(); i++) {
+						Ausencia ausencia = new Ausencia();
+						ausencia.setProfessor(recebe.getProfList().get(i));
+						ausencia.setDataInicio(recebe.getDataInicio());
+						ausencia.setDataFinal(recebe.getDataFinal());
+						ausencia.setTipo(TipoAusencia.FERIAS);
+						for (int j = 0; j < ListAusencia.size(); j++) {
+
+						System.out.println(recebe.getDataInicio());
+						System.out.println(ListAusencia.get(i).getDataInicio());
+							
+						if (ListAusencia.get(j).getDataInicio().compareTo(recebe.getDataInicio()) == 0 && ListAusencia.get(j).getDataFinal().compareTo(recebe.getDataFinal()) == 0 && ListAusencia.get(i).getProfessor().getId() == recebe.getProfessor().getId()) {
+							Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR,"Erro em cadastrar Ausencia, Professor " + recebe.getProfList().get(i).getNome() + "já tem uma ausencia nessa data !", null);
+							return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+						} else {
+							ausenciaRepository.save(ausencia);
+						}
+					}
+				}
 			}
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+
 		} catch (Exception e) {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID invalido!", null);
+			System.out.println(e);
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Erro!", null);
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

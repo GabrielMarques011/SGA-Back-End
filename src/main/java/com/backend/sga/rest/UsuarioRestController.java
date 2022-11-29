@@ -134,7 +134,7 @@ public class UsuarioRestController {
 	@RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> login(@RequestBody Usuario usuario, HttpServletRequest request) {
 
-		Optional<Usuario> user = usuarioRepository.findByNif(usuario.getNif());
+		Optional<Usuario> user = Optional.of(usuarioRepository.findByNif(usuario.getNif()));
 		
 		System.out.println(user.get());
 		

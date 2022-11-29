@@ -14,6 +14,6 @@ public interface UsuarioRepository extends PagingAndSortingRepository<Usuario, L
 
 	public Usuario findByIdAndSenha(Long id, @NotNull String senha);
 	
-	public Optional<Usuario> findByNif(String nif);
+	public Usuario findByNif(String nif);
 	
 }
