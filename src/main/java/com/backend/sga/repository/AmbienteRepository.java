@@ -18,6 +18,10 @@ public interface AmbienteRepository extends PagingAndSortingRepository<Ambiente,
 	@Query("SELECT a FROM Ambiente a WHERE a.ativo = 1")
 	public List<Ambiente> findAllAtivo();
 	
+	//SELECT * FROM sga.ambiente order by sga.ambiente.nome;
+	@Query("SELECT a FROM Ambiente a order by a.nome")
+	public List<Ambiente> findAllOrderBy();
+	
 	// SELECT * FROM sga.ambiente WHERE sga.ambiente.nome LIKE '%15%'
 	@Query("SELECT a FROM Ambiente a WHERE a.nome LIKE %:nome%")
 	public List<Ambiente> palavraChave(@Param("nome") String nome);

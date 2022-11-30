@@ -1,8 +1,5 @@
 package com.backend.sga.rest;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -17,8 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.backend.sga.annotation.Administrador;
+import com.backend.sga.annotation.Suporte;
 import com.backend.sga.model.Ausencia;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.RecebeAula;
@@ -36,6 +35,8 @@ public class AusenciaRestController {
 	@Autowired
 	private AulaRepository aulaRepository;
 
+	@Administrador
+	@Suporte
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarAusencia(@RequestBody Ausencia ausencia, HttpServletRequest request) {
 		if (ausencia != null) {
@@ -52,6 +53,8 @@ public class AusenciaRestController {
 		}
 	}
 
+	@Administrador
+	@Suporte
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> deletarAusencia(@PathVariable("id") Long id, Ausencia ausencia,
 			HttpServletRequest request) {
@@ -65,11 +68,15 @@ public class AusenciaRestController {
 		}
 	}
 
+	@Administrador
+	@Suporte
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<Ausencia> listarAusencias() {
 		return ausenciaRepository.findAll();
 	}
 
+	@Administrador
+	@Suporte
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> atualizarAusencia(@PathVariable("id") Long id, @RequestBody Ausencia ausencia,
 			HttpServletRequest request) {
@@ -83,6 +90,8 @@ public class AusenciaRestController {
 		}
 	}
 
+	@Administrador
+	@Suporte
 	@RequestMapping(value = "/criaAusencia", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criaAusenciaParaProfessores(@RequestBody RecebeAula recebe) {
 		try {
@@ -136,6 +145,8 @@ public class AusenciaRestController {
 		}
 	}
 
+	@Administrador
+	@Suporte
 	@RequestMapping(value = "/listProf/{id}", method = RequestMethod.GET)
 	public ArrayList<String> filtroFeriasProf(@PathVariable("id") Long id) {
 		ArrayList<String> datas = new ArrayList<String>();
@@ -183,62 +194,10 @@ public class AusenciaRestController {
 		return datas;
 	}
 	
+	@Administrador
+	@Suporte
 	@RequestMapping(value = "/buscaDataAusencia/{id}", method = RequestMethod.GET)
 	public List<Object> listaDataDeAusenciaProf(@PathVariable("id") Long id){
-		
-//		int ano = LocalDate.now().getYear();
-//		
-//		String dataInicioStr = "01/01/"+ano;
-//		String dataFinalStr = "31/12/"+ano;
-//		
-//		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-//		Calendar dataInicio = Calendar.getInstance();
-//		try {
-//			dataInicio.setTime(sdf.parse(dataInicioStr));
-//		} catch (ParseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		Calendar dataFinal = Calendar.getInstance();
-//		try {
-//			dataFinal.setTime(sdf.parse(dataFinalStr));
-//		} catch (ParseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		ArrayList<String> datas = new ArrayList<String>();
-//		
-//		List<Ausencia> ferias = ausenciaRepository.listaAusenciaDeUmProfessor(id, dataInicio, dataFinal);
-//		
-//		for(int i = 0; i < ferias.size(); i++) {
-//			Calendar data = ferias.get(i).getDataInicio();
-//			while(data.before(ferias.get(i).getDataFinal()) || data.equals(ferias.get(i).getDataFinal())) {
-//				String dataFormInicio;
-//				int mes = ferias.get(i).getDataFinal().get(Calendar.MONTH) + 1;
-//				// formatado a variável Calendar para String (dataInicio)
-//				if ((ferias.get(i).getDataInicio().get(Calendar.MONTH) + 1) < 10
-//						&& ferias.get(i).getDataInicio().get(Calendar.DAY_OF_MONTH) < 10) {
-//					dataFormInicio = ferias.get(i).getDataInicio().get(Calendar.YEAR) + "-0" + mes + "-0"
-//							+ ferias.get(i).getDataInicio().get(Calendar.DAY_OF_MONTH);
-//				} else if (ferias.get(i).getDataInicio().get(Calendar.DAY_OF_MONTH) < 10) {
-//					dataFormInicio = ferias.get(i).getDataInicio().get(Calendar.YEAR) + "-" + mes + "-0"
-//							+ ferias.get(i).getDataInicio().get(Calendar.DAY_OF_MONTH);
-//				} else if ((ferias.get(i).getDataInicio().get(Calendar.MONTH) + 1) < 10) {
-//					dataFormInicio = ferias.get(i).getDataInicio().get(Calendar.YEAR) + "-0" + mes + "-"
-//							+ ferias.get(i).getDataInicio().get(Calendar.DAY_OF_MONTH);
-//				} else {
-//					dataFormInicio = ferias.get(i).getDataInicio().get(Calendar.YEAR) + "-" + mes + "-"
-//							+ ferias.get(i).getDataInicio().get(Calendar.DAY_OF_MONTH);
-//				}
-//				
-//				datas.add(dataFormInicio);
-//				data.add(Calendar.DAY_OF_MONTH, 1);
-//			}
-//		}
-//		
-//		
-//		return datas;
 		
 		ArrayList<Object> datas = new ArrayList<Object>();
 		

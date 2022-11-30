@@ -106,7 +106,7 @@ public class AmbienteRestController {
 	// METODO PARA LISTAR TODOS OS AMBIENTES
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<Ambiente> listaAmbiente(Ambiente ambiente) {
-		return ambienteRepository.findAll();
+		return ambienteRepository.findAllOrderBy();
 	}
 	
 
