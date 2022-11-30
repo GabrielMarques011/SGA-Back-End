@@ -9,7 +9,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.backend.sga.model.Ausencia;
 import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Professor;
 
@@ -55,6 +54,8 @@ public interface ProfessorRepository extends PagingAndSortingRepository<Professo
 	@Query("SELECT p FROM Professor p INNER JOIN Competencia c ON p.id = c.professor.id WHERE c.unidadeCurricular.id = :id")
 	public List<Professor> buscaPorUnidade(@Param("id") Long id);
 	
+	@Query("SELECT p FROM Aula a INNER JOIN Professor p ON p.id = a.professor.id WHERE a.curso.id = :id AND p.ativo = 1 group by p.id")
+	public List<Professor> buscaProfessorPorCurso(@Param("id") Long id);
 	
 	
 }

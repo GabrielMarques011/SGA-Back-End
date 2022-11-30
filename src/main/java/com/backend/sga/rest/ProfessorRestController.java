@@ -114,12 +114,13 @@ public class ProfessorRestController {
 	// retorna apenas o prof, ambiente e se esta em aula
 	@RequestMapping(value = "/professorDisp/", method = RequestMethod.GET)
 	public ArrayList<DevolveDisp> buscarDisponibilidadeProfessor() {
-		List<Professor> listaProf = (List<Professor>) professorRepository.findAll();
+		List<Professor> listaProf = (List<Professor>) professorRepository.findAllAtivo();
 		int hora = LocalTime.now().getHour();
 		Calendar data = Calendar.getInstance();
 		Ambiente ambiente = null;
 		Periodo periodo = null;
 		boolean emAula;
+		
 		if (hora < 12) {
 			periodo = Periodo.MANHA;
 		} else if (hora > 12 && hora < 18) {
@@ -127,11 +128,16 @@ public class ProfessorRestController {
 		} else if (hora >= 18) {
 			periodo = Periodo.NOITE;
 		}
+		
 		ArrayList<DevolveDisp> listaDisp = new ArrayList<DevolveDisp>();
+		
 		for (int i = 0; i < listaProf.size(); i++) {
+			
 			DevolveDisp devolveDisp = new DevolveDisp();
 			devolveDisp.setProfessor(listaProf.get(i));
+			
 			List<Aula> listaAula = aulaRepository.buscaProf(listaProf.get(i), data, periodo);
+			
 			if (listaAula.isEmpty()) {
 				devolveDisp.setEmAula(false);
 				devolveDisp.setAmbiente(null);
@@ -239,8 +245,7 @@ public class ProfessorRestController {
 		return professorRepository.orderProf();
 	}
 
-	// URL = localhost:8080/api/professor/buscProf?nomeCurso=Word
-	// Avançado&nomeUnidade=Word
+	// URL = localhost:8080/api/professor/buscProf?nomeCurso=WordAvançado&nomeUnidade=Word
 	// METODO PARA TRAZER TODOS OS PROFESSORES DE UMA UNIDADE E UM CURSO ESPECIFICO
 	// (MOBILE)
 	@RequestMapping(value = "/buscProf", method = RequestMethod.GET)
@@ -345,41 +350,6 @@ public class ProfessorRestController {
 		result[2] = emAula;
 		return result;
 	}
-
-	// METODO PARA CRIAR UMA AUSENCIA PARA DIVERSOS PROFESSORES
-	// URL =
-	/*public ResponseEntity<Object> criaAusenciaParaProfessores(@RequestParam("dataInicio") String dataInicio,
-			@RequestParam("dataFinal") String dataFinal) {
-
-		List<Professor> profs = (List<Professor>) professorRepository.findAll();
-
-		Ausencia ausencia = new Ausencia();
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
-		Calendar calendar = Calendar.getInstance();
-		try {
-			calendar.setTime(sdf.parse(dataInicio));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		
-		Calendar calendar2 = Calendar.getInstance();
-		try {
-			calendar2.setTime(sdf.parse(dataFinal));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-
-		for (int i = 0; i < profs.size(); i++) {
-			
-			
-			
-		}
-
-		return null;
-
-	}*/
 	
 	@RequestMapping(value = "/alterarStatus/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Object> alterarStatusProf(@PathVariable("id") Long id, Professor prof,
@@ -394,5 +364,12 @@ public class ProfessorRestController {
         Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
         return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
     }
+	
+	//METODO QUE TRAS PROFESSOR CONFORME O CURSO SELECIONADO
+	// URL = localhost:8080/api/professor/buscaProfCurso/3
+	@RequestMapping(value = "/buscaProfCurso/{id}", method = RequestMethod.GET)
+	public List<Professor> listaProfessorPorCurso(@PathVariable("id") Long id){
+		return professorRepository.buscaProfessorPorCurso(id);
+	}
 
 }

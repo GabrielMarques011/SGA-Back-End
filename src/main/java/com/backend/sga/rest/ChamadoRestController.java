@@ -19,6 +19,7 @@ import com.backend.sga.model.Chamado;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.model.TipoChamado;
+import com.backend.sga.model.TipoStatus;
 import com.backend.sga.repository.ChamadoRepository;
 
 @RestController
@@ -76,6 +77,27 @@ public class ChamadoRestController {
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
+	}
+	
+	@RequestMapping(value = "/alterarStatus/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<Object> alterarStatus(@PathVariable("id") Long id, HttpServletRequest request) {
+
+		Optional<Chamado> alterar = repository.findById(id);
+
+		if (alterar.get().getId() == id) {
+			if (alterar.get().getStatus() == TipoStatus.FECHADO) {
+				alterar.get().setStatus(TipoStatus.ABERTO);
+			}else {
+				alterar.get().setStatus(TipoStatus.FECHADO);
+			}
+			repository.save(alterar.get());
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+		} else {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel alterar o status do chamado", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 	}
 
 	@RequestMapping(value = "/tipochamado")

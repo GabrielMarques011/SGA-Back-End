@@ -30,6 +30,7 @@ public class Usuario {
 	@NotNull
 	private String senha;
 	
+	@Column(unique = true)
 	@NotNull
 	private String nif;
 	

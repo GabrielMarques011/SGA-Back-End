@@ -25,4 +25,9 @@ public interface AusenciaRepository extends PagingAndSortingRepository<Ausencia,
 	
 	@Query("SELECT a FROM Ausencia a WHERE a.dataInicio >= :dataInicio AND a.dataFinal <= :dataFinal AND a.professor.id = :id")
 	public List<Ausencia> listaAusenciaDeProf(@Param("dataInicio") Calendar dataInicio, @Param("dataFinal") Calendar dataFinal, @Param("id") Long id );
+
+	//AND a.dataInicio >= :dataInicio AND a.dataFinal <= :dataFinal
+	@Query("SELECT a FROM Ausencia a WHERE a.professor.id = :id AND a.tipo = 0")
+	public List<Ausencia> listaAusenciaDeUmProfessor(@Param("id") Long id);
+	
 }
