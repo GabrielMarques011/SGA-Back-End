@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.sga.annotation.Administrador;
+import com.backend.sga.annotation.Suporte;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.FeriadosNacionais;
 import com.backend.sga.model.Sucesso;
@@ -26,12 +28,16 @@ public class FeriadosNacionaisRestController {
 	@Autowired
 	private FeriadosNacionaisRepository repository;	
 			
+	@Suporte
+	@Administrador
 	// método que retorna os feriados nacionais 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<FeriadosNacionais> buscarFeriados(){
 		return repository.findAll(); // retorna a lista de feriados nascionais
 	}
 	
+	@Suporte
+	@Administrador
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> excluir(@PathVariable("id") Long id){
 		
@@ -47,6 +53,8 @@ public class FeriadosNacionaisRestController {
 		}
 	}
 	
+	@Suporte
+	@Administrador
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> alterar(@PathVariable("id") long id, @RequestBody FeriadosNacionais feriado){
 		

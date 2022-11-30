@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.backend.sga.annotation.Administrador;
+import com.backend.sga.annotation.Suporte;
 import com.backend.sga.model.Curso;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Sucesso;
@@ -30,6 +33,8 @@ public class CursoRestController {
 	private UnidadeCurricularRepository curricularRepository;
 
 	// metodo para criar o curso
+	@Suporte
+	@Administrador
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarCurso(@RequestBody Curso curso, HttpServletRequest request, Long id) {
 		if (curso != null) {
@@ -59,6 +64,8 @@ public class CursoRestController {
 		}
 	}
 
+	@Suporte
+	@Administrador
 	@RequestMapping(value = "/inativar/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Object> desativarCurso(@PathVariable("id") Long id, HttpServletRequest request) {
 		Optional<Curso> inativar = cursoRepository.findById(id);
@@ -73,11 +80,15 @@ public class CursoRestController {
 		}
 	}
 
+	@Suporte
+	@Administrador
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<Curso> listaCurso(Curso curso) {
 		return cursoRepository.findAll();
 	}
 
+	@Suporte
+	@Administrador
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> atualizarCurso(@PathVariable("id") Long id, @RequestBody Curso curso,
 			HttpServletRequest request) {
@@ -111,26 +122,36 @@ public class CursoRestController {
 		}
 	}
 
+	@Suporte
+	@Administrador
 	@RequestMapping(value = "/tipocurso", method = RequestMethod.GET)
 	public TipoCurso[] busca() {
 		return TipoCurso.values();
 	}
 
+	@Suporte
+	@Administrador
 	@RequestMapping(value = "/buscacurso/{tipo}", method = RequestMethod.GET)
 	public Iterable<Curso> buscaTipoCurso(@PathVariable("tipo") TipoCurso tipo) {
 		return cursoRepository.buscaTipoCurso(tipo);
 	}
 
+	@Suporte
+	@Administrador
 	@RequestMapping(value = "/buscapalavra/{nome}", method = RequestMethod.GET)
 	public Iterable<Curso> buscaPalavrasChaves(@PathVariable("nome") String nome) {
 		return cursoRepository.palavraChave(nome);
 	}
-
+	
+	@Suporte
+	@Administrador
 	@RequestMapping(value = "/buscaCr/{nome}", method = RequestMethod.GET)
 	public Iterable<Curso> buscaCurso(@PathVariable("nome") String nome) {
 		return cursoRepository.buscaCurso(nome);
 	}
 	
+	@Suporte
+	@Administrador
 	@RequestMapping(value = "/alterarStatus/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Object> alterarStatusCurso(@PathVariable("id") Long id, HttpServletRequest request) {
         Optional<Curso> status = cursoRepository.findById(id);
