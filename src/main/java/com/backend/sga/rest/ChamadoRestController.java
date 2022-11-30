@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.sga.annotation.Administrador;
+import com.backend.sga.annotation.Suporte;
 import com.backend.sga.model.Chamado;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Sucesso;
@@ -30,6 +32,8 @@ public class ChamadoRestController {
 	@Autowired
 	private ChamadoRepository repository;
 
+	@Administrador
+	@Suporte
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarChamado(@RequestBody Chamado chamado, HttpServletRequest request) {
 		if (chamado != null) {
@@ -48,11 +52,13 @@ public class ChamadoRestController {
 		}
 	}
 
+	@Suporte
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<Chamado> buscaChamados() {
 		return repository.findAll();
 	}
 
+	@Suporte
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> deletarChamado(@PathVariable("id") Long id, HttpServletRequest request) {
 		Optional<Chamado> del = repository.findById(id);
@@ -66,6 +72,7 @@ public class ChamadoRestController {
 		}
 	}
 
+	@Suporte
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> alterarChamado(@PathVariable("id") Long id, @RequestBody Chamado chamado,
 			HttpServletRequest request) {
@@ -79,6 +86,7 @@ public class ChamadoRestController {
 		}
 	}
 	
+	@Suporte
 	@RequestMapping(value = "/alterarStatus/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Object> alterarStatus(@PathVariable("id") Long id, HttpServletRequest request) {
 
@@ -100,6 +108,7 @@ public class ChamadoRestController {
 
 	}
 
+	@Suporte
 	@RequestMapping(value = "/tipochamado")
 	public TipoChamado[] entregaChamado() {
 		return TipoChamado.values();
