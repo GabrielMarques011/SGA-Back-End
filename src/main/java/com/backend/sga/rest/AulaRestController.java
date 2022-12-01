@@ -554,4 +554,19 @@ public class AulaRestController {
 			return result;
 		}
 	}
+	
+	@RequestMapping(value = "/filtro", method = RequestMethod.GET)
+	public List<Aula> filtraAulaGeral(@RequestParam("value") String value, @RequestParam("data") String dataStr, @RequestParam("periodo") Periodo periodo){
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		Calendar data = Calendar.getInstance();
+		try {
+			data.setTime(sdf.parse(dataStr));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return aulaRepository.filtroAulaGeral(value, periodo, data);
+		
+	}
 }
