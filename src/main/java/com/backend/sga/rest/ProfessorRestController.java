@@ -1,5 +1,6 @@
 package com.backend.sga.rest;
 
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
@@ -97,7 +98,7 @@ public class ProfessorRestController {
 	@Administrador
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<Professor> listaDnl() {
-		return professorRepository.findAll();
+		return professorRepository.orderProf();
 	}
 
 	@Suporte
@@ -244,14 +245,16 @@ public class ProfessorRestController {
 	public ArrayList<Aula> disponivelPeriodoProf(@RequestBody RecebeBuscaAmbiente busca) {
 		Calendar data = busca.getDataInicio();
 		boolean dia[] = busca.getDiasSemana();
-		int diaSemana = data.get(Calendar.DAY_OF_WEEK);
+		////boolean diasSemana = busca.verificarDiasSemana(dia);
+		
 		ArrayList<Aula> aulas = new ArrayList<Aula>();
+		
 		while (data.before(busca.getDataFinal()) || data.equals(busca.getDataFinal())) {
+			int diaSemana = data.get(Calendar.DAY_OF_WEEK);
 			if (dia[diaSemana - 1] == true) {
-				// Optional<Aula> ocupado = aulaRepository.ocupadoPorDataPeriodo(data,
-				// busca.getPeriodo(), busca.getAmbiente());
-				Optional<Aula> ocupado = aulaRepository.ocupadoPorDataPeriodoProf(data, busca.getPeriodo(),
-						busca.getProfessor());
+				
+				Optional<Aula> ocupado = aulaRepository.ocupadoPorDataPeriodoProf(data, busca.getPeriodo(),busca.getProfessor());
+				
 				if (!ocupado.isEmpty()) {
 					aulas.add(ocupado.get());
 				}

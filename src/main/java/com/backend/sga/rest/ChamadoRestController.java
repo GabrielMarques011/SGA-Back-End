@@ -93,11 +93,7 @@ public class ChamadoRestController {
 		Optional<Chamado> alterar = repository.findById(id);
 
 		if (alterar.get().getId() == id) {
-			if (alterar.get().getStatus() == TipoStatus.FECHADO) {
-				alterar.get().setStatus(TipoStatus.ABERTO);
-			}else {
-				alterar.get().setStatus(TipoStatus.FECHADO);
-			}
+			alterar.get().setStatus(TipoStatus.FECHADO);
 			repository.save(alterar.get());
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);

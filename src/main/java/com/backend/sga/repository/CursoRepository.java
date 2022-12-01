@@ -13,6 +13,9 @@ import com.backend.sga.model.TipoCurso;
 @Repository
 public interface CursoRepository extends PagingAndSortingRepository<Curso, Long>{
 
+	@Query("SELECT c FROM Curso c order by c.nome")
+	public List<Curso> findAllOrdeyBy();
+	
 	//SELECT * FROM sga.curso WHERE sga.curso.tipo_curso = 0
 	@Query("SELECT c FROM Curso c WHERE c.tipo = :tipo")
 	public Iterable<Curso> buscaTipoCurso (@Param("tipo") TipoCurso tipo);

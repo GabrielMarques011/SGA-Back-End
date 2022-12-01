@@ -84,7 +84,7 @@ public class CursoRestController {
 	@Administrador
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<Curso> listaCurso(Curso curso) {
-		return cursoRepository.findAll();
+		return cursoRepository.findAllOrdeyBy();
 	}
 
 	@Suporte

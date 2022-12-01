@@ -191,53 +191,46 @@ public class UsuarioRestController {
 	@Suporte
 	@Administrador
 	@RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> login(@RequestBody Usuario usuario, HttpServletRequest request) {
+    public ResponseEntity<Object> login(@RequestBody Usuario usuario, HttpServletRequest request) {
 
-		Optional<Usuario> user = Optional.of(usuarioRepository.findByNif(usuario.getNif()));
-		
-		System.out.println(user.get());
-		
-		if(!user.isEmpty()) {
-			Boolean validar = validarSenha(user.get(), usuario.getSenha());
-			System.out.println(validar);
+       Usuario user = usuarioRepository.findByNif(usuario.getNif());
+        if(user != null) {
+            Boolean validar = validarSenha(user, usuario.getSenha());
+            if (validar == true) {
 
-			if (validar == true) {
-					System.out.println(usuario.getNome());
+                   // cria uma variavel payload e insere os dados do usuario no payload
+                    Map<String, Object> payload = new HashMap<String, Object>();
+                    
+                    payload.put("id", user.getId());
+                    payload.put("nome", user.getNome());
+                    payload.put("email", user.getEmail());
+                    payload.put("senha", user.getSenha());
+                    payload.put("nif", user.getNif());
+                    payload.put("tipoUsuario", user.getTipo().toString());
 
-					// cria uma variavel payload e insere os dados do usuario no payload
-					Map<String, Object> payload = new HashMap<String, Object>();
+                   // cria variavel para data de expiração
+                    Calendar expiracao = Calendar.getInstance();
 
-					payload.put("nome", usuario.getNome());
-					payload.put("email", usuario.getEmail());
-					payload.put("senha", usuario.getSenha());
-					payload.put("nif", usuario.getNif());
-					payload.put("tipoUsuario", usuario.getTipo());
-					payload.put("ativo", usuario.getAtivo());
+                   // adiciona expiração a variavel para expirar o token
+                    expiracao.add(Calendar.DAY_OF_MONTH, Calendar.DAY_OF_MONTH + 7);
 
-					// cria variavel para data de expiração
-					Calendar expiracao = Calendar.getInstance();
+                   // coloca assinatura do algoritmo no token
+                    Algorithm algoritmo = Algorithm.HMAC512(SECRET);
 
-					// adiciona expiração a variavel para expirar o token
-					expiracao.add(Calendar.DAY_OF_MONTH, Calendar.DAY_OF_MONTH + 7);
+                   // instancia a classe token
+                    TokenJWT tokenJwt = new TokenJWT();
 
-					// coloca assinatura do algoritmo no token
-					Algorithm algoritmo = Algorithm.HMAC512(SECRET);
+                    // adiciona os recursos no token
+                    tokenJwt.setToken(JWT.create().withPayload(payload).withIssuer(EMISSOR)
+                            .withExpiresAt(expiracao.getTime()).sign(algoritmo));
 
-					// instancia a classe token
-					TokenJWT tokenJwt = new TokenJWT();
+                   System.out.println(tokenJwt);
 
-					// adiciona os recursos no token
-					tokenJwt.setToken(JWT.create().withPayload(payload).withIssuer(EMISSOR)
-							.withExpiresAt(expiracao.getTime()).sign(algoritmo));
-
-					System.out.println(tokenJwt);
-
-					// envia o token
-					return ResponseEntity.ok(tokenJwt);
-				}
-			}
-
-		return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
-	}
+                   // envia o token
+                    return ResponseEntity.ok(tokenJwt);
+                }
+            }
+       return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+    }
 
 }

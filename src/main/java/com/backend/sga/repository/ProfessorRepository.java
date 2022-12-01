@@ -18,6 +18,9 @@ public interface ProfessorRepository extends PagingAndSortingRepository<Professo
 	@Query("SELECT p FROM Professor p WHERE p.ativo = 1")
 	public List<Professor> findAllAtivo();
 	
+	//@Query("SELECT p FROM Professor p GROUP BY p.nome")
+	//public List<Professor> findAllGroupBy();
+	
 	//SELECT * FROM sga.professor WHERE sga.professor.nome LIKE '%r%'
 	@Query("SELECT p FROM Professor p WHERE p.nome LIKE %:nome%")
 	//Retorna uma lista onde aparece o relacionamento entre as 'letras' escritas com o banco
