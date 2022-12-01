@@ -103,5 +103,8 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	
 	@Query("SELECT a FROM Aula a WHERE a.partitionKey = :partitionKey")
 	public List<Aula> findByPartitionKey(@Param("partitionKey") int partitionKey);
+	
+	@Query("SELECT a FROM Aula a INNER JOIN Professor p ON a.professor.id = p.id INNER JOIN Ambiente am ON a.ambiente.id = am.id INNER JOIN UnidadeCurricular uc ON a.unidadeCurricular.id = uc.id INNER JOIN Curso c ON c.id = a.curso.id WHERE a.data = :data AND a.periodo = :periodo AND a.codTurma LIKE %:value% OR a.cargaDiaria LIKE %:value% OR p.nome LIKE %:value% OR am.nome LIKE %:value% OR uc.nome LIKE %:value% OR c.nome LIKE %:value%")
+	public List<Aula> filtroAulaGeral(@Param("value")String value, @Param("periodo") Periodo periodo, @Param("data") Calendar data);
 
 }
