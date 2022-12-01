@@ -103,5 +103,8 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	
 	@Query("SELECT a FROM Aula a WHERE a.partitionKey = :partitionKey")
 	public List<Aula> findByPartitionKey(@Param("partitionKey") int partitionKey);
+	
+	@Query("SELECT a FROM Aula a WHERE a.data = :data")
+	public List<Aula> listaAulaDeDataExpecifica(@Param("data") Calendar data);
 
 }

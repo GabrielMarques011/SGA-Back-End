@@ -227,7 +227,7 @@ public class AulaRestController {
 		return result;
 	}
 
-	// ATULIZAR AULAS
+	// DELETAR AULAS
 	// URL = localhost:8080/api/aula/key/9176
 	@Administrador
 	@Suporte
@@ -553,5 +553,23 @@ public class AulaRestController {
 			result[1] = ambientes;
 			return result;
 		}
+	}
+	
+	@RequestMapping(value = "/listaPorData", method = RequestMethod.GET)
+	public Object listaAulaPorDataExpecifica(@RequestParam("data") String data) {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		
+		Calendar dataInicio = Calendar.getInstance();
+		try {
+			dataInicio.setTime(sdf.parse(data));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		Object[] result = new Object[1];
+		result[0] =  aulaRepository.listaAulaDeDataExpecifica(dataInicio);
+		
+		return result;
 	}
 }
