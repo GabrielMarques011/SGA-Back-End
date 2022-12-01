@@ -24,7 +24,7 @@ public class Usuario {
 	@NotNull
 	@Column(unique = true)
 	@Email
-	private String email;//fazer a criptografia
+	private String email;
 	
 	@NotNull
 	private String senha;
@@ -37,6 +37,4 @@ public class Usuario {
 	
 	private Boolean ativo;
 	
-	@Column(columnDefinition = "LONGTEXT")
-	private String foto;
 }

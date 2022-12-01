@@ -47,35 +47,35 @@ public class UsuarioRestController {
 
 	@Suporte
 	// metodo para criar o professor
-    @RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> criarUser(@RequestBody Usuario user, HttpServletRequest request) {
-        System.out.println();
-        if (usuarioRepository.findByNif(user.getNif()) != null) {
-            Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Nif já cadastrado.", null);
-            return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-        } else if (usuarioRepository.findByEmail(user.getEmail()) != null) {
-            Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Email já cadastrado.", null);
-            return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-        } else if (user != null && usuarioRepository.findByNif(user.getNif()) == null) {
-            // pegando a senha e transformando em criptografia
-            String crip = this.encoder.encode(user.getSenha());
-            // mandando criptografada
-            user.setSenha(crip);
-            // deixando o usuario como ativo no banco de dados
-            user.setAtivo(true);
-            usuarioRepository.save(user);
-            Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
-            Object[] filtro = new Object[2];
-            filtro[0] = sucesso;
-            filtro[1] = user;// ajeitando o metodo depois que apliquei o id na model
-            // setando o o filtro junto com o 'Status OK'
-            ResponseEntity<Object> okpost = new ResponseEntity<Object>(filtro, HttpStatus.OK);
-            return okpost;
-        } else {
-            Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel cadastrar um usuário", null);
-            return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> criarUser(@RequestBody Usuario user, HttpServletRequest request) {
+		System.out.println();
+		if (usuarioRepository.findByNif(user.getNif()) != null) {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Nif já cadastrado.", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		} else if (usuarioRepository.findByEmail(user.getEmail()) != null) {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Email já cadastrado.", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		} else if (user != null && usuarioRepository.findByNif(user.getNif()) == null) {
+			// pegando a senha e transformando em criptografia
+			String crip = this.encoder.encode(user.getSenha());
+			// mandando criptografada
+			user.setSenha(crip);
+			// deixando o usuario como ativo no banco de dados
+			user.setAtivo(true);
+			usuarioRepository.save(user);
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			Object[] filtro = new Object[2];
+			filtro[0] = sucesso;
+			filtro[1] = user;// ajeitando o metodo depois que apliquei o id na model
+			// setando o o filtro junto com o 'Status OK'
+			ResponseEntity<Object> okpost = new ResponseEntity<Object>(filtro, HttpStatus.OK);
+			return okpost;
+		} else {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel cadastrar um usuário", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 	@Suporte
 	@RequestMapping(value = "/desativar/{id}", method = RequestMethod.PUT)
@@ -108,75 +108,83 @@ public class UsuarioRestController {
 
 	@Suporte
 	// Editar usuario não precisa de senha
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> atualizarUser(@PathVariable("id") Long id, @RequestBody Usuario user,
-            HttpServletRequest request) {
-        if (user.getId() != id) {
-            Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null);
-            return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-        } else {
-            // vendo se o user é existente
-            Usuario userRepository = usuarioRepository.findById(id).get();
-            boolean nifIgual = user.getNif().equals(userRepository.getNif());
-            boolean emailIgual = user.getEmail().equals(userRepository.getEmail());
-            if (usuarioRepository.findByNif(user.getNif()) != null) {
-                if (!nifIgual) {
-                    Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Nif já cadastrado.", null);
-                    return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-                }
-            }
-            if (usuarioRepository.findByEmail(user.getEmail()) != null) {
-                if (!emailIgual) {
-                    Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Email já cadastrado.", null);
-                    return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-                }
-            }
-            user.setSenha(userRepository.getSenha());
-            usuarioRepository.save(user);
-            Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
-            return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
-        }
-    }
-	
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> atualizarUser(@PathVariable("id") Long id, @RequestBody Usuario user,
+			HttpServletRequest request) {
+		if (user.getId() != id) {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		} else {
+			// vendo se o user é existente
+			Usuario userRepository = usuarioRepository.findById(id).get();
+			boolean nifIgual = user.getNif().equals(userRepository.getNif());
+			boolean emailIgual = user.getEmail().equals(userRepository.getEmail());
+			if (usuarioRepository.findByNif(user.getNif()) != null) {
+				if (!nifIgual) {
+					Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Nif já cadastrado.", null);
+					return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+			}
+			if (usuarioRepository.findByEmail(user.getEmail()) != null) {
+				if (!emailIgual) {
+					Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Email já cadastrado.", null);
+					return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+			}
+			user.setSenha(userRepository.getSenha());
+			usuarioRepository.save(user);
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+		}
+	}
+
 	@Suporte
 	@Administrador
 	// Editar perfil que precisa da senha
-    @RequestMapping(value = "/perfil/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> atualizarUserPerfil(@PathVariable("id") Long id, @RequestBody Usuario user,
-            HttpServletRequest request) {
-        if (user.getId() != id) {
-            Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null);
-            return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-        } else {
-            // vendo se o user é existente
-            Usuario userRepository = usuarioRepository.findById(id).get();
-            boolean nifIgual = user.getNif().equals(userRepository.getNif());
-            boolean emailIgual = user.getEmail().equals(userRepository.getEmail());
-            if (user.getSenha() == null) {
-                user.setSenha(userRepository.getSenha());
-            } else {
-                String crip = this.encoder.encode(user.getSenha());
-                user.setSenha(crip);
-            }
-            if (usuarioRepository.findByNif(user.getNif()) != null) {
-                if (!nifIgual) {
-                    Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Nif já cadastrado.", null);
-                    return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-                }
-            }
-            if (usuarioRepository.findByEmail(user.getEmail()) != null) {
-                if (!emailIgual) {
-                    Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Email já cadastrado.", null);
-                    return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-                }
-            }
-            user.setAtivo(true);
-            user.setTipo(userRepository.getTipo());
-            usuarioRepository.save(user);
-            Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
-            return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
-        }
-    }
+	@RequestMapping(value = "/perfil/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> atualizarUserPerfil(@PathVariable("id") Long id, @RequestBody Usuario user,
+			HttpServletRequest request) {
+		if (user.getId() != id) {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null);
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		} else {
+			// vendo se o user é existente
+			Usuario userRepository = usuarioRepository.findById(id).get();
+			boolean nifIgual = user.getNif().equals(userRepository.getNif());
+			boolean emailIgual = user.getEmail().equals(userRepository.getEmail());
+
+			if (usuarioRepository.findByNif(user.getNif()) != null) {
+				if (!nifIgual) {
+					Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Nif já cadastrado.", null);
+					return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+			}
+			
+			if (usuarioRepository.findByEmail(user.getEmail()) != null) {
+				if (!emailIgual) {
+					Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Email já cadastrado.", null);
+					return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+			}
+			// se a senha chegar vazia
+			if (user.getSenha() == "") {
+				// ele seta a mesma senha
+				user.setSenha(userRepository.getSenha());
+				// se a senha nao for vazia
+			} else {
+				// ele critografa e salva a senha
+				String crip = this.encoder.encode(user.getSenha());
+				user.setSenha(crip);
+			}
+
+			user.setAtivo(true);
+			user.setTipo(userRepository.getTipo());
+			usuarioRepository.save(user);
+
+			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
+		}
+	}
 
 	// metodo feito para validar quando criamos o login
 	// metodo feito para comparar se a senha bate com a do banco de dados
@@ -191,46 +199,46 @@ public class UsuarioRestController {
 	@Suporte
 	@Administrador
 	@RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> login(@RequestBody Usuario usuario, HttpServletRequest request) {
+	public ResponseEntity<Object> login(@RequestBody Usuario usuario, HttpServletRequest request) {
 
-       Usuario user = usuarioRepository.findByNif(usuario.getNif());
-        if(user != null) {
-            Boolean validar = validarSenha(user, usuario.getSenha());
-            if (validar == true) {
+		Usuario user = usuarioRepository.findByNif(usuario.getNif());
+		if (user != null) {
+			Boolean validar = validarSenha(user, usuario.getSenha());
+			if (validar == true) {
 
-                   // cria uma variavel payload e insere os dados do usuario no payload
-                    Map<String, Object> payload = new HashMap<String, Object>();
-                    
-                    payload.put("id", user.getId());
-                    payload.put("nome", user.getNome());
-                    payload.put("email", user.getEmail());
-                    payload.put("senha", user.getSenha());
-                    payload.put("nif", user.getNif());
-                    payload.put("tipoUsuario", user.getTipo().toString());
+				// cria uma variavel payload e insere os dados do usuario no payload
+				Map<String, Object> payload = new HashMap<String, Object>();
 
-                   // cria variavel para data de expiração
-                    Calendar expiracao = Calendar.getInstance();
+				payload.put("id", user.getId());
+				payload.put("nome", user.getNome());
+				payload.put("email", user.getEmail());
+				payload.put("senha", user.getSenha());
+				payload.put("nif", user.getNif());
+				payload.put("tipoUsuario", user.getTipo().toString());
 
-                   // adiciona expiração a variavel para expirar o token
-                    expiracao.add(Calendar.DAY_OF_MONTH, Calendar.DAY_OF_MONTH + 7);
+				// cria variavel para data de expiração
+				Calendar expiracao = Calendar.getInstance();
 
-                   // coloca assinatura do algoritmo no token
-                    Algorithm algoritmo = Algorithm.HMAC512(SECRET);
+				// adiciona expiração a variavel para expirar o token
+				expiracao.add(Calendar.DAY_OF_MONTH, Calendar.DAY_OF_MONTH + 7);
 
-                   // instancia a classe token
-                    TokenJWT tokenJwt = new TokenJWT();
+				// coloca assinatura do algoritmo no token
+				Algorithm algoritmo = Algorithm.HMAC512(SECRET);
 
-                    // adiciona os recursos no token
-                    tokenJwt.setToken(JWT.create().withPayload(payload).withIssuer(EMISSOR)
-                            .withExpiresAt(expiracao.getTime()).sign(algoritmo));
+				// instancia a classe token
+				TokenJWT tokenJwt = new TokenJWT();
 
-                   System.out.println(tokenJwt);
+				// adiciona os recursos no token
+				tokenJwt.setToken(JWT.create().withPayload(payload).withIssuer(EMISSOR)
+						.withExpiresAt(expiracao.getTime()).sign(algoritmo));
 
-                   // envia o token
-                    return ResponseEntity.ok(tokenJwt);
-                }
-            }
-       return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
-    }
+				System.out.println(tokenJwt);
+
+				// envia o token
+				return ResponseEntity.ok(tokenJwt);
+			}
+		}
+		return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+	}
 
 }

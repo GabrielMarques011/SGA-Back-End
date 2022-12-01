@@ -555,7 +555,7 @@ public class AulaRestController {
 		}
 	}
 	
-<<<<<<< HEAD
+
 	@RequestMapping(value = "/listaPorData", method = RequestMethod.GET)
 	public Object listaAulaPorDataExpecifica(@RequestParam("data") String data) {
 		
@@ -572,7 +572,9 @@ public class AulaRestController {
 		result[0] =  aulaRepository.listaAulaDeDataExpecifica(dataInicio);
 		
 		return result;
-=======
+
+	}
+
 	@RequestMapping(value = "/filtro", method = RequestMethod.GET)
 	public List<Aula> filtraAulaGeral(@RequestParam("value") String value, @RequestParam("data") String dataStr, @RequestParam("periodo") Periodo periodo){
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -585,7 +587,6 @@ public class AulaRestController {
 		}
 		
 		return aulaRepository.filtroAulaGeral(value, periodo, data);
-		
->>>>>>> 1d75b652c9737724b7fee65f7035244140e07b56
+	
 	}
 }
