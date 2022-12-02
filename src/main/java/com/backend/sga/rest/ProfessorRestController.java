@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.sga.annotation.User;
 import com.backend.sga.annotation.Administrador;
-import com.backend.sga.annotation.Suporte;
 import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Aula;
 import com.backend.sga.model.Ausencia;
@@ -50,8 +50,8 @@ public class ProfessorRestController {
 	@Autowired
 	private AusenciaRepository ausenciaRepository;
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarProf(@RequestBody Professor prof) {
 		if (prof != null) {
@@ -80,8 +80,8 @@ public class ProfessorRestController {
 		}
 	}
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/desativar/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Object> desativarProf(@PathVariable("id") Long id, Professor prof,
 			HttpServletRequest request) {
@@ -92,15 +92,15 @@ public class ProfessorRestController {
 		return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 	}
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<Professor> listaDnl() {
 		return professorRepository.orderProf();
 	}
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> atualizarProf(@PathVariable("id") Long id, @RequestBody Professor prof,
 			HttpServletRequest request) {
@@ -115,8 +115,8 @@ public class ProfessorRestController {
 	}
 
 	// metodo para trazer os professores digitados (Pedido Kalebe)
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/buscapalavra/{nome}", method = RequestMethod.GET)
 	public Iterable<Professor> buscaPalavraChave(@PathVariable("nome") String nome) {
 		// retorna o like da query que eles irão escrever
@@ -124,8 +124,8 @@ public class ProfessorRestController {
 	}
 
 	// retorna apenas o prof, ambiente e se esta em aula
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/professorDisp/", method = RequestMethod.GET)
 	public ArrayList<DevolveDisp> buscarDisponibilidadeProfessor() {
 		List<Professor> listaProf = (List<Professor>) professorRepository.findAllAtivo();
@@ -164,8 +164,8 @@ public class ProfessorRestController {
 		return listaDisp;
 	}
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/disponibilidade/periodo", method = RequestMethod.GET)
 	public Object disponivelDataPeriodo(@RequestParam("dataInicio") String dataStr, @RequestParam("dia") boolean dia[],
 			@RequestParam("dataFinal") String dataFinalStr, @RequestParam("periodo") Periodo periodo,
@@ -206,8 +206,8 @@ public class ProfessorRestController {
 		return aulas;
 	}
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/disponibilidade", method = RequestMethod.POST)
 	public List<Professor> disponibilidadeProf(@RequestBody RecebeBuscaAmbiente busca) {
 		ArrayList<Professor> ocupados = new ArrayList<Professor>();
@@ -237,8 +237,8 @@ public class ProfessorRestController {
 		return profsDb;
 	}
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/disponibilidadeProf/periodo", method = RequestMethod.POST)
 	public ArrayList<Aula> disponivelPeriodoProf(@RequestBody RecebeBuscaAmbiente busca) {
 		Calendar data = busca.getDataInicio();
@@ -262,8 +262,8 @@ public class ProfessorRestController {
 		return aulas;
 	}
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/orderProf", method = RequestMethod.GET)
 	public List<Professor> orderProfessor() {
 		return professorRepository.orderProf();
@@ -272,8 +272,8 @@ public class ProfessorRestController {
 	// URL = localhost:8080/api/professor/buscProf?nomeCurso=WordAvançado&nomeUnidade=Word
 	// METODO PARA TRAZER TODOS OS PROFESSORES DE UMA UNIDADE E UM CURSO ESPECIFICO
 	// (MOBILE)
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/buscProf", method = RequestMethod.GET)
 	public List<Professor> ordernarProCrEUc(@RequestParam("nomeCurso") String nomeCurso,
 			@RequestParam("nomeUnidade") String nomeUnidade) {
@@ -283,8 +283,8 @@ public class ProfessorRestController {
 	// URL =
 	// localhost:8080/api/professor/diaria?id=1&data_inicio=09/11/2022&data_final=11/11/2022
 	// METODO DASHBOARD (COLUNA)
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/diaria", method = RequestMethod.GET)
 	public double[] busca(@RequestParam("id") Long id, @RequestParam("data_inicio") String data_inicio,
 			@RequestParam("data_final") String data_final, Professor prof) {
@@ -319,8 +319,8 @@ public class ProfessorRestController {
 
 	// URL = localhost:8080/api/professor/emAula
 	// METODO PARA VER SE O PROFESSOR ESTÁ EM AULA OU NÃO
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/emAula", method = RequestMethod.GET)
 	public ArrayList<Object> retornaEmAula() {
 		List<Professor> prof = (List<Professor>) professorRepository.buscaProfAtivo(true);
@@ -354,8 +354,8 @@ public class ProfessorRestController {
 	}
 
 	// retorna apenas o prof, ausencia e se esta em aula
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public Object[] buscarAusenciaProfessor(@PathVariable("id") Long id) {
 		List<Ausencia> ausencias = ausenciaRepository.findByProfessorId(id);
@@ -383,8 +383,8 @@ public class ProfessorRestController {
 		return result;
 	}
 	
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/alterarStatus/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Object> alterarStatusProf(@PathVariable("id") Long id, Professor prof,
             HttpServletRequest request) {       
@@ -401,8 +401,8 @@ public class ProfessorRestController {
 	
 	//METODO QUE TRAS PROFESSOR CONFORME O CURSO SELECIONADO
 	// URL = localhost:8080/api/professor/buscaProfCurso/3
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/buscaProfCurso/{id}", method = RequestMethod.GET)
 	public List<Professor> listaProfessorPorCurso(@PathVariable("id") Long id){
 		return professorRepository.buscaProfessorPorCurso(id);

@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.sga.annotation.User;
 import com.backend.sga.annotation.Administrador;
-import com.backend.sga.annotation.Suporte;
 import com.backend.sga.model.Competencia;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Sucesso;
@@ -28,8 +28,8 @@ public class CompetenciaRestController {
 	@Autowired
 	private CompetenciaRepository competenciaRepository;
 
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	public ResponseEntity<Object> criarCompetencia(@RequestBody Competencia competencia, HttpServletRequest request) {
 		if (competencia != null) {
@@ -48,8 +48,8 @@ public class CompetenciaRestController {
 		}
 	}
 
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> deletarCompetencia(@PathVariable("id") Long id, Competencia competencia,
 			HttpServletRequest request) {
@@ -63,15 +63,15 @@ public class CompetenciaRestController {
 		}
 	}
 
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<Competencia> listarCompetencias() {
 		return competenciaRepository.findAll();
 	}
 
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> atualizarCompetencia(@PathVariable("id") Long id,
 			@RequestBody Competencia competencia, HttpServletRequest request) {
@@ -85,8 +85,8 @@ public class CompetenciaRestController {
 		}
 	}
 
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/nivel/{nivel}", method = RequestMethod.GET)
 	public Iterable<Competencia> buscaNivel(@PathVariable("nivel") int nivel) {
 		return competenciaRepository.buscarNivel(nivel);

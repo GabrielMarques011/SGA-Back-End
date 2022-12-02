@@ -2,6 +2,6 @@ package com.backend.sga.model;
 
 public enum TipoUsuario {
 	
-	ADMINISTRADOR, SUPORTE;
+	USUARIO, ADMINISTRADOR;
 
 }

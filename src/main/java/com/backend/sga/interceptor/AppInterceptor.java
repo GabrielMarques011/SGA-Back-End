@@ -15,8 +15,8 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.backend.sga.annotation.User;
 import com.backend.sga.annotation.Administrador;
-import com.backend.sga.annotation.Suporte;
 import com.backend.sga.model.TipoUsuario;
 import com.backend.sga.rest.UsuarioRestController;
 
@@ -63,7 +63,7 @@ public class AppInterceptor implements HandlerInterceptor{
 				TipoUsuario tipo = TipoUsuario.values()[Integer.parseInt(claims.get("tipoUsuario").toString())];
 				
 				// se tiver tentando acessar um método com o anotation @Administrador
-				if(metodo.getMethodAnnotation(Administrador.class) != null) { 
+				if(metodo.getMethodAnnotation(User.class) != null) { 
 					if(tipo == TipoUsuario.ADMINISTRADOR) {
 						response.setStatus(HttpStatus.OK.value());
 						return true;
@@ -72,7 +72,7 @@ public class AppInterceptor implements HandlerInterceptor{
 						return false;
 					}
 					// se tiver tentando acessar um método com o anotation @Suporte
-				} else if(metodo.getMethodAnnotation(Suporte.class) != null) {
+				} else if(metodo.getMethodAnnotation(Administrador.class) != null) {
 					if(tipo == TipoUsuario.ADMINISTRADOR) {
 						response.setStatus(HttpStatus.OK.value());
 						return true;
