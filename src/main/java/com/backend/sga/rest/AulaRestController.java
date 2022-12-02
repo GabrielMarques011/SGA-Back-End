@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.sga.annotation.User;
 import com.backend.sga.annotation.Administrador;
-import com.backend.sga.annotation.Suporte;
 import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Analise;
 import com.backend.sga.model.Aula;
@@ -66,8 +66,8 @@ public class AulaRestController {
 	ArrayList<Professor> professoresOcp = new ArrayList<Professor>();
 	ArrayList<Ambiente> ambientesOcp = new ArrayList<Ambiente>();
 
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/criar", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Object criarAula(@RequestBody RecebeAula recebeAula, HttpServletRequest request) {
 		boolean dia[] = recebeAula.getDiaSemana();
@@ -156,8 +156,8 @@ public class AulaRestController {
 		return result;
 	}
 
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	public ResponseEntity<Object> salvarAulas(@RequestBody RecebeAula recebeAula) {
 		System.out.println(aulas.size());
@@ -180,8 +180,8 @@ public class AulaRestController {
 
 	// LISTA DE AULAS
 	// URL = localhost:8080/api/aula
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<Aula> listarAulas() {
 		return aulaRepository.findAll();
@@ -189,8 +189,8 @@ public class AulaRestController {
 
 	// RETORNA AMBIENTES E PROFESSOR LIVRES SEM AULA
 	// URL = localhost:8080/api/aula/valoresLivres
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/valoresLivres", method = RequestMethod.GET)
 	public Object[] retornaProfsEAmbsLivres() {
 		List<Professor> professores = (List<Professor>) professorRepository.findAllAtivo();
@@ -229,8 +229,8 @@ public class AulaRestController {
 
 	// DELETAR AULAS
 	// URL = localhost:8080/api/aula/key/9176
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/key/{partitionKey}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> DeletarAulas(@PathVariable("partitionKey") int partitionKey) {
 		List<Aula> keyData = aulaRepository.findByPartitionKey(partitionKey);
@@ -247,8 +247,8 @@ public class AulaRestController {
 
 	// ATUALIZAR AULA
 	// URL = localhost:8080/api/aula/1
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> atualizarAula(@PathVariable("id") Long id, @RequestBody Aula aula,
 			HttpServletRequest request) {
@@ -264,8 +264,8 @@ public class AulaRestController {
 
 	// METODO PEDIDO MOBILE
 	// URL = localhost:8080/api/aula/busca/81
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/busca/{id}", method = RequestMethod.GET)
 	public Iterable<Aula> listaPorId(@PathVariable("id") Long id) {
 		return aulaRepository.listaID(id);
@@ -273,8 +273,8 @@ public class AulaRestController {
 
 	// METODO PARA EDITAR AULAS PELO KEY
 	// URL = localhost:8080/api/aula/key/9176
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/key/{partitionKey}", method = RequestMethod.PUT)
 	public ResponseEntity<Object> attAulas(@PathVariable("partitionKey") int partitionKey,@RequestBody RecebeAula recebeAula) {
 		
@@ -300,8 +300,8 @@ public class AulaRestController {
 	// *NÃO SERIA MELHOR PASSAR SÓ O PERIODO E TRAZER AULAS RELACIONADAS A ISSO
 	// METODO QUE TRAS AULA POR PERIODO
 	// URL = localhost:8080/api/aula/periodo?periodo=TARDE&data=2022-11-23
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/periodo", method = RequestMethod.GET)
 	public Optional<Aula> retornaPeriodo(@RequestParam("periodo") Periodo periodo,
 			@RequestParam("data") String dataStr) {
@@ -318,8 +318,8 @@ public class AulaRestController {
 
 	// AUTOCOMPLETE
 	// URL = localhost:8080/api/aula/filtro/Desenvolvimento
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/filtro/{value}", method = RequestMethod.GET)
 	public List<Aula> buscaFiltroAula(@PathVariable("value") String value) {
 		return aulaRepository.filtroAula(value);
@@ -327,8 +327,8 @@ public class AulaRestController {
 
 	// METODO BUSCA UMA AULA POR DATA
 	// URL = localhost:8080/api/aula/2022-11-23
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/{data}", method = RequestMethod.GET)
 	public List<Aula> buscaPorData(@PathVariable("data") String dataStr) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // FORMATANDO DATA
@@ -343,8 +343,8 @@ public class AulaRestController {
 
 	// METODO COMPARAÇAÕ DO MES ANTERIOS (VALOR PERIODO DASHBOARD)
 	// URL = localhost:8080/api/aula/analise/11
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/analise/{mes}", method = RequestMethod.GET)
 	public ArrayList<Object> comparacaoMes(@PathVariable("mes") int mes) {
 		int ano = LocalDate.now().getYear();
@@ -394,8 +394,8 @@ public class AulaRestController {
 		return valores;
 	}
 
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/trasPeriodo/{periodo}", method = RequestMethod.GET)
 	public List<Aula> trasPorPeriodo(@PathVariable("periodo") Periodo periodo) {
 		return aulaRepository.listaPorPeriodo(periodo);
@@ -403,8 +403,8 @@ public class AulaRestController {
 
 	// URL = localhost:8080/api/aula/prof?idProf=1&data=11/11/2022
 	// METODO PARA RETORNAR UMA LISTA DE AULA CONFORME ID PASSADO E DATA
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/prof", method = RequestMethod.GET)
 	public List<Aula> retornaAulaProf(@RequestParam("idProf") Long id, @RequestParam("data") String data) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -418,8 +418,8 @@ public class AulaRestController {
 
 	// METODO QUE RETORNA APENAS DATAS DE UM PROFESSOR E UM TIPO ESPECIFICO
 	// URL = localhost:8080/api/aula/aulaTipo?prof=3&tipo=FIC
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/aulaTipo", method = RequestMethod.GET)
 	public ArrayList<String> retornaAulaTipo(@RequestParam("prof") Long id, @RequestParam("tipo") TipoCurso tipo) {
 		List<Calendar> datas = aulaRepository.retornaAulaProfTipoData(id, tipo);
@@ -444,8 +444,8 @@ public class AulaRestController {
 
 	// METODO QUE LISTA AULAS EM DETERMINADAS DATAS
 	// URL = localhost:8080/api/aula/lista?dataInicio=2022-11-23&dataFinal=2022-11-28
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/lista", method = RequestMethod.GET)
 	public List<Aula> retornaEntredatas(@RequestParam("dataInicio") String dataInicioStr,
 			@RequestParam("dataFinal") String dataFinalStr) {
@@ -467,8 +467,8 @@ public class AulaRestController {
 
 	// DISPONIBILIDADE PROF E AMBIENTE ATIVOS
 	// URL = localhost:8080/api/aula/aulaProfessorAmbienteDisponivel?periodo=MANHA&dataInicio=23/11/2022
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/aulaProfessorAmbienteDisponivel", method = RequestMethod.GET)
 	public Object aulaProfessorAmbienteDisponivel(@RequestParam("dataInicio") String dataInicio,
 			@RequestParam("periodo") Periodo periodo, @RequestParam("id") Long id) {
@@ -510,8 +510,8 @@ public class AulaRestController {
 
 	// DISPONIBILIDADE PROF E AMBIENTE POR DATA INICIO E FINAL ATIVOS
 	// URL = localhost:8080/api/aula/aulasProfessorAmbienteDisponivel?periodo=NOITE&dataInicio=16/01/2023&dataFinal=17/01/2023
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/aulasProfessorAmbienteDisponivel", method = RequestMethod.GET)
 	public Object aulasProfessorAmbienteDisponivel(@RequestParam("dataInicio") String dataInicio,
 			@RequestParam("dataFinal") String dataFinal, @RequestParam("periodo") Periodo periodo) {

@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.sga.annotation.User;
 import com.backend.sga.annotation.Administrador;
-import com.backend.sga.annotation.Suporte;
 import com.backend.sga.model.DiaNaoLetivo;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.FeriadosNacionais;
@@ -44,8 +44,8 @@ public class DiaNaoLetivoRestController {
 	@Autowired
 	private FeriadosNacionaisService service;
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarDnl(@RequestBody DiaNaoLetivo dnl, HttpServletRequest request) {
 		if (dnl != null) {
@@ -65,8 +65,8 @@ public class DiaNaoLetivoRestController {
 		}
 	}
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> excluirDnl(@PathVariable("id") Long id, DiaNaoLetivo dnl,
 			HttpServletRequest request) {
@@ -80,15 +80,15 @@ public class DiaNaoLetivoRestController {
 		}
 	}
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<DiaNaoLetivo> listaDnl(DiaNaoLetivo dnl) {
 		return diaNaoLetivoRepository.findAll();
 	}
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> atualizarDnl(@PathVariable("id") Long id, @RequestBody DiaNaoLetivo dnl,
 			HttpServletRequest request) {
@@ -102,8 +102,8 @@ public class DiaNaoLetivoRestController {
 		}
 	}
 	
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/buscaDnls", method = RequestMethod.GET)
 	public ArrayList<String> retornaDatas() {
 		int ano = LocalDate.now().getYear();

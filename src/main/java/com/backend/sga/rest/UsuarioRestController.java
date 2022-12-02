@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.backend.sga.annotation.User;
 import com.backend.sga.annotation.Administrador;
-import com.backend.sga.annotation.Suporte;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.model.TokenJWT;
@@ -45,7 +45,7 @@ public class UsuarioRestController {
 	// passando o parametro do BCrypto dentro encoder para que salva a criptografia
 	private PasswordEncoder encoder = new BCryptPasswordEncoder();
 
-	@Suporte
+	@Administrador
 	// metodo para criar o professor
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarUser(@RequestBody Usuario user, HttpServletRequest request) {
@@ -77,7 +77,7 @@ public class UsuarioRestController {
 		}
 	}
 
-	@Suporte
+	@Administrador
 	@RequestMapping(value = "/desativar/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Object> desativaUser(@PathVariable("id") Long id, HttpServletRequest request) {
 
@@ -99,14 +99,14 @@ public class UsuarioRestController {
 
 	}
 
-	@Suporte
+	@Administrador
 	// Buscando todos os dados no banco
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<Usuario> listaUser(Usuario user) {
 		return usuarioRepository.findAll();
 	}
 
-	@Suporte
+	@Administrador
 	// Editar usuario não precisa de senha
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> atualizarUser(@PathVariable("id") Long id, @RequestBody Usuario user,
@@ -138,8 +138,8 @@ public class UsuarioRestController {
 		}
 	}
 
-	@Suporte
 	@Administrador
+	@User
 	// Editar perfil que precisa da senha
 	@RequestMapping(value = "/perfil/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> atualizarUserPerfil(@PathVariable("id") Long id, @RequestBody Usuario user,
@@ -196,8 +196,8 @@ public class UsuarioRestController {
 		return valid;
 	}
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> login(@RequestBody Usuario usuario, HttpServletRequest request) {
 

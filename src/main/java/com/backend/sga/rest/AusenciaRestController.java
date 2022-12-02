@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.sga.annotation.User;
 import com.backend.sga.annotation.Administrador;
-import com.backend.sga.annotation.Suporte;
 import com.backend.sga.model.Ausencia;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.RecebeAula;
@@ -35,8 +35,8 @@ public class AusenciaRestController {
 	@Autowired
 	private AulaRepository aulaRepository;
 
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarAusencia(@RequestBody Ausencia ausencia, HttpServletRequest request) {
 		if (ausencia != null) {
@@ -53,8 +53,8 @@ public class AusenciaRestController {
 		}
 	}
 
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> deletarAusencia(@PathVariable("id") Long id, Ausencia ausencia,
 			HttpServletRequest request) {
@@ -68,15 +68,15 @@ public class AusenciaRestController {
 		}
 	}
 
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<Ausencia> listarAusencias() {
 		return ausenciaRepository.findAll();
 	}
 
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> atualizarAusencia(@PathVariable("id") Long id, @RequestBody Ausencia ausencia,
 			HttpServletRequest request) {
@@ -90,8 +90,8 @@ public class AusenciaRestController {
 		}
 	}
 
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/criaAusencia", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criaAusenciaParaProfessores(@RequestBody RecebeAula recebe) {
 		try {
@@ -145,8 +145,8 @@ public class AusenciaRestController {
 		}
 	}
 
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/listProf/{id}", method = RequestMethod.GET)
 	public ArrayList<String> filtroFeriasProf(@PathVariable("id") Long id) {
 		ArrayList<String> datas = new ArrayList<String>();
@@ -194,8 +194,8 @@ public class AusenciaRestController {
 		return datas;
 	}
 	
+	@User
 	@Administrador
-	@Suporte
 	@RequestMapping(value = "/buscaDataAusencia/{id}", method = RequestMethod.GET)
 	public List<Object> listaDataDeAusenciaProf(@PathVariable("id") Long id){
 		

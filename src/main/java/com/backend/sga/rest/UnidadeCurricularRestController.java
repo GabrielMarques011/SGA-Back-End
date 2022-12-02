@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.sga.annotation.User;
 import com.backend.sga.annotation.Administrador;
-import com.backend.sga.annotation.Suporte;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.model.TipoAmbiente;
@@ -31,8 +31,8 @@ public class UnidadeCurricularRestController {
 	@Autowired
 	private UnidadeCurricularRepository curricularRepository;
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarUnidade(@RequestBody UnidadeCurricular curricular, HttpServletRequest request) {
 		if (curricular != null) {
@@ -52,8 +52,8 @@ public class UnidadeCurricularRestController {
 		}
 	}
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> excluirUnidade(@PathVariable("id") Long id, UnidadeCurricular curricular,
 			HttpServletRequest request) {
@@ -68,15 +68,15 @@ public class UnidadeCurricularRestController {
 		}
 	}
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<UnidadeCurricular> listaUnidade(UnidadeCurricular curricular) {
 		return curricularRepository.findAll();
 	}
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> atualizarUnidadetand(@PathVariable("id") Long id,
 			@RequestBody UnidadeCurricular curricular, HttpServletRequest request) {
@@ -91,22 +91,22 @@ public class UnidadeCurricularRestController {
 	}
 
 	// Feito o metodo para retornar a ENUM para o Front
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/tipoambiente", method = RequestMethod.GET)
 	public TipoAmbiente[] buscaAmbiente() {
 		return TipoAmbiente.values();
 	}
 	
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/autocomplete/{nome}")
 	public List<UnidadeCurricular> autoComplete(@PathVariable("nome") String nome){
 		return curricularRepository.autoComplete(nome);
 	}
 
-	@Suporte
 	@Administrador
+	@User
 	@RequestMapping(value = "/buscaUc/{nome}", method =  RequestMethod.GET)
 	public List<UnidadeCurricular> buscaUnidade (@PathVariable("nome") String nome){
 		return curricularRepository.buscaUnidade(nome);
