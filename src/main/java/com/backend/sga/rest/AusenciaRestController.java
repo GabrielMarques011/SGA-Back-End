@@ -1,5 +1,7 @@
 package com.backend.sga.rest;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -84,6 +86,11 @@ public class AusenciaRestController {
 			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID invalido!", null);
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		} else {
+			Ausencia ausenciaFromDb = ausenciaRepository.findById(id).get();
+			
+			ausencia.setTipo(ausenciaFromDb.getTipo());
+			ausencia.setProfessor(ausenciaFromDb.getProfessor());
+			
 			ausenciaRepository.save(ausencia);
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);

@@ -196,16 +196,16 @@ public class AulaRestController {
 		List<Professor> professores = (List<Professor>) professorRepository.findAllAtivo();
 		List<Ambiente> ambientes = (List<Ambiente>) ambRepository.findAllAtivo();
 		for (int i = 0; i < professores.size(); i++) {
-			
-			for(int k = 0; k < aulas.size(); k++) {
-				List<Ausencia> ausencia = ausenciaRepository.buscaAusenciaData(aulas.get(k).getData()); 
-				if(!ausencia.isEmpty()) {
-					for(int m = 0; m < ausencia.size(); m++) {
+
+			for (int k = 0; k < aulas.size(); k++) {
+				List<Ausencia> ausencia = ausenciaRepository.buscaAusenciaData(aulas.get(k).getData());
+				if (!ausencia.isEmpty()) {
+					for (int m = 0; m < ausencia.size(); m++) {
 						professores.remove(ausencia.get(m).getProfessor());
 					}
 				}
 			}
-			
+
 			for (int j = 0; j < professoresOcp.size(); j++) {
 				if (professores.get(i).getId() == professoresOcp.get(j).getId()) {
 					professores.remove(i);
@@ -219,8 +219,7 @@ public class AulaRestController {
 				}
 			}
 		}
-		System.out.println(ambientes.get(1));
-		System.out.println(professores.get(0).getNome());
+
 		Object result[] = new Object[2];
 		result[0] = professores;
 		result[1] = ambientes;
@@ -276,10 +275,12 @@ public class AulaRestController {
 	@User
 	@Administrador
 	@RequestMapping(value = "/key/{partitionKey}", method = RequestMethod.PUT)
-	public ResponseEntity<Object> attAulas(@PathVariable("partitionKey") int partitionKey,@RequestBody RecebeAula recebeAula) {
-		
-		List<Aula> keyData = aulaRepository.buscaDatasEKey(partitionKey, recebeAula.getDataInicio(),recebeAula.getDataFinal());
-		
+	public ResponseEntity<Object> attAulas(@PathVariable("partitionKey") int partitionKey,
+			@RequestBody RecebeAula recebeAula) {
+
+		List<Aula> keyData = aulaRepository.buscaDatasEKey(partitionKey, recebeAula.getDataInicio(),
+				recebeAula.getDataFinal());
+
 		if (!keyData.isEmpty()) {
 			for (int i = 0; i < keyData.size(); i++) {
 				// setando novos valores
@@ -287,13 +288,14 @@ public class AulaRestController {
 				keyData.get(i).setAmbiente(recebeAula.getAmbiente());
 				aulaRepository.save(keyData.get(i));
 			}
-			
+
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
-			
+
 		}
-		
-		Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi editar aulas no periodo desejado pois já existe aulas dentro desse intervalo de datas", null);
+
+		Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR,
+				"Não foi editar aulas no periodo desejado pois já existe aulas dentro desse intervalo de datas", null);
 		return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
@@ -412,6 +414,7 @@ public class AulaRestController {
 		try {
 			dataFormat.setTime(sdf.parse(data));
 		} catch (Exception e) {
+			
 		}
 		return aulaRepository.retornaAulasProf(id, dataFormat);
 	}
@@ -443,7 +446,8 @@ public class AulaRestController {
 	}
 
 	// METODO QUE LISTA AULAS EM DETERMINADAS DATAS
-	// URL = localhost:8080/api/aula/lista?dataInicio=2022-11-23&dataFinal=2022-11-28
+	// URL =
+	// localhost:8080/api/aula/lista?dataInicio=2022-11-23&dataFinal=2022-11-28
 	@User
 	@Administrador
 	@RequestMapping(value = "/lista", method = RequestMethod.GET)
@@ -466,7 +470,8 @@ public class AulaRestController {
 	}
 
 	// DISPONIBILIDADE PROF E AMBIENTE ATIVOS
-	// URL = localhost:8080/api/aula/aulaProfessorAmbienteDisponivel?periodo=MANHA&dataInicio=23/11/2022
+	// URL =
+	// localhost:8080/api/aula/aulaProfessorAmbienteDisponivel?periodo=MANHA&dataInicio=23/11/2022
 	@User
 	@Administrador
 	@RequestMapping(value = "/aulaProfessorAmbienteDisponivel", method = RequestMethod.GET)
@@ -509,7 +514,8 @@ public class AulaRestController {
 	}
 
 	// DISPONIBILIDADE PROF E AMBIENTE POR DATA INICIO E FINAL ATIVOS
-	// URL = localhost:8080/api/aula/aulasProfessorAmbienteDisponivel?periodo=NOITE&dataInicio=16/01/2023&dataFinal=17/01/2023
+	// URL =
+	// localhost:8080/api/aula/aulasProfessorAmbienteDisponivel?periodo=NOITE&dataInicio=16/01/2023&dataFinal=17/01/2023
 	@User
 	@Administrador
 	@RequestMapping(value = "/aulasProfessorAmbienteDisponivel", method = RequestMethod.GET)
@@ -554,29 +560,29 @@ public class AulaRestController {
 			return result;
 		}
 	}
-	
 
 	@RequestMapping(value = "/listaPorData", method = RequestMethod.GET)
 	public Object listaAulaPorDataExpecifica(@RequestParam("data") String data) {
-		
+
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		
+
 		Calendar dataInicio = Calendar.getInstance();
 		try {
 			dataInicio.setTime(sdf.parse(data));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		
+
 		Object[] result = new Object[1];
-		result[0] =  aulaRepository.listaAulaDeDataExpecifica(dataInicio);
-		
+		result[0] = aulaRepository.listaAulaDeDataExpecifica(dataInicio);
+
 		return result;
 
 	}
 
 	@RequestMapping(value = "/filtro", method = RequestMethod.GET)
-	public List<Aula> filtraAulaGeral(@RequestParam("value") String value, @RequestParam("data") String dataStr, @RequestParam("periodo") Periodo periodo){
+	public List<Aula> filtraAulaGeral(@RequestParam("value") String value, @RequestParam("data") String dataStr,
+			@RequestParam("periodo") Periodo periodo) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		Calendar data = Calendar.getInstance();
 		try {
@@ -585,8 +591,8 @@ public class AulaRestController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return aulaRepository.filtroAulaGeral(value, periodo, data);
-	
+
 	}
 }
