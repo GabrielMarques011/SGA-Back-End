@@ -21,7 +21,7 @@ public class DiaNaoLetivo {
 	private Long id;
 	
 	@NotNull
-	@JsonFormat(pattern = "dd/MM/yyyy")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Calendar data;
 	
 	@NotNull

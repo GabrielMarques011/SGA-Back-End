@@ -28,13 +28,23 @@ public class FeriadosNacionaisRestController {
 	@Autowired
 	private FeriadosNacionaisRepository repository;	
 			
-	@Suporte
-	@Administrador
-	// método que retorna os feriados nacionais 
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public Iterable<FeriadosNacionais> buscarFeriados(){
-		return repository.findAll(); // retorna a lista de feriados nascionais
-	}
+    public Iterable<FeriadosNacionais> buscarFeriados(){
+        
+        Iterable<FeriadosNacionais> f = repository.findAll();
+
+        int i = 0;
+        for (FeriadosNacionais feriadosNacionais : f) {
+            if(feriadosNacionais != null) {
+                i++;
+            }
+        }
+        if(i == 0) {
+            return repository.findAll();
+        } else {
+            return repository.findAll();
+        }
+    }
 	
 	@Suporte
 	@Administrador
@@ -62,6 +72,7 @@ public class FeriadosNacionaisRestController {
 		
 		if(!feriadoDb.isEmpty()) {
 			try {
+				
 				feriadoDb.get().setDate(feriado.getDate());
 				feriadoDb.get().setName(feriado.getName());
 				
