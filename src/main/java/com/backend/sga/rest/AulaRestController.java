@@ -149,10 +149,40 @@ public class AulaRestController {
 				// PULANDO DE 1 EM 1 DIA...
 				dataInicio.add(Calendar.DAY_OF_MONTH, 1);
 			}
+		} 
+		
+		List<Professor> professores = (List<Professor>) professorRepository.findAllAtivo();
+		List<Ambiente> ambientes = (List<Ambiente>) ambRepository.findAllAtivo();
+		for (int i = 0; i < professores.size(); i++) {
+
+			for (int k = 0; k < aulas.size(); k++) {
+				List<Ausencia> ausencia = ausenciaRepository.buscaAusenciaData(aulas.get(k).getData());
+				if (!ausencia.isEmpty()) {
+					for (int m = 0; m < ausencia.size(); m++) {
+						professores.remove(ausencia.get(m).getProfessor());
+					}
+				}
+			}
+
+			for (int j = 0; j < professoresOcp.size(); j++) {
+				if (professores.get(i).getId() == professoresOcp.get(j).getId()) {
+					professores.remove(i);
+				}
+			}
 		}
-		Calendar result[] = new Calendar[2];
-		result[0] = aulas.get(0).getData();
-		result[1] = aulas.get(aulas.size() - 1).getData();
+
+		for (int i = 0; i < ambientes.size(); i++) {
+			for (int j = 0; j < ambientesOcp.size(); j++) {
+				if (ambientes.get(i).getId() == ambientesOcp.get(j).getId()) {
+					ambientes.remove(i);
+				}
+			}
+		}
+
+		Object result[] = new Object[3];
+		result[0] = aulas.get(aulas.size() - 1).getData();
+		result[1] = professores;
+		result[2] = ambientes;
 		return result;
 	}
 
@@ -185,45 +215,6 @@ public class AulaRestController {
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<Aula> listarAulas() {
 		return aulaRepository.findAll();
-	}
-
-	// RETORNA AMBIENTES E PROFESSOR LIVRES SEM AULA
-	// URL = localhost:8080/api/aula/valoresLivres
-	@User
-	@Administrador
-	@RequestMapping(value = "/valoresLivres", method = RequestMethod.GET)
-	public Object[] retornaProfsEAmbsLivres() {
-		List<Professor> professores = (List<Professor>) professorRepository.findAllAtivo();
-		List<Ambiente> ambientes = (List<Ambiente>) ambRepository.findAllAtivo();
-		for (int i = 0; i < professores.size(); i++) {
-
-			for (int k = 0; k < aulas.size(); k++) {
-				List<Ausencia> ausencia = ausenciaRepository.buscaAusenciaData(aulas.get(k).getData());
-				if (!ausencia.isEmpty()) {
-					for (int m = 0; m < ausencia.size(); m++) {
-						professores.remove(ausencia.get(m).getProfessor());
-					}
-				}
-			}
-
-			for (int j = 0; j < professoresOcp.size(); j++) {
-				if (professores.get(i).getId() == professoresOcp.get(j).getId()) {
-					professores.remove(i);
-				}
-			}
-		}
-		for (int i = 0; i < ambientes.size(); i++) {
-			for (int j = 0; j < ambientesOcp.size(); j++) {
-				if (ambientes.get(i).getId() == ambientesOcp.get(j).getId()) {
-					ambientes.remove(i);
-				}
-			}
-		}
-
-		Object result[] = new Object[2];
-		result[0] = professores;
-		result[1] = ambientes;
-		return result;
 	}
 
 	// DELETAR AULAS
@@ -414,7 +405,7 @@ public class AulaRestController {
 		try {
 			dataFormat.setTime(sdf.parse(data));
 		} catch (Exception e) {
-			
+
 		}
 		return aulaRepository.retornaAulasProf(id, dataFormat);
 	}
