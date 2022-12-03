@@ -14,11 +14,9 @@ import com.backend.sga.model.FeriadosNacionais;
 public interface FeriadosNacionaisRepository extends PagingAndSortingRepository<FeriadosNacionais, Long>{
 
 	//SELECT * FROM sga.feriados_nacionais where date = "2022-01-01";
-	@Query("SELECT f FROM FeriadosNacionais f WHERE f.date = :date")
-	public List<FeriadosNacionais> buscaData (@Param("date") String date);
+	
+	public List<FeriadosNacionais> findByDate (String data);
 	
 	@Query("SELECT f FROM FeriadosNacionais f WHERE f.date >= :inicio AND f.date <= :final")
 	public List<FeriadosNacionais> buscaAno(@Param("inicio") String inicio, @Param("final") String fim);
-	
-	
 }

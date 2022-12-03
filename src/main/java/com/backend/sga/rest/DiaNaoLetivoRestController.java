@@ -26,6 +26,7 @@ import com.backend.sga.model.DiaNaoLetivo;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.FeriadosNacionais;
 import com.backend.sga.model.Sucesso;
+import com.backend.sga.model.TipoDeDia;
 import com.backend.sga.repository.DiaNaoLetivoRepository;
 import com.backend.sga.repository.FeriadosNacionaisRepository;
 import com.backend.sga.service.FeriadosNacionaisService;
@@ -37,30 +38,54 @@ public class DiaNaoLetivoRestController {
 
 	@Autowired
 	private DiaNaoLetivoRepository diaNaoLetivoRepository;
-	
+
 	@Autowired
 	private FeriadosNacionaisRepository feriadosRepository;
 
-	@Autowired
-	private FeriadosNacionaisService service;
-
-	@Administrador
-	@User
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarDnl(@RequestBody DiaNaoLetivo dnl, HttpServletRequest request) {
 		if (dnl != null) {
-			diaNaoLetivoRepository.save(dnl);
-			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
+			try {
+				String dataFormatada;
+				int mes;
+				mes = dnl.getData().get(Calendar.MONTH) + 1;
 
-			Object[] filtro = new Object[2];
-			filtro[0] = sucesso;
-			filtro[1] = dnl.getId();
+				// FORMATANDO DE CALENDAR PARA STRING
+				if (dnl.getData().get(Calendar.MONTH + 1) < 10 && dnl.getData().get(Calendar.DAY_OF_MONTH) < 10) {
+					dataFormatada = dnl.getData().get(Calendar.YEAR) + "-0" + mes + "-0"
+							+ dnl.getData().get(Calendar.DAY_OF_MONTH);
+				} else if (dnl.getData().get(Calendar.DAY_OF_MONTH) < 10) {
+					dataFormatada = dnl.getData().get(Calendar.YEAR) + "-" + mes + "-0"
+							+ dnl.getData().get(Calendar.DAY_OF_MONTH);
+				} else if (dnl.getData().get(Calendar.MONTH + 1) < 10) {
+					dataFormatada = dnl.getData().get(Calendar.YEAR) + "-0" + mes + "-"
+							+ dnl.getData().get(Calendar.DAY_OF_MONTH);
+				} else {
+					dataFormatada = dnl.getData().get(Calendar.YEAR) + "-" + mes + "-"
+							+ dnl.getData().get(Calendar.DAY_OF_MONTH);
+				}
 
-			service.salvarFeriados();
-			ResponseEntity<Object> okpost = new ResponseEntity<Object>(filtro, HttpStatus.OK);
-			return okpost;
+				if (!feriadosRepository.findByDate(dataFormatada).isEmpty()
+						|| !diaNaoLetivoRepository.findByData(dnl.getData()).isEmpty()) {
+					Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR,
+							"Feriado nacional ou dia não letivo já cadastrado no mesmo dia...", null);
+					return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+				} else {
+					diaNaoLetivoRepository.save(dnl);
+
+					ResponseEntity<Object> okpost = new ResponseEntity<Object>(dnl, HttpStatus.OK);
+					return okpost;
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage() + "", null);
+				return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+
 		} else {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel cadastrar um Dia não letivo",null);
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possivel cadastrar um Dia não letivo",
+					null);
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -80,10 +105,22 @@ public class DiaNaoLetivoRestController {
 		}
 	}
 
-	@Administrador
-	@User
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public Iterable<DiaNaoLetivo> listaDnl(DiaNaoLetivo dnl) {
+		List<DiaNaoLetivo> diasBD = (List<DiaNaoLetivo>) diaNaoLetivoRepository.findAll();
+		String anoAtual = LocalDate.now().getYear() + "";
+		for (DiaNaoLetivo dia : diasBD) {
+			if (dia.getTipo().equals(TipoDeDia.RECORRENTE)) {
+				String anoBD = dia.getData().toString().substring(0, 4);
+				if (!anoBD.equals(anoAtual)) {
+					try {
+						// TERMINAR LÓGICA
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 		return diaNaoLetivoRepository.findAll();
 	}
 
@@ -101,7 +138,7 @@ public class DiaNaoLetivoRestController {
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
 	}
-	
+
 	@Administrador
 	@User
 	@RequestMapping(value = "/buscaDnls", method = RequestMethod.GET)
@@ -109,7 +146,7 @@ public class DiaNaoLetivoRestController {
 		int ano = LocalDate.now().getYear();
 		String dataInicioStr = ano + "-01-01";
 		String datafinalStr = ano + "-12-31";
-		
+
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Calendar dataInicio = Calendar.getInstance();
 		try {
@@ -118,7 +155,7 @@ public class DiaNaoLetivoRestController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		Calendar dataFinal = Calendar.getInstance();
 		try {
 			dataFinal.setTime(sdf.parse(datafinalStr));
@@ -126,21 +163,22 @@ public class DiaNaoLetivoRestController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		ArrayList<String> datas = new ArrayList<String>();
-		
+
 		List<DiaNaoLetivo> dnls = diaNaoLetivoRepository.buscaAno(dataInicio, dataFinal);
 		List<FeriadosNacionais> feriados = feriadosRepository.buscaAno(dataInicioStr, datafinalStr);
-		
-		for(int i = 0; i < dnls.size(); i++) {
+
+		for (int i = 0; i < dnls.size(); i++) {
 			String dataStr;
-			
+
 			String mes = dnls.get(i).getData().get(Calendar.MONTH) + 1 + "";
 			String anoStr = ano + "";
-			
+
 			System.out.println(dnls.get(i).getData().get(Calendar.MONTH) + 1);
-			
-			if ((dnls.get(i).getData().get(Calendar.MONTH) + 1) < 10 && dnls.get(i).getData().get(Calendar.DAY_OF_MONTH) < 10) {
+
+			if ((dnls.get(i).getData().get(Calendar.MONTH) + 1) < 10
+					&& dnls.get(i).getData().get(Calendar.DAY_OF_MONTH) < 10) {
 				dataStr = anoStr + "-0" + mes + "-0" + dnls.get(i).getData().get(Calendar.DAY_OF_MONTH);
 			} else if (dnls.get(i).getData().get(Calendar.DAY_OF_MONTH) < 10) {
 				dataStr = anoStr + "-" + mes + "-0" + dnls.get(i).getData().get(Calendar.DAY_OF_MONTH);
@@ -149,15 +187,14 @@ public class DiaNaoLetivoRestController {
 			} else {
 				dataStr = anoStr + "-" + mes + "-" + dnls.get(i).getData().get(Calendar.DAY_OF_MONTH);
 			}
-			
+
 			datas.add(dataStr);
 		}
-		
-		for(int i = 0; i < feriados.size(); i++) {
+
+		for (int i = 0; i < feriados.size(); i++) {
 			datas.add(feriados.get(i).getDate());
 		}
-		
-		
+
 		return datas;
 	}
 

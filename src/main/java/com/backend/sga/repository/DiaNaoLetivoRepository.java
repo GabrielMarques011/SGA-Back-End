@@ -13,9 +13,7 @@ import com.backend.sga.model.DiaNaoLetivo;
 @Repository
 public interface DiaNaoLetivoRepository extends PagingAndSortingRepository<DiaNaoLetivo, Long>{
 
-	// busca o dia não letivo pela data
-	@Query("SELECT dnl from DiaNaoLetivo dnl where dnl.data = :data ")
-	public List<DiaNaoLetivo> buscaDNL(@Param("data") Calendar dataInicio );
+	public List<DiaNaoLetivo> findByData(Calendar data);
 	
 	@Query("SELECT dnl FROM DiaNaoLetivo dnl WHERE dnl.data >= :dataInicio AND dnl.data <= :dataFinal")
 	public List<DiaNaoLetivo> buscaAno(@Param("dataInicio") Calendar datainicio, @Param("dataFinal") Calendar datafinal);

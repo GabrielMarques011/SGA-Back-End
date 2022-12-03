@@ -114,8 +114,8 @@ public class AulaRestController {
 					} else {
 						dataStr = data.get(Calendar.YEAR) + "-" + mes + "-" + data.get(Calendar.DAY_OF_MONTH);
 					}
-					if (feriadosRepository.buscaData(dataStr).isEmpty()) {
-						if (diaNaorepository.buscaDNL(data).isEmpty()) {
+					if (feriadosRepository.findByDate(dataStr).isEmpty()) {
+						if (diaNaorepository.findByData(data).isEmpty()) {
 							// CRIANDO A AULA
 							Aula aula = new Aula();
 							// SETANDO OS VALORES
