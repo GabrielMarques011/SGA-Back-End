@@ -42,6 +42,8 @@ public class DiaNaoLetivoRestController {
 	@Autowired
 	private FeriadosNacionaisRepository feriadosRepository;
 
+	@User
+	@Administrador
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarDnl(@RequestBody DiaNaoLetivo dnl, HttpServletRequest request) {
 		if (dnl != null) {
@@ -105,16 +107,19 @@ public class DiaNaoLetivoRestController {
 		}
 	}
 
+	@User
+	@Administrador
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public Iterable<DiaNaoLetivo> listaDnl(DiaNaoLetivo dnl) {
+	public Iterable<DiaNaoLetivo> listaDnl() {
 		List<DiaNaoLetivo> diasBD = (List<DiaNaoLetivo>) diaNaoLetivoRepository.findAll();
-		String anoAtual = LocalDate.now().getYear() + "";
+		int anoAtual = LocalDate.now().getYear();
 		for (DiaNaoLetivo dia : diasBD) {
 			if (dia.getTipo().equals(TipoDeDia.RECORRENTE)) {
-				String anoBD = dia.getData().toString().substring(0, 4);
-				if (!anoBD.equals(anoAtual)) {
+				int anoDaData = dia.getData().get(Calendar.YEAR);
+				if (anoDaData < anoAtual) {
 					try {
-						// TERMINAR LÓGICA
+						dia.getData().set(Calendar.YEAR, anoAtual + 1);
+						diaNaoLetivoRepository.save(dia);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -127,6 +132,7 @@ public class DiaNaoLetivoRestController {
 	@Administrador
 	@User
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	// VALIDAR ISSO AQUI PELO AMOR DE DEUS
 	public ResponseEntity<Object> atualizarDnl(@PathVariable("id") Long id, @RequestBody DiaNaoLetivo dnl,
 			HttpServletRequest request) {
 		if (dnl.getId() != id) {

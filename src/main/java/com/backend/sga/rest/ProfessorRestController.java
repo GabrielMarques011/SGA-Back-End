@@ -157,7 +157,7 @@ public class ProfessorRestController {
 				devolveDisp.setAmbiente(null);
 			} else {
 				devolveDisp.setEmAula(true);
-				devolveDisp.setAmbiente(listaAula.get(i).getAmbiente());
+				devolveDisp.setAmbiente(listaAula.get(0).getAmbiente());
 			}
 			listaDisp.add(devolveDisp);
 		}

@@ -220,8 +220,8 @@ public class UsuarioRestController {
 				Calendar expiracao = Calendar.getInstance();
 
 				// adiciona expiração a variavel para expirar o token
-				expiracao.add(Calendar.DAY_OF_MONTH, Calendar.DAY_OF_MONTH + 7);
-
+				expiracao.set(Calendar.DAY_OF_MONTH, Calendar.DAY_OF_MONTH + 7);
+				
 				// coloca assinatura do algoritmo no token
 				Algorithm algoritmo = Algorithm.HMAC512(SECRET);
 
