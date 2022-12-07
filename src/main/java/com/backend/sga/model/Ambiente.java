@@ -17,22 +17,22 @@ public class Ambiente {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@NotNull
 	private String nome;
-	
+
 	private int capacidade;
-	
+
 	@NotNull
 	private TipoAmbiente tipo;
-	
+
 	@NotNull
 	private boolean ativo;
-	
+
 	private String cep;
-	
+
 	private String complemento;
-	
+
 	private String endereco;
 
 	@Override
@@ -51,7 +51,5 @@ public class Ambiente {
 	public int hashCode() {
 		return Objects.hash(id);
 	}
-	
-	
-	
+
 }

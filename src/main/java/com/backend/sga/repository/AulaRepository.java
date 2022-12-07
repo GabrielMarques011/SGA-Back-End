@@ -36,6 +36,10 @@ public interface AulaRepository extends PagingAndSortingRepository<Aula, Long>{
 	@Query("SELECT a FROM Aula a WHERE a.data = :data AND a.periodo = :periodo and ambiente = :ambiente")
 	public List<Aula> diaAula(@Param("data") Calendar data, @Param("periodo") Periodo periodo, @Param("ambiente") Ambiente ambiente);
 	
+	//PEGANDO PERIODO PARA FAZER VALIDAÇÃO *TEST
+	@Query("SELECT a FROM Aula a WHERE a.data >= :data AND a.periodo = :periodo")
+	public List<Aula> listaPeriodo(@Param("data") Calendar data ,@Param("periodo") Periodo periodo);
+	
 	//SELECT * FROM sga.aula where sga.aula.periodo = 1 
 	@Query("SELECT a from Aula a where a.periodo = :periodo and a.data = :data")
 	public Optional<Aula> findByPeriodoEData (@Param("periodo") Periodo periodo, @Param("data") Calendar data);

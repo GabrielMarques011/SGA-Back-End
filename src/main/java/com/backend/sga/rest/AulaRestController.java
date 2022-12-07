@@ -2,10 +2,8 @@ package com.backend.sga.rest;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -27,7 +25,6 @@ import com.backend.sga.annotation.User;
 import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Analise;
 import com.backend.sga.model.Aula;
-import com.backend.sga.model.Ausencia;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Professor;
@@ -38,7 +35,6 @@ import com.backend.sga.model.TipoCurso;
 import com.backend.sga.model.UnidadeCurricular;
 import com.backend.sga.repository.AmbienteRepository;
 import com.backend.sga.repository.AulaRepository;
-import com.backend.sga.repository.AusenciaRepository;
 import com.backend.sga.repository.DiaNaoLetivoRepository;
 import com.backend.sga.repository.FeriadosNacionaisRepository;
 import com.backend.sga.repository.ProfessorRepository;
@@ -53,136 +49,122 @@ public class AulaRestController {
 	@Autowired
 	private ProfessorRepository professorRepository;
 	@Autowired
-	private DiaNaoLetivoRepository diaNaorepository;
+	private DiaNaoLetivoRepository diaNaoLetivoRepository;
 	@Autowired
-	private FeriadosNacionaisRepository feriadosRepository;
+	private FeriadosNacionaisRepository feriadosNacionaisRepository;
 	@Autowired
-	private AmbienteRepository ambRepository;
+	private AmbienteRepository ambienteRepository;
 	@Autowired
 	private UnidadeCurricularRepository unidadeCurricularRepository;
-	@Autowired
-	private AusenciaRepository ausenciaRepository;
+	
 	ArrayList<Aula> aulas = new ArrayList<Aula>();
-	ArrayList<Professor> professoresOcp = new ArrayList<Professor>();
-	ArrayList<Ambiente> ambientesOcp = new ArrayList<Ambiente>();
+
+	ArrayList<Professor> professoresOcupadosGlobal = new ArrayList<Professor>();
+	ArrayList<Ambiente> ambientesOcupadosGlobal = new ArrayList<Ambiente>();
 
 	@User
-	@Administrador
-	@RequestMapping(value = "/criar", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Object criarAula(@RequestBody RecebeAula recebeAula, HttpServletRequest request) {
-		boolean dia[] = recebeAula.getDiaSemana();
-		Calendar dataInicio = recebeAula.getDataInicio();
-		UnidadeCurricular uc = unidadeCurricularRepository.findById(recebeAula.getUnidadeCurricular().getId()).get();
-		double cargaHorariaUC = uc.getHoras();
-		double cargaDiaria = recebeAula.getCargaDiaria();
-		System.out.println(
-				!aulaRepository.diaAula(dataInicio, recebeAula.getPeriodo(), recebeAula.getAmbiente()).isEmpty());
-		// RETORNA UMA LISTAGEM DE AULA
-		List<Aula> listaAula = aulaRepository.diaSemanal(recebeAula.getDataInicio());
-		if (!aulaRepository.diaAula(dataInicio, recebeAula.getPeriodo(), recebeAula.getAmbiente()).isEmpty()) {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Este dia não está disponível", null);
-			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-		} else if (cargaDiaria <= 0) {
-			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR,
-					"Impossivel cadastrar com essa carga diaria, altere!!", null);
-			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-		} else {
-			int valorRandom;
-			do {
-				// CRIANDO UMA VARIAVEL QUE 'SORTEIA' NUMEROS ALEATORIOS
-				Random random = new Random();
-				// SETANDO A VARIAVEL DANDO UM NUMERO MAX PARA ELA
-				valorRandom = random.nextInt(10000);
-			} while (!aulaRepository.findByPartitionKey(valorRandom).isEmpty());
-			// FAZENDO A REPETIÇÃO DE HORAS ATÉ CHEGAR A 0
-			while (cargaHorariaUC > 0) {
-				// CRIANDO VARIAVEIS PARA QUE SETE O dataIncio
-				// !NECESSARIO (TimeZone.getTimeZone("GMT-00:00"))
-				Calendar data = Calendar.getInstance(TimeZone.getTimeZone("GMT-00:00"));
-				data.setTime(dataInicio.getTime());
-				int diaSemana = data.get(Calendar.DAY_OF_WEEK);
-				if (dia[diaSemana - 1] == true) {
-					String dataStr;
-					int mes;
-					mes = data.get(Calendar.MONTH) + 1;
-					// FORMATANDO DE CALENDAR PARA STRING
-					if (data.get(Calendar.MONTH + 1) < 10 && data.get(Calendar.DAY_OF_MONTH) < 10) {
-						dataStr = data.get(Calendar.YEAR) + "-0" + mes + "-0" + data.get(Calendar.DAY_OF_MONTH);
-					} else if (data.get(Calendar.DAY_OF_MONTH) < 10) {
-						dataStr = data.get(Calendar.YEAR) + "-" + mes + "-0" + data.get(Calendar.DAY_OF_MONTH);
-					} else if (data.get(Calendar.MONTH + 1) < 10) {
-						dataStr = data.get(Calendar.YEAR) + "-0" + mes + "-" + data.get(Calendar.DAY_OF_MONTH);
-					} else {
-						dataStr = data.get(Calendar.YEAR) + "-" + mes + "-" + data.get(Calendar.DAY_OF_MONTH);
-					}
-					if (feriadosRepository.findByDate(dataStr).isEmpty()) {
-						if (diaNaorepository.findByData(data).isEmpty()) {
-							// CRIANDO A AULA
-							Aula aula = new Aula();
-							// SETANDO OS VALORES
-							aula.setCurso(recebeAula.getCurso());
-							aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
-							aula.setCodTurma(recebeAula.getCodTurma());
-							aula.setPeriodo(recebeAula.getPeriodo());
-							aula.setCargaDiaria(recebeAula.getCargaDiaria());
-							aula.setPartitionKey(valorRandom);
-							aula.setData(data);
-							aulas.add(aula);
-							List<Professor> profOcupado = professorRepository.buscaOcupado(data,
-									recebeAula.getPeriodo());
-							if (!profOcupado.isEmpty()) {
-								for (int i = 0; i < profOcupado.size(); i++) {
-									professoresOcp.add(profOcupado.get(i));
-								}
-							}
-							List<Ambiente> ambOcopados = ambRepository.retornaOcupadosDiaCalendar(data,
-									recebeAula.getPeriodo());
-							if (!ambOcopados.isEmpty()) {
-								for (int i = 0; i < ambOcopados.size(); i++) {
-									ambientesOcp.add(ambOcopados.get(i));
-								}
-							}
-							// SUBTRAINDO A CARGA HORARIA DEPOIS QUE O CADASTRO ACONTECE
-							cargaHorariaUC = cargaHorariaUC - aula.getCargaDiaria();
-						}
-					}
-				}
-				// PULANDO DE 1 EM 1 DIA...
-				dataInicio.add(Calendar.DAY_OF_MONTH, 1);
-			}
-		}
-		List<Professor> professores = (List<Professor>) professorRepository.findAllAtivo();
-		List<Ambiente> ambientes = (List<Ambiente>) ambRepository.findAllAtivo();
-		for (int i = 0; professores.size() < i; i++) {
-		}
-		for (int i = 0; i < professores.size(); i++) {
-			for (int k = 0; k < aulas.size(); k++) {
-				List<Ausencia> ausencia = ausenciaRepository.buscaAusenciaData(aulas.get(k).getData());
-				if (!ausencia.isEmpty()) {
-					for (int m = 0; m < ausencia.size(); m++) {
-						professores.remove(ausencia.get(m).getProfessor());
-					}
-				}
-			}
-			for (int j = 0; j < professoresOcp.size(); j++) {
-				if (professores.get(i).getId() == professoresOcp.get(j).getId()) {
-					professores.remove(i);
-				}
-			}
-		}
-//      for (int i = 0; i < ambientes.size(); i++) {
-//          for (int j = 0; j < ambientesOcp.size(); j++) {
-//              if (ambientes.get(i).getId() == ambientesOcp.get(j).getId()) {
-//                  ambientes.remove(i);
-//              }
-//          }
-//      }
-		Object result[] = new Object[3];
-		result[0] = aulas.get(aulas.size() - 1).getData();
-		result[1] = professores;
-		result[2] = ambientes;
-		return result;
-	}
+    @Administrador
+    @RequestMapping(value = "/criar", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Object criarAula(@RequestBody RecebeAula recebeAula, HttpServletRequest request) {
+        // Limpando as variaveis globais
+        professoresOcupadosGlobal.clear();
+        ambientesOcupadosGlobal.clear();
+        aulas.clear();
+        boolean diasDaSemana[] = recebeAula.getDiaSemana();
+        Calendar dataInicio = recebeAula.getDataInicio();
+        UnidadeCurricular uc = unidadeCurricularRepository.findById(recebeAula.getUnidadeCurricular().getId()).get();
+        double cargaHorariaUC = uc.getHoras();
+        double cargaDiaria = recebeAula.getCargaDiaria();
+        // RETORNA UMA LISTAGEM DE AULA
+        List<Aula> listaAula = aulaRepository.diaSemanal(recebeAula.getDataInicio());
+        /*
+         * if (!aulaRepository.diaAula(dataInicio, recebeAula.getPeriodo(),
+         * recebeAula.getAmbiente()).isEmpty()) { Erro erro = new
+         * Erro(HttpStatus.INTERNAL_SERVER_ERROR, "Este dia não está disponível", null);
+         * return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR); }
+         * else
+         */
+        if (cargaDiaria <= 0) {
+            Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "A carga diária da aula não pode ser menor ou igual a zero...", null);
+            return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+        } else {
+            int valorRandom;
+            do {
+                // CRIANDO UMA VARIAVEL QUE 'SORTEIA' NUMEROS ALEATORIOS
+                Random random = new Random();
+                // SETANDO A VARIAVEL DANDO UM NUMERO MAX PARA ELA
+                valorRandom = random.nextInt(10000);
+            } while (!aulaRepository.findByPartitionKey(valorRandom).isEmpty());
+            // FAZENDO A REPETIÇÃO DE HORAS ATÉ CHEGAR A 0
+            while (cargaHorariaUC > 0) {
+                // !NECESSARIO (TimeZone.getTimeZone("GMT-00:00"))
+                Calendar data = Calendar.getInstance(TimeZone.getTimeZone("GMT-00:00"));
+                data.setTime(dataInicio.getTime());
+                String dataStr;
+                int mes;
+                mes = data.get(Calendar.MONTH) + 1;
+                // FORMATANDO DE CALENDAR PARA STRING
+                if (data.get(Calendar.MONTH + 1) < 10 && data.get(Calendar.DAY_OF_MONTH) < 10) {
+                    dataStr = data.get(Calendar.YEAR) + "-0" + mes + "-0" + data.get(Calendar.DAY_OF_MONTH);
+                } else if (data.get(Calendar.DAY_OF_MONTH) < 10) {
+                    dataStr = data.get(Calendar.YEAR) + "-" + mes + "-0" + data.get(Calendar.DAY_OF_MONTH);
+                } else if (data.get(Calendar.MONTH + 1) < 10) {
+                    dataStr = data.get(Calendar.YEAR) + "-0" + mes + "-" + data.get(Calendar.DAY_OF_MONTH);
+                } else {
+                    dataStr = data.get(Calendar.YEAR) + "-" + mes + "-" + data.get(Calendar.DAY_OF_MONTH);
+                }
+                if (feriadosNacionaisRepository.findByDate(dataStr).isEmpty()
+                        || diaNaoLetivoRepository.findByData(data).isEmpty()) {
+                    int diaSemana = data.get(Calendar.DAY_OF_WEEK);
+                    if (diasDaSemana[diaSemana - 1] == true) {
+                        // CRIANDO A AULA
+                        Aula aula = new Aula();
+                        // SETANDO OS VALORES
+                        aula.setCurso(recebeAula.getCurso());
+                        aula.setUnidadeCurricular(recebeAula.getUnidadeCurricular());
+                        aula.setCodTurma(recebeAula.getCodTurma());
+                        aula.setPeriodo(recebeAula.getPeriodo());
+                        aula.setCargaDiaria(recebeAula.getCargaDiaria());
+                        aula.setPartitionKey(valorRandom);
+                        aula.setData(data);
+                        aulas.add(aula);
+                        List<Professor> profOcupado = professorRepository.buscaOcupado(data, recebeAula.getPeriodo());
+                        if (!profOcupado.isEmpty()) {
+                            professoresOcupadosGlobal.addAll(profOcupado);
+                        }
+                        // Pegando todos os ambientes ocupados
+                        List<Ambiente> ambientesOcupados = ambienteRepository.retornaOcupadosDiaCalendar(data,
+                                recebeAula.getPeriodo());
+                        if (!ambientesOcupados.isEmpty()) {
+                            ambientesOcupadosGlobal.addAll(ambientesOcupados);
+                        }
+                        // SUBTRAINDO A CARGA HORARIA DEPOIS QUE O CADASTRO ACONTECE
+                        cargaHorariaUC = cargaHorariaUC - aula.getCargaDiaria();
+                    }
+                    // PULANDO DE 1 EM 1 DIA...
+                    dataInicio.add(Calendar.DAY_OF_MONTH, 1);
+                }
+            }
+        }
+        List<Professor> professores = (List<Professor>) professorRepository.findAllAtivo();
+        List<Ambiente> ambientes = (List<Ambiente>) ambienteRepository.findAllAtivo();
+        ambientes.removeAll(ambientesOcupadosGlobal);
+        /*
+         * for (int i = 0; i < professores.size(); i++) { for (int k = 0; k <
+         * aulas.size(); k++) { List<Ausencia> ausencia =
+         * ausenciaRepository.buscaAusenciaData(aulas.get(k).getData()); if
+         * (!ausencia.isEmpty()) { for (int m = 0; m < ausencia.size(); m++) {
+         * professores.remove(ausencia.get(m).getProfessor()); } } } for (int j = 0; j <
+         * professoresOcupadosGlobal.size(); j++) { if (professores.get(i).getId() ==
+         * professoresOcupadosGlobal.get(j).getId()) { professores.remove(i); } } }
+         */
+        Object result[] = new Object[3];
+        result[0] = aulas.get(aulas.size() - 1).getData();
+        result[1] = professores;
+        result[2] = ambientes;
+        return result;
+    }
 
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	public ResponseEntity<Object> salvarAulas(@RequestBody RecebeAula recebeAula) {
@@ -194,8 +176,8 @@ public class AulaRestController {
 				aulaRepository.save(aulas.get(i));
 			}
 			aulas.clear();
-			professoresOcp.clear();
-			ambientesOcp.clear();
+			professoresOcupadosGlobal.clear();
+			ambientesOcupadosGlobal.clear();
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		} catch (Exception e) {
@@ -326,57 +308,43 @@ public class AulaRestController {
 	}
 
 	// METODO COMPARAÇAÕ DO MES ANTERIOS (VALOR PERIODO DASHBOARD)
-	// URL = localhost:8080/api/aula/analise/11
-	@User
-	@Administrador
-	@RequestMapping(value = "/analise/{mes}", method = RequestMethod.GET)
-	public ArrayList<Object> comparacaoMes(@PathVariable("mes") int mes) {
-		int ano = LocalDate.now().getYear();
-		String data = ano + "-" + mes + "-01";
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Calendar comecoMes = Calendar.getInstance();
-		try {
-			comecoMes.setTime(sdf.parse(data));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		String dataStr;
-		if (mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12) {
-			dataStr = ano + "-" + mes + "-31";
-		} else if (mes == 2) {
-			dataStr = ano + "-" + mes + "-28";
-		} else {
-			dataStr = ano + "-" + mes + "-30";
-		}
-		Calendar finalMes = Calendar.getInstance();
-		try {
-			finalMes.setTime(sdf.parse(dataStr));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		ArrayList<Object> valores = new ArrayList<Object>();
-		List<Periodo> periodos = aulaRepository.comparacaoMes(comecoMes, finalMes);
-		List<Integer> atual = aulaRepository.valorMes(comecoMes, finalMes);
-		comecoMes.add(Calendar.MONTH, -1);
-		finalMes.add(Calendar.MONTH, -1);
-		List<Integer> passado = aulaRepository.valorMes(comecoMes, finalMes);
-		for (int i = 0; i < periodos.size(); i++) {
-			Analise result = new Analise();
-			result.setPeriodo(periodos.get(i));
-			result.setQuantidade(atual.get(i));
-			if (!passado.isEmpty()) {
-				if (atual.get(i) > passado.get(i)) {
-					result.setMaior(true);
-				} else {
-					result.setMaior(false);
-				}
-			} else {
-				result.setMaior(true);
-			}
-			valores.add(result);
-		}
-		return valores;
-	}
+    // URL = localhost:8080/api/aula/analise/11
+    @User
+    @Administrador
+    @RequestMapping(value = "/analise/mes/{mes}/fimMes/{fimMes}", method = RequestMethod.GET)
+    public ArrayList<Object> comparacaoMes(@PathVariable("mes") String mes, @PathVariable("fimMes") String mesFinal) {
+        ArrayList<Object> valores = new ArrayList<Object>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar dataFim = Calendar.getInstance();
+        Calendar dataInicio = Calendar.getInstance();
+        try {
+            dataFim.setTime(sdf.parse(mesFinal)); // TRANSFORMANDO A STRING EM CALENDAR
+            dataInicio.setTime(sdf.parse(mes));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        List<Periodo> periodos = aulaRepository.comparacaoMes(dataInicio, dataFim);
+        List<Integer> atual = aulaRepository.valorMes(dataInicio, dataFim);
+        dataInicio.add(Calendar.MONTH, -1);
+        dataFim.add(Calendar.MONTH, -1);
+        List<Integer> passado = aulaRepository.valorMes(dataInicio, dataFim);
+        for (int i = 0; i < periodos.size(); i++) {
+            Analise result = new Analise();
+            result.setPeriodo(periodos.get(i));
+            result.setQuantidade(atual.get(i));
+            if (!passado.isEmpty()) {
+                if (atual.get(i) > passado.get(i)) {
+                    result.setMaior(true);
+                } else {
+                    result.setMaior(false);
+                }
+            } else {
+                result.setMaior(true);
+            }
+            valores.add(result);
+        }
+        return valores;
+    }
 
 	@User
 	@Administrador
@@ -472,17 +440,17 @@ public class AulaRestController {
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		} else {
 			List<Professor> professores = (List<Professor>) professorRepository.findAllAtivo();
-			List<Ambiente> ambientes = (List<Ambiente>) ambRepository.findAllAtivo();
+			List<Ambiente> ambientes = (List<Ambiente>) ambienteRepository.findAllAtivo();
 			for (int i = 0; i < professores.size(); i++) {
-				for (int j = 0; j < professoresOcp.size(); j++) {
-					if (professores.get(i).getId() == professoresOcp.get(j).getId()) {
+				for (int j = 0; j < professoresOcupadosGlobal.size(); j++) {
+					if (professores.get(i).getId() == professoresOcupadosGlobal.get(j).getId()) {
 						professores.remove(i);
 					}
 				}
 			}
 			for (int i = 0; i < ambientes.size(); i++) {
-				for (int j = 0; j < ambientesOcp.size(); j++) {
-					if (ambientes.get(i).getId() == ambientesOcp.get(j).getId()) {
+				for (int j = 0; j < ambientesOcupadosGlobal.size(); j++) {
+					if (ambientes.get(i).getId() == ambientesOcupadosGlobal.get(j).getId()) {
 						ambientes.remove(i);
 					}
 				}
@@ -516,17 +484,17 @@ public class AulaRestController {
 			e.printStackTrace();
 		}
 		List<Professor> professores = (List<Professor>) professorRepository.findAllAtivo();
-		List<Ambiente> ambientes = (List<Ambiente>) ambRepository.findAllAtivo();
+		List<Ambiente> ambientes = (List<Ambiente>) ambienteRepository.findAllAtivo();
 		for (int i = 0; i < professores.size(); i++) {
-			for (int j = 0; j < professoresOcp.size(); j++) {
-				if (professores.get(i).getId() == professoresOcp.get(j).getId()) {
+			for (int j = 0; j < professoresOcupadosGlobal.size(); j++) {
+				if (professores.get(i).getId() == professoresOcupadosGlobal.get(j).getId()) {
 					professores.remove(i);
 				}
 			}
 		}
 		for (int i = 0; i < ambientes.size(); i++) {
-			for (int j = 0; j < ambientesOcp.size(); j++) {
-				if (ambientes.get(i).getId() == ambientesOcp.get(j).getId()) {
+			for (int j = 0; j < ambientesOcupadosGlobal.size(); j++) {
+				if (ambientes.get(i).getId() == ambientesOcupadosGlobal.get(j).getId()) {
 					ambientes.remove(i);
 				}
 			}
@@ -572,7 +540,7 @@ public class AulaRestController {
 	@RequestMapping(value = "/filtroAula", method = RequestMethod.GET)
 	public List<RecebeMobile> filtraAulaPorAmbiente(@RequestParam("data") String data) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 		Calendar date = Calendar.getInstance();
 		try {
@@ -585,7 +553,7 @@ public class AulaRestController {
 
 		List<Aula> aulas = aulaRepository.trasAulaPorData(date);
 
-		List<Ambiente> amb = ambRepository.findAllByOrderById();
+		List<Ambiente> amb = ambienteRepository.findAllByOrderById();
 
 		for (Ambiente a : amb) {
 			RecebeMobile rec = new RecebeMobile();
@@ -597,7 +565,7 @@ public class AulaRestController {
 
 		RecebeMobile r = rb.get(i);
 		for (Aula a : aulas) {
-			a.getProfessor().setFoto(null);		
+			a.getProfessor().setFoto(null);
 			if (a.getAmbiente().equals(r.getAmbiente())) {
 				r.addAula(a);
 			} else {
@@ -607,8 +575,6 @@ public class AulaRestController {
 				}
 			}
 		}
-
-	
 
 		return rb;
 	}
