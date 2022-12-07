@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -21,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.backend.sga.annotation.User;
 import com.backend.sga.annotation.Administrador;
+import com.backend.sga.annotation.User;
 import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Analise;
 import com.backend.sga.model.Aula;
@@ -31,6 +32,7 @@ import com.backend.sga.model.Erro;
 import com.backend.sga.model.Periodo;
 import com.backend.sga.model.Professor;
 import com.backend.sga.model.RecebeAula;
+import com.backend.sga.model.RecebeMobile;
 import com.backend.sga.model.Sucesso;
 import com.backend.sga.model.TipoCurso;
 import com.backend.sga.model.UnidadeCurricular;
@@ -565,5 +567,49 @@ public class AulaRestController {
 			e.printStackTrace();
 		}
 		return aulaRepository.filtroAulaGeral(value, periodo, data);
+	}
+
+	@RequestMapping(value = "/filtroAula", method = RequestMethod.GET)
+	public List<RecebeMobile> filtraAulaPorAmbiente(@RequestParam("data") String data) {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+		Calendar date = Calendar.getInstance();
+		try {
+			date.setTime(sdf.parse(data));
+		} catch (Exception e) {
+
+		}
+
+		List<RecebeMobile> rb = new ArrayList<RecebeMobile>();
+
+		List<Aula> aulas = aulaRepository.trasAulaPorData(date);
+
+		List<Ambiente> amb = ambRepository.findAllByOrderById();
+
+		for (Ambiente a : amb) {
+			RecebeMobile rec = new RecebeMobile();
+			rec.setAmbiente(a);
+			rb.add(rec);
+		}
+
+		int i = 0;
+
+		RecebeMobile r = rb.get(i);
+		for (Aula a : aulas) {
+			a.getProfessor().setFoto(null);		
+			if (a.getAmbiente().equals(r.getAmbiente())) {
+				r.addAula(a);
+			} else {
+				if (i < rb.size()) {
+					i++;
+					r = rb.get(i);
+				}
+			}
+		}
+
+	
+
+		return rb;
 	}
 }

@@ -27,7 +27,7 @@ public interface ProfessorRepository extends PagingAndSortingRepository<Professo
 	public List<Professor> palavraChave(@Param("nome") String nome);
 	
 	//SELECT * FROM sga.professor order by sga.professor.nome asc;
-	@Query("SELECT p FROM Professor p ORDER BY p.nome ASC")
+	@Query("SELECT p FROM Professor p ORDER BY p.nome ASC ")
 	public List<Professor> orderProf();
 
 	//SELECT p FROM Professor p INNER JOIN Competencia com ON com.professor.id = p.id INNER JOIN UnidadeCurricular uc ON com.unidade_curricular.id = uc.id INNER JOIN Curso c ON uc.curso.id = c.id WHERE c.nome = :nomeCr AND uc.nome = :nomeUc 

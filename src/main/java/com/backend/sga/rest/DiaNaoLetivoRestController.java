@@ -20,8 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.backend.sga.annotation.User;
+
 import com.backend.sga.annotation.Administrador;
+import com.backend.sga.annotation.User;
 import com.backend.sga.model.DiaNaoLetivo;
 import com.backend.sga.model.Erro;
 import com.backend.sga.model.FeriadosNacionais;

@@ -20,8 +20,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.backend.sga.annotation.User;
+
 import com.backend.sga.annotation.Administrador;
+import com.backend.sga.annotation.User;
 import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Aula;
 import com.backend.sga.model.Ausencia;

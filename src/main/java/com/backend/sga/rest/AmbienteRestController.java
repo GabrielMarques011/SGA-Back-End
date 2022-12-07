@@ -22,8 +22,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import com.backend.sga.annotation.User;
 import com.backend.sga.annotation.Administrador;
+import com.backend.sga.annotation.User;
 import com.backend.sga.model.Ambiente;
 import com.backend.sga.model.Aula;
 import com.backend.sga.model.Erro;

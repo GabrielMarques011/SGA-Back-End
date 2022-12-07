@@ -15,8 +15,8 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.backend.sga.annotation.User;
 import com.backend.sga.annotation.Administrador;
+import com.backend.sga.annotation.User;
 import com.backend.sga.model.TipoUsuario;
 import com.backend.sga.rest.UsuarioRestController;
 
