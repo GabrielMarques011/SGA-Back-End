@@ -413,12 +413,12 @@ public class AulaRestController {
 	@User
 	@Administrador
 	@RequestMapping(value = "/aulaProfessorAmbienteDisponivel", method = RequestMethod.GET)
-	public Object aulaProfessorAmbienteDisponivel(@RequestParam("dataInicio") String dataInicio,
+	public Object aulaProfessorAmbienteDisponivel(@RequestParam("data") String data,
 			@RequestParam("periodo") Periodo periodo, @RequestParam("id") Long id) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // FORMATANDO DATA
 		Calendar calendar = Calendar.getInstance(); // GUARDANDO AS VARIAVEL
 		try {
-			calendar.setTime(sdf.parse(dataInicio)); // TRANSFORMANDO DE STRING PARA CALENDAR
+			calendar.setTime(sdf.parse(data)); // TRANSFORMANDO DE STRING PARA CALENDAR
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

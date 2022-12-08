@@ -35,7 +35,7 @@ public interface ProfessorRepository extends PagingAndSortingRepository<Professo
 	public List<Professor> listProfcuc(@Param("nomeCurso") String nomeCurso, @Param("nomeUnidade") String nomeUnidade);
 	
 	// SELECT a.professor_id FROM sga.aula as a where a.data = "2022-10-17" and a.periodo = 0;
-	@Query("SELECT a.professor FROM Aula a WHERE a.data = :data AND a.periodo = :periodo")
+	@Query("SELECT p FROM Professor p INNER JOIN Aula a ON p.id = a.ambiente.id WHERE a.data = :data AND a.periodo = :periodo")
 	public List<Professor> buscaOcupado(@Param("data") Calendar data, @Param("periodo") Periodo periodo);
 	
 	//SELECT * FROM sga.professor AS p WHERE p.ativo = 1;

@@ -51,8 +51,8 @@ public interface AmbienteRepository extends PagingAndSortingRepository<Ambiente,
 	@Query("SELECT a FROM Ambiente a ORDER BY a.nome ASC")
 	public List<Ambiente> orderAmbiente();
 	
-	@Query("SELECT a FROM Ambiente a INNER JOIN Aula au ON a.id = au.ambiente.id WHERE au.data = :datainicio AND au.periodo = :periodo")
-	public List<Ambiente> retornaOcupadosDiaCalendar(@Param("datainicio") Calendar dataInicio, @Param("periodo") Periodo periodo);
+	@Query("SELECT a FROM Ambiente a INNER JOIN Aula au ON a.id = au.ambiente.id WHERE au.data = :data AND au.periodo = :periodo")
+	public List<Ambiente> retornaOcupadosDiaCalendar(@Param("data") Calendar data, @Param("periodo") Periodo periodo);
 	
 	public List<Ambiente> findAllByOrderById();
 
