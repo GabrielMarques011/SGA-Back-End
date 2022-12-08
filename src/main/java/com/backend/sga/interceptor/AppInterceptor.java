@@ -23,7 +23,7 @@ import com.backend.sga.rest.UsuarioRestController;
 @Component
 public class AppInterceptor implements HandlerInterceptor{
 	
-	@Override
+	/*@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 
@@ -46,7 +46,7 @@ public class AppInterceptor implements HandlerInterceptor{
 				// variável para o token
 				String token = null;
 				
-				token = request.getHeader("Autorization");
+				token = request.getHeader("Authorization");
 				
 				// buscando o algoritmo do algoritmo do Usuario
 				Algorithm algoritmo = Algorithm.HMAC512(UsuarioRestController.SECRET);
@@ -63,27 +63,27 @@ public class AppInterceptor implements HandlerInterceptor{
 				TipoUsuario tipo = TipoUsuario.values()[Integer.parseInt(claims.get("tipoUsuario").toString())];
 				
 				// se tiver tentando acessar um método com o anotation @Administrador
-				if(metodo.getMethodAnnotation(User.class) != null) { 
-					if(tipo == TipoUsuario.ADMINISTRADOR) {
-						response.setStatus(HttpStatus.OK.value());
-						return true;
-					} else {
-						response.sendError(HttpStatus.UNAUTHORIZED.value(), "Acesso negado");
-						return false;
-					}
-					// se tiver tentando acessar um método com o anotation @Suporte
-				} else if(metodo.getMethodAnnotation(Administrador.class) != null) {
-					if(tipo == TipoUsuario.ADMINISTRADOR) {
-						response.setStatus(HttpStatus.OK.value());
-						return true;
-					}else {
-						response.sendError(HttpStatus.UNAUTHORIZED.value(), "Acesso negado");
-					}
-				}
-				
-			}
-		}
+				if(metodo.getMethodAnnotation(User.class) != null) {
+                    if(tipo == TipoUsuario.USUARIO) {
+                        response.setStatus(HttpStatus.OK.value());
+                        return true;
+                    } else {
+                        response.sendError(HttpStatus.UNAUTHORIZED.value(), "Acesso negado");
+                        return false;
+                    }
+                    // se tiver tentando acessar um método com o anotation @Suporte
+                } else if(metodo.getMethodAnnotation(Administrador.class) != null) {
+                    if(tipo == TipoUsuario.ADMINISTRADOR) {
+                        response.setStatus(HttpStatus.OK.value());
+                        return true;
+                    }else {
+                        response.sendError(HttpStatus.UNAUTHORIZED.value(), "Acesso negado");
+                    }
+                }
+                
+            }
+        }
 		
 		return true;
-	}
+	}*/
 }

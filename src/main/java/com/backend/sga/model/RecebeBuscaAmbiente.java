@@ -19,11 +19,16 @@ public class RecebeBuscaAmbiente {
 	// @JsonFormat(pattern = "dd/MM/yyyy")
 	private Calendar dataFinal;
 
+	@JsonFormat(pattern = "dd/MM/yyyy")
+	private Calendar dtInicio;
+
+	@JsonFormat(pattern = "dd/MM/yyyy")
+	private Calendar dtFinal;
+
 	private boolean diasSemana[];
 
 	private Professor professor;
 
 	private UnidadeCurricular unidadeCurricular;
 
-	
 }
