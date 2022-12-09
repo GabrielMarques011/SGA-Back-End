@@ -196,7 +196,6 @@ public class UsuarioRestController {
 		return valid;
 	}
 
-	@Administrador
 	@RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> login(@RequestBody Usuario usuario, HttpServletRequest request) {
 

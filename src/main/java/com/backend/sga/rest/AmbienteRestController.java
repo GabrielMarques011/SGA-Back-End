@@ -238,7 +238,7 @@ public class AmbienteRestController {
 			if(dia != null) {
 				if (dia[diaSemana - 1] == true) {
 
-					List<Ambiente> ocupado = ambienteRepository.retornaOcupadosDia(calendar, periodo); // BUSCANDO O RETORNO NO BANCO DE DADOS
+					List<Ambiente> ocupado = ambienteRepository.retornaOcupadosPorDia(calendar, periodo); // BUSCANDO O RETORNO NO BANCO DE DADOS
 
 					if (!ocupado.isEmpty()) {
 						for (int i = 0; i < ocupado.size(); i++) {
@@ -247,7 +247,7 @@ public class AmbienteRestController {
 					}
 				}
 			} else {
-				List<Ambiente> ocupado = ambienteRepository.retornaOcupadosDia(calendar, periodo); // BUSCANDO O RETORNO NO BANCO DE DADOS
+				List<Ambiente> ocupado = ambienteRepository.retornaOcupadosPorDia(calendar, periodo); // BUSCANDO O RETORNO NO BANCO DE DADOS
 
 				if (!ocupado.isEmpty()) {
 					for (int i = 0; i < ocupado.size(); i++) {

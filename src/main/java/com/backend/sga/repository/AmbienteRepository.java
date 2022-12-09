@@ -39,20 +39,19 @@ public interface AmbienteRepository extends PagingAndSortingRepository<Ambiente,
 	public Iterable<Ambiente> retornaTipoCapacidade(@Param("tipo") TipoAmbiente tipo,@Param("capacidadeMin") int capacidadeMin, @Param("capacidadeMax") int capacidadeMax);
 
 	@Query("SELECT a FROM Ambiente a INNER JOIN Aula au ON a.id = au.ambiente.id WHERE au.data >= :datainicio AND au.data <= :dataFinal AND au.periodo = :periodo")
-	public List<Ambiente> retornaOcupados(@Param("datainicio") Calendar dataInicio, @Param("dataFinal") Calendar dataFinal, @Param("periodo") Periodo periodo);
+	public List<Ambiente> retornaOcupadoEmIntervaloDeDatas(@Param("datainicio") Calendar dataInicio, @Param("dataFinal") Calendar dataFinal, @Param("periodo") Periodo periodo);
 
-	@Query("SELECT a FROM Ambiente a INNER JOIN Aula au ON a.id = au.ambiente.id WHERE au.data = :datainicio AND au.periodo = :periodo")
-	public List<Ambiente> retornaOcupadosDia(@Param("datainicio") Calendar dataInicio, @Param("periodo") Periodo periodo);
-	
 	@Query("SELECT a FROM Ambiente a INNER JOIN Aula au ON a.id = au.ambiente.id WHERE au.data = :data GROUP BY a.id")
 	public List<Ambiente> ocupadosPorData(@Param("data") Calendar dataInicio);
+	
+	@Query("SELECT a FROM Ambiente a INNER JOIN Aula au ON a.id = au.ambiente.id WHERE au.data = :data AND au.periodo = :periodo")
+	public List<Ambiente> retornaOcupadosPorDia(@Param("data") Calendar data, @Param("periodo") Periodo periodo);
 	
 	//SELECT * FROM sga.ambiente order by sga.ambiente.nome asc;
 	@Query("SELECT a FROM Ambiente a ORDER BY a.nome ASC")
 	public List<Ambiente> orderAmbiente();
 	
-	@Query("SELECT a FROM Ambiente a INNER JOIN Aula au ON a.id = au.ambiente.id WHERE au.data = :data AND au.periodo = :periodo")
-	public List<Ambiente> retornaOcupadosDiaCalendar(@Param("data") Calendar data, @Param("periodo") Periodo periodo);
+	
 	
 	public List<Ambiente> findAllByOrderById();
 

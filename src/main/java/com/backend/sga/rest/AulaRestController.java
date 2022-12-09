@@ -133,9 +133,9 @@ public class AulaRestController {
 							professoresOcupados.addAll(professorRepository.buscaOcupado(data, recebeAula.getPeriodo()));
 						}
 
-						if (!ambienteRepository.retornaOcupadosDiaCalendar(data, recebeAula.getPeriodo()).isEmpty()) {
+						if (!ambienteRepository.retornaOcupadosPorDia(data, recebeAula.getPeriodo()).isEmpty()) {
 							ambientesOcupados.addAll(
-									ambienteRepository.retornaOcupadosDiaCalendar(data, recebeAula.getPeriodo()));
+									ambienteRepository.retornaOcupadosPorDia(data, recebeAula.getPeriodo()));
 						}
 						// SUBTRAINDO A CARGA HORARIA DEPOIS QUE O CADASTRO ACONTECE
 						cargaHorariaUC = cargaHorariaUC - aula.getCargaDiaria();
@@ -431,23 +431,8 @@ public class AulaRestController {
 			List<Professor> professores = (List<Professor>) professorRepository.findAllAtivo();
 			List<Ambiente> ambientes = (List<Ambiente>) ambienteRepository.findAllAtivo();
 
-			for (int i = 0; i < professores.size(); i++) {
-				for (int j = 0; j < professorRepository.buscaOcupado(calendar, periodo).size(); j++) {
-					if (professores.get(i).getId() == professorRepository.buscaOcupado(calendar, periodo).get(j)
-							.getId()) {
-						professores.remove(i);
-					}
-				}
-			}
-			
-			for (int i = 0; i < ambientes.size(); i++) {
-				for (int j = 0; j < ambienteRepository.retornaOcupadosDiaCalendar(calendar, periodo).size(); j++) {
-					if (ambientes.get(i).getId() == ambienteRepository.retornaOcupadosDiaCalendar(calendar, periodo)
-							.get(j).getId()) {
-						ambientes.remove(i);
-					}
-				}
-			}
+			professores.removeAll(professorRepository.buscaOcupado(calendar, periodo));
+			ambientes.removeAll(ambienteRepository.retornaOcupadosPorDia(calendar, periodo));
 			
 			Object result[] = new Object[2];
 			result[0] = professores;
@@ -489,14 +474,7 @@ public class AulaRestController {
 			}
 		}
 		
-		for (int i = 0; i < ambientes.size(); i++) {
-			for (int j = 0; j < ambienteRepository.retornaOcupadosDiaCalendar(calendar, periodo).size(); j++) {
-				if (ambientes.get(i).getId() == ambienteRepository.retornaOcupadosDiaCalendar(calendar, periodo).get(j)
-						.getId()) {
-					ambientes.remove(i);
-				}
-			}
-		}
+		
 		Object result[] = new Object[2];
 		result[0] = professores;
 		result[1] = ambientes;
