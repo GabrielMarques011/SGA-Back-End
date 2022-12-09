@@ -311,9 +311,9 @@ public class ProfessorRestController {
 	@Administrador
 	@User
 	@RequestMapping(value = "/buscProf", method = RequestMethod.GET)
-	public List<Professor> ordernarProCrEUc(@RequestParam("nomeCurso") String nomeCurso,
+	public List<Professor> ordernarProCrEUc(
 			@RequestParam("nomeUnidade") String nomeUnidade) {
-		return professorRepository.listProfcuc(nomeCurso, nomeUnidade);
+		return professorRepository.listProfcuc(nomeUnidade);
 	}
 
 	// URL =

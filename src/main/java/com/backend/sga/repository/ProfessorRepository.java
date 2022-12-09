@@ -26,8 +26,8 @@ public interface ProfessorRepository extends PagingAndSortingRepository<Professo
     public List<Professor> orderProf();
     
     //SELECT p FROM Professor p INNER JOIN Competencia com ON com.professor.id = p.id INNER JOIN UnidadeCurricular uc ON com.unidade_curricular.id = uc.id INNER JOIN Curso c ON uc.curso.id = c.id WHERE c.nome = :nomeCr AND uc.nome = :nomeUc 
-    @Query("SELECT p FROM Professor p INNER JOIN Competencia c ON c.professor.id = p.id INNER JOIN UnidadeCurricular uc ON c.unidadeCurricular.id = uc.id INNER JOIN Curso cu ON uc.curso.id = cu.id WHERE cu.nome = :nomeCurso AND uc.nome = :nomeUnidade")
-    public List<Professor> listProfcuc(@Param("nomeCurso") String nomeCurso, @Param("nomeUnidade") String nomeUnidade);
+    @Query("SELECT p FROM Professor p INNER JOIN Competencia c ON c.professor.id = p.id INNER JOIN UnidadeCurricular uc ON c.unidadeCurricular.id = uc.id WHERE uc.nome = :nomeUnidade")
+    public List<Professor> listProfcuc(@Param("nomeUnidade") String nomeUnidade);
     
     // SELECT a.professor_id FROM sga.aula as a where a.data = "2022-10-17" and a.periodo = 0;
     @Query("SELECT p FROM Professor p INNER JOIN Aula a ON p.id = a.professor.id WHERE a.data = :data AND a.periodo = :periodo")
