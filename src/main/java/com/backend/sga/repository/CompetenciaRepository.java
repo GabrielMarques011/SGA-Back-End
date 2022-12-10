@@ -14,5 +14,4 @@ public interface CompetenciaRepository extends PagingAndSortingRepository<Compet
 	
 	@Query("SELECT c FROM Competencia c where c.nivel = :nivel")
 	public List<Competencia> buscarNivel (@Param("nivel") int nivel);
-	
 }

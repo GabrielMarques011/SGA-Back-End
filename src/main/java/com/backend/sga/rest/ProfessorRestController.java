@@ -109,7 +109,31 @@ public class ProfessorRestController {
 			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, "ID inválido", null);
 			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
 		} else {
-			professorRepository.save(prof);
+			try {
+				List<Competencia> co = (List<Competencia>) competenciaRepository.findAll();
+				
+				for (Competencia competencia : co) {
+					if(competencia.getProfessor().getId() == prof.getId()) {
+						competenciaRepository.deleteById(competencia.getId());
+					}
+				}
+				
+				List<Competencia> un = prof.getCompetencia();
+				for (int i = 0; i < un.size(); i++) {
+					Competencia competencia = new Competencia();
+					// setando os valores da unidade para competencia
+					competencia.setUnidadeCurricular(un.get(i).getUnidadeCurricular());
+					// setando o nivel
+					competencia.setNivel(un.get(i).getNivel());
+					// trazendo os atributos dos professore
+					competencia.setProfessor(prof);
+					competenciaRepository.save(competencia);
+				}
+				
+				professorRepository.save(prof);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			return new ResponseEntity<Object>(sucesso, HttpStatus.OK);
 		}
