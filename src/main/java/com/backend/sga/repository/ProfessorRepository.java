@@ -33,8 +33,15 @@ public interface ProfessorRepository extends PagingAndSortingRepository<Professo
     @Query("SELECT p FROM Professor p INNER JOIN Aula a ON p.id = a.professor.id WHERE a.data = :data AND a.periodo = :periodo")
     public List<Professor> buscaOcupado(@Param("data") Calendar data, @Param("periodo") Periodo periodo);
     
+ // SELECT a.professor_id FROM sga.aula as a where a.data = "2022-10-17" and a.periodo = 0;
+    @Query("SELECT p FROM Professor p INNER JOIN Aula a ON p.id = a.professor.id WHERE a.data >= :dataInicio AND a.data <= :dataFinal AND a.periodo = :periodo")
+    public List<Professor> buscaOcupadoIntervalo(@Param("dataInicio") Calendar dataInicio, @Param("dataFinal") Calendar dataFinal, @Param("periodo") Periodo periodo);
+    
     @Query("SELECT p FROM Professor p INNER JOIN Aula a ON p.id = a.professor.id WHERE a.data = :data")
     public List<Professor> buscaOcupadoData(@Param("data") Calendar data);
+    
+    @Query("SELECT p FROM Professor p INNER JOIN Aula a ON p.id = a.professor.id WHERE a.data >= :dataInicio AND a.data <= :dataFinal")
+    public List<Professor> buscaOcupadoDatas(@Param("dataInicio") Calendar dataInicio, @Param("dataFinal") Calendar dataFinal);
     
     //SELECT * FROM sga.professor AS p WHERE p.ativo = 1;
     @Query("SELECT p FROM Professor p WHERE p.ativo = :ativo")
