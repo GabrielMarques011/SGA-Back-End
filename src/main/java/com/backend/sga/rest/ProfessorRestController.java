@@ -509,7 +509,7 @@ public class ProfessorRestController {
         } catch (Exception er) {
             er.printStackTrace();
             return null;
-        } finally {
+        } finally { 
             if (connection != null) {
                 connection.disconnect();
             }
