@@ -1,5 +1,11 @@
 package com.backend.sga.rest;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
@@ -69,6 +75,10 @@ public class ProfessorRestController {
 				competenciaRepository.save(competencia);
 			}
 			professorRepository.save(prof);
+			new Thread() { 
+                public void run() {
+                    emailProfessorCriado(prof);  
+            }; }.start();
 			Sucesso sucesso = new Sucesso(HttpStatus.OK, "Sucesso");
 			Object[] filtro = new Object[2];
 			filtro[0] = sucesso;
@@ -467,5 +477,42 @@ public class ProfessorRestController {
 	public List<Professor> listaProfessorPorCurso(@PathVariable("id") Long id){
 		return professorRepository.buscaProfessorPorCurso(id);
 	}
-
+	
+	public static String emailProfessorCriado(Professor destinatario) {
+        HttpURLConnection connection = null;
+        try {
+            // Create connection
+            URL url = new URL("https://email-api-tirj.vercel.app/bemVindo");
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            String jsonInputString = "{\"nome\":" + "\"" + destinatario.getNome() + "\",\"email\":\"" + destinatario.getEmail()+ "\"}";
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("Content-Language", "en-US");
+            connection.setUseCaches(false);
+            connection.setDoOutput(true);
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = jsonInputString.getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+            // Get Response
+            InputStream is = connection.getInputStream();
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+            StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
+            String line;
+            while ((line = rd.readLine()) != null) {
+                response.append(line);
+                response.append('\r');
+            }
+            rd.close();
+            return response.toString();
+        } catch (Exception er) {
+            er.printStackTrace();
+            return null;
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+    }
 }
